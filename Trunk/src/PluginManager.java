@@ -42,10 +42,27 @@ public class PluginManager
         
         p.add(listScroller);
         
-        p.add(new JLabel("Test"));
+        JPanel RightSide = new JPanel();
+        RightSide.setLayout(new BorderLayout());
+        
+        JPanel Manage = new JPanel();
+        Manage.add(new JButton("Install"));
+        Manage.add(new JButton("Remove"));
+        
+        RightSide.add(Manage,BorderLayout.NORTH);
+        RightSide.add(new PluginInfo(),BorderLayout.CENTER);
+        
+        p.add(RightSide);
                       
 		frame.setContentPane(p);
 		frame.pack();
 		frame.setVisible(true);
+	}
+	private static class PluginInfo extends JPanel
+	{
+		PluginInfo()
+		{
+			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));
+		}
 	}
 }
