@@ -34,7 +34,7 @@ public class Utils
 				// create a popup menu
 				PopupMenu popup = new PopupMenu();
 				
-				MenuItem Item = new MenuItem("Plugins");
+				MenuItem Item = new MenuItem("Projects");
 	         	Item.addActionListener(listener);
          		Item.setActionCommand("Plugins"); 
          		

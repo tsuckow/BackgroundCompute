@@ -15,6 +15,7 @@ public class PluginManager
 {
 	private static JFrame frame = null;
 	private PluginManager(){}
+	private static JList list = null;
 	
 	public static void show()
 	{
@@ -25,14 +26,23 @@ public class PluginManager
 			frame = null;
 		}
 		
-		frame = new JFrame("Plugin Manager");
+		frame = new JFrame("Project Manager");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JPanel p = new JPanel();
 		
-		String[] it = {"Bla","Ble","Blue","Background Pi","SETI@home","Prime Numbers","Checksums"};
+		String[] installed = BC.getLocalList("installedPlugins.txt");
+		String[] master = BC.getRemoteList("plugins.txt");
 		
-		JList list = new JList(it); //data has type Object[]
+		String[] it = new String[installed.length];
+		for(int i = 0; i < installed.length; ++i)
+		{
+			it[i] = installed[i].split(";")[1];
+		}
+		
+		//String[] it = {"Bla","Ble","Blue","Background Pi","SETI@home","Prime Numbers","Checksums"};
+		
+		list = new JList(it); //data has type Object[]
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
@@ -47,7 +57,9 @@ public class PluginManager
         
         JPanel Manage = new JPanel();
         Manage.add(new JButton("Install"));
-        Manage.add(new JButton("Remove"));
+        JButton remove = new JButton("Remove");
+        remove.addActionListener(new RemoveButton());
+        Manage.add(remove);
         
         RightSide.add(Manage,BorderLayout.NORTH);
         RightSide.add(new PluginInfo(),BorderLayout.CENTER);
@@ -64,5 +76,22 @@ public class PluginManager
 		{
 			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));
 		}
+	}
+	private static class RemoveButton implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			 BC.PError("Got Selection");
+        		}
+        	}
+        }
 	}
 }
