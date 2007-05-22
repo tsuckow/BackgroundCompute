@@ -22,7 +22,14 @@ public class BC_Plugin extends Plugin {
     {
     	while(true)
     	{
-    		Utils.iconMessage("ThreadTest in plugin!","Message: " + i,TrayIcon.MessageType.INFO);
+    		Utils.iconMessage("Thread Test in plugin!","Message: " + i,TrayIcon.MessageType.INFO);
+    		try
+    		{
+    			Thread.sleep(10000);
+    		}
+    		catch(InterruptedException e)
+    		{
+    		}
     		i++;
     		try
     		{
@@ -50,5 +57,20 @@ public class BC_Plugin extends Plugin {
     public JPanel getStatus()
     {
     	return null;
+    }
+    
+    public void remove()
+    {
+    	
+    }
+    
+    public int getState()
+    {
+    	return 0;
+    }
+    
+    protected void update()
+    {
+    	
     }
 }

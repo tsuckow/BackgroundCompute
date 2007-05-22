@@ -11,9 +11,7 @@
 		<ant_ref/>
 	</settings>
 	<ant_events/>
-	<run_items>
-		<item run="BC"/>
-	</run_items>
+	<run_items/>
 	<runtimes>
 		<runtime>
 			<label>&lt;Default&gt;</label>
@@ -59,6 +57,10 @@
 			</fileitem>
 			<fileitem>
 				<path>src\PluginManager.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
+				<path>src\PluginRemover.java</path>
 				<folder>src</folder>
 			</fileitem>
 			<fileitem>

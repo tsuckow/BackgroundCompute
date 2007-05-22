@@ -34,7 +34,19 @@ public class Utils
 				// create a popup menu
 				PopupMenu popup = new PopupMenu();
 				
-				MenuItem Item = new MenuItem("Projects");
+				MenuItem Item = new MenuItem("Add Project");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("Plugins"); 
+         		
+				popup.add(Item);
+				
+				Item = new MenuItem("Remove Project");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("RemovePlugin"); 
+         		
+				popup.add(Item);
+				
+				Item = new MenuItem("Current Projects");
 	         	Item.addActionListener(listener);
          		Item.setActionCommand("Plugins"); 
          		
@@ -98,7 +110,13 @@ public class Utils
             if( e.getActionCommand().equals("Plugins") )
             {
             	PluginManager.show();
-            }		
+            }
+            
+            if( e.getActionCommand().equals("RemovePlugin") )
+            {
+            	PluginRemover.show();
+            }
+            		
             if( e.getActionCommand().equals("Settings") )
             {
             	Settings.show();

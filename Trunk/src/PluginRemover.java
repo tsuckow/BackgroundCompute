@@ -11,10 +11,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class PluginManager
+public class PluginRemover
 {
 	private static JFrame frame = null;
-	private PluginManager(){}
+	private PluginRemover(){}
 	private static JList list = null;
 	
 	public static void show()
@@ -37,9 +37,7 @@ public class PluginManager
 		{
 			pluginList[i] = installedPlugins[i].split(";")[0];
 		}
-		
-		//String[] it = {"Bla","Ble","Blue","Background Pi","SETI@home","Prime Numbers","Checksums"};
-		
+				
 		list = new JList(pluginList); //data has type Object[]
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -54,7 +52,6 @@ public class PluginManager
         RightSide.setLayout(new BorderLayout());
         
         JPanel Manage = new JPanel();
-        Manage.add(new JButton("Install"));
         JButton remove = new JButton("Remove");
         remove.addActionListener(new RemoveButton());
         Manage.add(remove);
