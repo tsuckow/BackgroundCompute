@@ -9,6 +9,9 @@
 import java.awt.*;
 import java.awt.event.*;
 
+import java.net.*; //URL
+import java.io.*;//File
+
 import javax.swing.*;
 
 public class Utils
@@ -97,6 +100,48 @@ public class Utils
 		{
 			trayIcon.displayMessage(title,msg,type);
 		}
+	}
+	
+	public static Plugin loadPlugin(String name)
+	{
+		ClassLoader CL = BC.class.getClassLoader();
+		
+		URLClassLoader UCL = null;
+		
+		Plugin test = null;
+		
+		try
+		{
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + name + "/").toURI().toURL()},CL);
+		}
+		catch(MalformedURLException ex)
+		{
+			BC.PError("Plugin Dir Path Malformed!");
+			return null;
+		}
+		try
+		{
+			
+			test = (Plugin)UCL.loadClass(name + "_Plugin").newInstance();
+			
+		}
+		catch(ClassNotFoundException ex)
+		{
+			BC.PError("Class not found: " + "plugins/" + name + "/" + name + "_Plugin");
+			return null;
+		}
+		catch(InstantiationException ex)
+		{
+			BC.PError("Failed to load class");
+			return null;
+		}
+		catch(IllegalAccessException ex)
+		{
+			BC.PError("Illegal Access");
+			return null;
+		}
+		
+		return test;
 	}
 	
 	private static class iconListener implements ActionListener

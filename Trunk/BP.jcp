@@ -11,9 +11,7 @@
 		<ant_ref/>
 	</settings>
 	<ant_events/>
-	<run_items>
-		<item run="BC"/>
-	</run_items>
+	<run_items/>
 	<runtimes>
 		<runtime>
 			<label>&lt;Default&gt;</label>
@@ -21,7 +19,7 @@
 			<applet_ref/>
 			<debugger_ref/>
 			<param/>
-			<run>BC</run>
+			<run/>
 		</runtime>
 	</runtimes>
 	<libraries>
@@ -51,7 +49,7 @@
 				<folder>classes</folder>
 			</fileitem>
 			<fileitem>
-				<path>src\BP\BC_Plugin.java</path>
+				<path>src\BP\BP_Plugin.java</path>
 				<folder>src\BP</folder>
 			</fileitem>
 		</include>

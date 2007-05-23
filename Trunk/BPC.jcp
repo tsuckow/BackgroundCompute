@@ -11,7 +11,9 @@
 		<ant_ref/>
 	</settings>
 	<ant_events/>
-	<run_items/>
+	<run_items>
+		<item run="BC"/>
+	</run_items>
 	<runtimes>
 		<runtime>
 			<label>&lt;Default&gt;</label>

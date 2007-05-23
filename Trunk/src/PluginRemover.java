@@ -57,7 +57,8 @@ public class PluginRemover
         Manage.add(remove);
         
         RightSide.add(Manage,BorderLayout.NORTH);
-        RightSide.add(new PluginInfo(),BorderLayout.CENTER);
+        
+        RightSide.add(new PluginInfo("BP"),BorderLayout.CENTER);
         
         p.add(RightSide);
                       
@@ -67,9 +68,15 @@ public class PluginRemover
 	}
 	private static class PluginInfo extends JPanel
 	{
-		PluginInfo()
+		PluginInfo(String name)
 		{
-			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));
+			Plugin plug = Utils.loadPlugin(name);
+        	String Info = "<html>Error: Unable to load Plugin</html>";
+        	if(plug!=null)
+        	{
+        		Info = plug.getInfo();
+        	}
+			add(new JLabel(Info));
 		}
 	}
 	private static class RemoveButton implements ActionListener

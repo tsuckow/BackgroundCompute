@@ -38,7 +38,7 @@ abstract public class Plugin
     
     
     
-    abstract public String[] getPluginInfo();
+    abstract public String getInfo();
     
     abstract public int getState();
     

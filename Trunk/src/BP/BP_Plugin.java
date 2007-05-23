@@ -11,9 +11,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class BC_Plugin extends Plugin {
+public class BP_Plugin extends Plugin {
 
-    public BC_Plugin() {
+    public BP_Plugin() {
     }
     
     int i = 0;
@@ -43,10 +43,9 @@ public class BC_Plugin extends Plugin {
     	}
     }
     
-    public String[] getPluginInfo()
+    public String getInfo()
     {
-    	String[] dat = {"Background Pi","Version 0.0","Defcon 1 Computer Technologies","Computes Pi"};
-    	return dat;
+    	return "<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>";
     }
     
     public JPanel getSettings()

@@ -43,7 +43,7 @@ public class Worker extends Thread
 		try
 		{
 			
-			test = (Plugin)UCL.loadClass("BC_Plugin").newInstance();
+			test = (Plugin)UCL.loadClass("BP_Plugin").newInstance();
 			
 		}
 		catch(ClassNotFoundException ex)
