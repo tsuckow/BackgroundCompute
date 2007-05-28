@@ -10,11 +10,11 @@ import javax.swing.*;
 
 abstract public class Plugin
 {
-	private boolean running = false;
+	protected static boolean running = false;
 	
-	private boolean stop = false;
+	protected static boolean stop = false;
 	
-    private synchronized void runner()
+    protected synchronized void runner()
     {
     	running = true;
     	run();
@@ -22,7 +22,7 @@ abstract public class Plugin
     	stop = false;
     }
     
-    private synchronized void updater()
+    protected synchronized void updater()
     {
     	running = true;
     	update();
@@ -67,5 +67,10 @@ abstract public class Plugin
     public void start()
     {
     	runner();
-    }    
+    }
+    
+    public void startUpdate()
+    {
+    	updater();
+    }   
 }

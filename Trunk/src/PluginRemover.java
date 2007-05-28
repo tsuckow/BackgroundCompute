@@ -16,6 +16,7 @@ public class PluginRemover
 	private static JFrame frame = null;
 	private PluginRemover(){}
 	private static JList list = null;
+	private static String[] installedPlugins = null;
 	
 	public static void show()
 	{
@@ -31,7 +32,7 @@ public class PluginRemover
 		
 		JPanel p = new JPanel();
 		
-		String[] installedPlugins = BC.getLocalList("installedplugins.txt");
+		installedPlugins = BC.getLocalList("installedplugins.txt");
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
@@ -91,7 +92,9 @@ public class PluginRemover
         	{
         		if(list.getSelectedIndex() != -1)
         		{
-        			 BC.PError("Got Selection");
+        			 BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()].split(";")[1]);
+        			 Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()].split(";")[1]);
+        			 plug.remove();
         		}
         	}
         }

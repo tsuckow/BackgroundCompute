@@ -60,7 +60,7 @@ public class BP_Plugin extends Plugin {
     
     public void remove()
     {
-    	
+    	BC.PError("Removing...");
     }
     
     public int getState()
