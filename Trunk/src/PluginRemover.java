@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
+
+import java.io.*;//File
 
 public class PluginRemover
 {
@@ -17,6 +20,7 @@ public class PluginRemover
 	private PluginRemover(){}
 	private static JList list = null;
 	private static String[] installedPlugins = null;
+	private static JPanel info = null;
 	
 	public static void show()
 	{
@@ -27,22 +31,24 @@ public class PluginRemover
 			frame = null;
 		}
 		
-		frame = new JFrame("Project Manager");
+		frame = new JFrame("Project Remover");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JPanel p = new JPanel();
 		
-		installedPlugins = BC.getLocalList("installedplugins.txt");
+		installedPlugins = getPlugins();
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
-			pluginList[i] = installedPlugins[i].split(";")[0];
+			Plugin plug = Utils.loadPlugin(installedPlugins[i]);
+			pluginList[i] = plug.getName();
 		}
 				
 		list = new JList(pluginList); //data has type Object[]
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
+		list.addListSelectionListener(new ListListen());
 				
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(100, 80));
@@ -59,7 +65,8 @@ public class PluginRemover
         
         RightSide.add(Manage,BorderLayout.NORTH);
         
-        RightSide.add(new PluginInfo("BP"),BorderLayout.CENTER);
+        info = new PluginInfo(installedPlugins[0]);
+        RightSide.add(info,BorderLayout.CENTER);
         
         p.add(RightSide);
                       
@@ -67,6 +74,7 @@ public class PluginRemover
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
 	private static class PluginInfo extends JPanel
 	{
 		PluginInfo(String name)
@@ -80,6 +88,7 @@ public class PluginRemover
 			add(new JLabel(Info));
 		}
 	}
+	
 	private static class RemoveButton implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
@@ -92,11 +101,65 @@ public class PluginRemover
         	{
         		if(list.getSelectedIndex() != -1)
         		{
-        			 BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()].split(";")[1]);
-        			 Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()].split(";")[1]);
-        			 plug.remove();
+        			BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			plug.startRemove();
+        			frame.dispose();
+					frame = null;
+					show();
         		}
         	}
         }
+	}
+	
+	private static class ListListen implements ListSelectionListener
+	{
+		public void valueChanged(ListSelectionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			info = new PluginInfo(installedPlugins[list.getSelectedIndex()]);
+        		}
+        	}
+        }
+	}
+	
+	private static String[] getPlugins()
+	{
+		String Dir = "plugins/";
+		
+		File[] files = null;
+		FilenameFilter filter = new FilenameFilter(){
+        	public boolean accept(File dir, String name)
+        	{
+        		File pdir = new File(dir,name);
+            	if( pdir.isDirectory() )
+            	{
+            		if(Utils.loadPlugin(name)!=null)
+            		{
+            			return true;
+            		}
+            	}
+            	
+            	return false;
+        	}
+    	};
+    	
+    	File src = new File(Dir);
+    	files = src.listFiles(filter);
+    	
+    	String[] plugins = new String[files.length];
+    	for(int i = 0; i < files.length; ++i)
+    	{
+    		plugins[i] = files[i].getName();
+    	}
+    	
+    	return plugins;
 	}
 }

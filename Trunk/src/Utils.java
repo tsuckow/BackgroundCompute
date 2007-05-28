@@ -104,6 +104,8 @@ public class Utils
 	
 	public static Plugin loadPlugin(String name)
 	{
+		if(name == null) return null;
+		
 		ClassLoader CL = BC.class.getClassLoader();
 		
 		URLClassLoader UCL = null;
@@ -140,6 +142,11 @@ public class Utils
 			BC.PError("Illegal Access");
 			return null;
 		}
+		catch(NoClassDefFoundError ex)
+		{
+			BC.PError("Class File Corrupted");
+			return null;
+		}	
 		
 		return test;
 	}
@@ -167,5 +174,5 @@ public class Utils
             	Settings.show();
 			}
 		}
-	}
+	} 
 }

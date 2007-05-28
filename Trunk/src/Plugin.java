@@ -14,6 +14,8 @@ abstract public class Plugin
 	
 	protected static boolean stop = false;
 	
+	protected static boolean norun = false;
+	
     protected synchronized void runner()
     {
     	running = true;
@@ -36,7 +38,11 @@ abstract public class Plugin
     
 	abstract protected void update(); //Should not be called by a plugin
     
+    abstract protected void remove(); //Should not be called by a plugin
     
+    
+    
+    abstract public String getName();
     
     abstract public String getInfo();
     
@@ -45,8 +51,6 @@ abstract public class Plugin
     abstract public JPanel getStatus();
     
     abstract public JPanel getSettings();
-    
-    abstract public void remove();
     
     public boolean isRunning()
     {
@@ -66,11 +70,20 @@ abstract public class Plugin
     
     public void start()
     {
+    	if(norun) return;
     	runner();
     }
     
     public void startUpdate()
     {
+    	if(norun) return;
     	updater();
-    }   
+    }
+    
+    public void startRemove()
+    {
+    	norun = true;
+    	while(running) stop();
+    	remove();
+    }  
 }

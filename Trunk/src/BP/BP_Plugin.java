@@ -43,6 +43,11 @@ public class BP_Plugin extends Plugin {
     	}
     }
     
+    public String getName()
+    {
+    	return "Background Pi";
+    }
+    
     public String getInfo()
     {
     	return "<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>";

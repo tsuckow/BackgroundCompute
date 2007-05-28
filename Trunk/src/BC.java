@@ -27,7 +27,7 @@ public class BC
 		
 		set.setProperty("locale", "en");
 		set.setProperty("update", "yes");
-		set.setProperty("server_path", "http://defcon1.hopto.org/bpc/");
+		set.setProperty("server_path", "http://defcon1.hopto.org/bc/");
 		
 		return set;
 	}
@@ -120,7 +120,7 @@ public class BC
         }
         catch(IOException ex)  { } //IO Exception!
         
-        Settings.setProperty("update","no");
+        //Settings.setProperty("update","no");
         
         try{
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );

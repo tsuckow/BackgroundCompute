@@ -26,40 +26,18 @@ public class Worker extends Thread
     	
     	
     	//Hi
-    	ClassLoader CL = BC.class.getClassLoader();
-		
-		URLClassLoader UCL = null;
-		
-		Plugin test = null;
-		
-		try
-		{
-			UCL = new URLClassLoader(new URL[]{new File("plugins/BP/").toURI().toURL()},CL);
-		}
-		catch(MalformedURLException ex)
-		{
-			BC.PError("Plugin Dir Path Malformed!");
-		}
-		try
-		{
+		Plugin test = Utils.loadPlugin("BP");
 			
-			test = (Plugin)UCL.loadClass("BP_Plugin").newInstance();
-			
-		}
-		catch(ClassNotFoundException ex)
-		{
-			BC.PError("Class not found");
-		}
-		catch(InstantiationException ex)
-		{
-			BC.PError("Failed to load class");
-		}
-		catch(IllegalAccessException ex)
-		{
-			BC.PError("Illegal Access");
-		}
-		
 		Utils.iconMessage("Loaded","Plugin has been loaded and will now be run...",TrayIcon.MessageType.INFO);
+		
+		try
+		{
+			Thread.sleep(2000);
+		}
+		catch(InterruptedException e)
+		{
+			
+		}
 		
 		test.start();
     }
