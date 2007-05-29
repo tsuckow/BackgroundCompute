@@ -174,5 +174,38 @@ public class Utils
             	Settings.show();
 			}
 		}
+	}
+	
+	public static String[] getLocalPlugins()
+	{
+		String Dir = "plugins/";
+		
+		File[] files = null;
+		FilenameFilter filter = new FilenameFilter(){
+        	public boolean accept(File dir, String name)
+        	{
+        		File pdir = new File(dir,name);
+            	if( pdir.isDirectory() )
+            	{
+            		if(Utils.loadPlugin(name)!=null)
+            		{
+            			return true;
+            		}
+            	}
+            	
+            	return false;
+        	}
+    	};
+    	
+    	File src = new File(Dir);
+    	files = src.listFiles(filter);
+    	
+    	String[] plugins = new String[files.length];
+    	for(int i = 0; i < files.length; ++i)
+    	{
+    		plugins[i] = files[i].getName();
+    	}
+    	
+    	return plugins;
 	} 
 }

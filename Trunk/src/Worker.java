@@ -15,30 +15,44 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import java.util.*;
+
 public class Worker extends Thread
 {	
-    public Worker()
-    {
-    }
-    
+	ArrayList<WorkRunner> threads = new ArrayList<WorkRunner>();
+
     public void run()
     {
+    	while(true)
+    	{
+    		try
+	    	{
+	    		Thread.sleep(2000);
+	    	}
+	    	catch(InterruptedException e)
+	    	{ 	}
+	    	
+	    	int maxthreads = Runtime.getRuntime().availableProcessors();
+	    	String[] Plugins = Utils.getLocalPlugins();
+	    	
+	    	if(maxthreads > threads.size() && Plugins.length > threads.size())
+	    	{
+	    		WorkRunner runner = new WorkRunner();
+	    		runner.start();
+	    		threads.add(runner);
+	    	}
+	    	
+	    	if(threads.size() > maxthreads)
+	    	{
+	    		threads.get(0).end();
+	    		try
+		    	{
+		    		Thread.sleep(5000);
+		    	}
+		    	catch(InterruptedException e)
+		    	{ 	}
+	    	}
+    	}
     	
-    	
-    	//Hi
-		Plugin test = Utils.loadPlugin("BP");
-			
-		Utils.iconMessage("Loaded","Plugin has been loaded and will now be run...",TrayIcon.MessageType.INFO);
-		
-		try
-		{
-			Thread.sleep(2000);
-		}
-		catch(InterruptedException e)
-		{
-			
-		}
-		
-		test.start();
     }
 }

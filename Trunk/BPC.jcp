@@ -34,10 +34,6 @@
 				<path>src</path>
 			</folderitem>
 			<fileitem>
-				<path>classes\installedplugins.txt</path>
-				<folder>classes</folder>
-			</fileitem>
-			<fileitem>
 				<path>classes\Root.properties</path>
 				<folder>classes</folder>
 			</fileitem>
@@ -83,6 +79,10 @@
 			</fileitem>
 			<fileitem>
 				<path>src\Worker.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
+				<path>src\WorkRunner.java</path>
 				<folder>src</folder>
 			</fileitem>
 		</include>

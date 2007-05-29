@@ -36,7 +36,7 @@ public class PluginRemover
 		
 		JPanel p = new JPanel();
 		
-		installedPlugins = getPlugins();
+		installedPlugins = Utils.getLocalPlugins();
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
@@ -129,7 +129,7 @@ public class PluginRemover
         	}
         }
 	}
-	
+	/*
 	private static String[] getPlugins()
 	{
 		String Dir = "plugins/";
@@ -161,5 +161,5 @@ public class PluginRemover
     	}
     	
     	return plugins;
-	}
+	}*/
 }
