@@ -164,15 +164,23 @@ public class BC
 			return;
         }
         
+        boolean updated = false;
         
         for( String name : getRemoteList("UpdaterList.txt") )
         {
         	Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
         	if( getLocalHash(name).compareTo( getRemoteList("Hash.php?File=" + name)[0] ) != 0 )
         	{
+        		updated = true;
         		Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
         		remoteToLocal(name,"Download.tmp",PB);
         		File src = new File("Download.tmp");
+        		
+        		name = name.replace('/',File.separatorChar); //Make the char for this OS
+        		
+        		int index = name.lastIndexOf(File.separatorChar);
+        		if(index != -1) new File(name.substring(0,index)).mkdirs();
+        		
         		File dest = new File(name);
         		dest.delete();
         		if( src.renameTo( dest ) )
@@ -181,15 +189,27 @@ public class BC
         		}
         	}
         }
+        if(updated)
+    	{
+    		restart("BC");
+    		System.exit(0);
+    	}
         
         for( String name : getRemoteList("MainList.txt") )
         {
         	Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
         	if( getLocalHash(name).compareTo( getRemoteList("Hash.php?File=" + name)[0] ) != 0 )
         	{
+        		updated = true;
         		Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
         		remoteToLocal(name,"Download.tmp",PB);
         		File src = new File("Download.tmp");
+        		
+        		name = name.replace('/',File.separatorChar); //Make the char for this OS
+        		
+        		int index = name.lastIndexOf(File.separatorChar);
+        		if(index != -1) new File(name.substring(0,index)).mkdirs();
+        		
         		File dest = new File(name);
         		dest.delete();
         		if( src.renameTo( dest ) )
@@ -198,11 +218,17 @@ public class BC
         		}
         	}
         }
+        if(updated)
+    	{
+    		restart("BC");
+    		System.exit(0);
+    	}
         
         //
         //END Updater
         //
         
+               
         try
     	{
     		Thread.sleep(200);
@@ -401,6 +427,7 @@ public class BC
 			BufferedInputStream bis = new BufferedInputStream(url.openStream(), 1024);
 
 			File file = new File(dFile);
+			
 			BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
 
 			byte[] buffer = new byte[1024]; 
@@ -448,6 +475,85 @@ public class BC
     
     
     
+    
+    
+    //NEW VM
+    
+    static final String CLASS_PATHM = getClassPath().trim(); //Class Path for restart
+    
+    static public void restart(String ClassName)
+    {
+    	restart(ClassName, "");
+    }
+    
+     //Restart Program (Thanks to the makers of JAP)
+    static public void restart(String ClassName,String App)
+	{
+		String CLASS_PATH = "";
+		if(CLASS_PATHM.indexOf(';') > 0)
+			CLASS_PATH = CLASS_PATHM.substring(0,CLASS_PATHM.indexOf(';')) + App + CLASS_PATHM.substring(CLASS_PATHM.indexOf(';'));
+		else
+			CLASS_PATH = CLASS_PATHM + App;
+		// restart command
+		String strRestartCommand = "";
+		
+		System.out.println(CLASS_PATH);
+
+		//what is used: sun.java or JView?
+		String strJavaVendor = System.getProperty("java.vendor");
+		//System.out.println("Java vendor: " + strJavaVendor);
+
+		String javaExe = null;
+		String pathToJava = null;
+		if (strJavaVendor.toLowerCase().indexOf("microsoft") != -1)
+		{
+
+			pathToJava = System.getProperty("com.ms.sysdir") + File.separator;
+			javaExe = "jview /cp";
+		}
+		else
+		{
+			pathToJava = System.getProperty("java.home") + File.separator + "bin" + File.separator;
+			javaExe = "javaw -cp"; // for windows
+		}
+		strRestartCommand = pathToJava + javaExe + " \"" + CLASS_PATH + "\" " + ClassName;// + m_commandLineArgs;
+
+
+
+	    try
+		{
+		    Runtime.getRuntime().exec(strRestartCommand);
+			//System.out.println("Restart command: " + strRestartCommand);
+		}
+		catch (Exception ex)
+		{
+			javaExe = "java -cp"; // Linux/UNIX
+			strRestartCommand = pathToJava + javaExe + " \"" + CLASS_PATH + "\" " + ClassName;// + m_commandLineArgs;
+
+			//System.out.println("JAP restart command: " + strRestartCommand);
+			try
+			{
+				Runtime.getRuntime().exec(strRestartCommand);
+			}
+			catch (Exception a_e)
+			{
+				System.out.println("Error auto-restart: " + ex);
+			}
+		}
+	}
+	
+	//Return Class Path for update (Thanks to the makers of JAP)
+	protected static String getClassPath()
+	{
+		try
+		{
+			return System.getProperty("java.class.path");
+		}
+		catch (SecurityException a_e)
+		{
+			return "";
+		}
+	}
     
     
     //HEX

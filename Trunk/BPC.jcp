@@ -91,15 +91,6 @@
 				<path>src\BP</path>
 				<dir/>
 			</folderitem>
-			<fileitem>
-				<path>src\Test.java</path>
-			</fileitem>
-			<fileitem>
-				<path>src\TestMe.java</path>
-			</fileitem>
-			<fileitem>
-				<path>src\UseMe.java</path>
-			</fileitem>
 		</exclude>
 	</files>
 	<tasks/>
