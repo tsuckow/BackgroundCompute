@@ -164,65 +164,124 @@ public class BC
 			return;
         }
         
+        //**************************************************************
+        //**************************************************************
+        //**************************************************************
+        
         boolean updated = false;
         
-        for( String name : getRemoteList("UpdaterList.txt") )
+        if(LTextRB!=null) Text.setText( " " + LTextRB.getString("Lists1") );
+    	remoteToLocal("HashList.php?R=Y&File=Lists.txt", "Lists.txt", PB); //Retrieve the list of update lists
+    	
+    	//TODO
+    	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
+    	
+    	//Get the sub lists that have the different modules.
+    	for( String line : getLocalList("Lists.txt") )
         {
-        	Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
-        	if( getLocalHash(name).compareTo( getRemoteList("Hash.php?File=" + name)[0] ) != 0 )
+        	String name = null;
+        	String hash = null;
+        		
         	{
-        		updated = true;
-        		Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
-        		remoteToLocal(name,"Download.tmp",PB);
-        		File src = new File("Download.tmp");
-        		
-        		name = name.replace('/',File.separatorChar); //Make the char for this OS
-        		
-        		int index = name.lastIndexOf(File.separatorChar);
-        		if(index != -1) new File(name.substring(0,index)).mkdirs();
-        		
-        		File dest = new File(name);
-        		dest.delete();
-        		if( src.renameTo( dest ) )
+        		String[] linea = line.split(";");
+        		if(linea.length != 2)
         		{
-        			Text.setText( " Moved." ); //*****************************************************
+        			//ERROR
+        			PError("Invalid Line in HashList");
+        			System.exit(-1);
+        		}
+        		else
+        		{
+        			name = linea[0];
+        			hash = linea[1];
         		}
         	}
+        	
+        	Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
+        	remoteToLocal("HashList.php?File=" + name,name, PB);
+        	if( getLocalHash(name).compareTo( hash ) != 0 )
+        	{
+        		//ERROR
+        		PError("Failed to download updated hash list, Program Is In Inconsistant State");
+        		System.exit(-1);
+        	}
         }
-        if(updated)
-    	{
-    		restart("BC");
-    		System.exit(0);
-    	}
         
-        for( String name : getRemoteList("MainList.txt") )
+        //Do the updating
+        for( String list : getLocalList("Lists.txt") )//Move through the sublists
         {
-        	Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
-        	if( getLocalHash(name).compareTo( getRemoteList("Hash.php?File=" + name)[0] ) != 0 )
+        	String listname = null;
+        		
         	{
-        		updated = true;
-        		Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
-        		remoteToLocal(name,"Download.tmp",PB);
-        		File src = new File("Download.tmp");
-        		
-        		name = name.replace('/',File.separatorChar); //Make the char for this OS
-        		
-        		int index = name.lastIndexOf(File.separatorChar);
-        		if(index != -1) new File(name.substring(0,index)).mkdirs();
-        		
-        		File dest = new File(name);
-        		dest.delete();
-        		if( src.renameTo( dest ) )
+        		String[] linea = list.split(";");
+        		if(linea.length != 2)
         		{
-        			Text.setText( " Moved." ); //*****************************************************
+        			//ERROR
+        			PError("Invalid Line in HashList");
+        			System.exit(-1);
+        		}
+        		else
+        		{
+        			listname = linea[0];
         		}
         	}
+        	
+        	for( String line : getLocalList(listname) )//Move through the files
+        	{
+        		String name = null;
+        		String hash = null;
+        		
+        		{
+        			String[] linea = line.split(";");
+        			if(linea.length != 2)
+        			{
+        				//ERROR
+        				PError("Invalid Line in HashList, Program Is In Inconsistant State");
+        				System.exit(-1);
+        			}
+        			else
+        			{
+        				name = linea[0];
+        				hash = linea[1];
+        			}
+        		}
+        		
+        		Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
+        		if( getLocalHash(name).compareTo( hash ) != 0 )
+        		{
+        			updated = true;
+        			Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
+        			if( !remoteToLocal(name,"Download.tmp",PB) )
+        			{
+        				PError("Failed to download update, Program Is In Inconsistant State");
+        				System.exit(-1);
+        			}
+        			File src = new File("Download.tmp");
+        		
+        			name = name.replace('/',File.separatorChar); //Make the char for this OS
+        		
+        			int index = name.lastIndexOf(File.separatorChar);
+        			if(index != -1) new File(name.substring(0,index)).mkdirs();
+        			
+        			File dest = new File(name);
+        			dest.delete();
+        			if( src.renameTo( dest ) )
+        			{
+        				Text.setText( " Moved." ); //*****************************************************
+        			}
+        		}
+        	}
+        	if(updated) //If we did something... restart.
+    		{
+    			restart("BC");
+    			System.exit(0);
+    		}
         }
-        if(updated)
-    	{
-    		restart("BC");
-    		System.exit(0);
-    	}
+        
+        //**************************************************************
+        //**************************************************************
+        //**************************************************************
+        
         
         //
         //END Updater
