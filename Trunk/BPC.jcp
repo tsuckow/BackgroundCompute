@@ -54,7 +54,15 @@
 				<folder>src</folder>
 			</fileitem>
 			<fileitem>
+				<path>src\MultiColumnListRenderer.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
 				<path>src\Plugin.java</path>
+				<folder>src</folder>
+			</fileitem>
+			<fileitem>
+				<path>src\PluginAdder.java</path>
 				<folder>src</folder>
 			</fileitem>
 			<fileitem>

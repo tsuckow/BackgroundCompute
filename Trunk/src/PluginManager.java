@@ -10,12 +10,17 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
+
+import java.io.*;//File
 
 public class PluginManager
 {
 	private static JFrame frame = null;
 	private PluginManager(){}
 	private static JList list = null;
+	private static String[] installedPlugins = null;
+	private static JPanel info = null;
 	
 	public static void show()
 	{
@@ -31,22 +36,24 @@ public class PluginManager
 		
 		JPanel p = new JPanel();
 		
-		String[] installedPlugins = BC.getLocalList("installedplugins.txt");
+		installedPlugins = Utils.getLocalPlugins();
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
-			pluginList[i] = installedPlugins[i].split(";")[0];
+			Plugin plug = Utils.loadPlugin(installedPlugins[i]);
+			pluginList[i] = plug.getName();
 		}
-		
-		//String[] it = {"Bla","Ble","Blue","Background Pi","SETI@home","Prime Numbers","Checksums"};
-		
+				
 		list = new JList(pluginList); //data has type Object[]
+		MultiColumnListRenderer renderer = new MultiColumnListRenderer();
+		list.setCellRenderer(renderer);
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+		//list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
+		list.addListSelectionListener(new ListListen());
 				
 		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(100, 80));
+		listScroller.setPreferredSize(new Dimension(150, 80));
         
         p.add(listScroller);
         
@@ -54,13 +61,14 @@ public class PluginManager
         RightSide.setLayout(new BorderLayout());
         
         JPanel Manage = new JPanel();
-        Manage.add(new JButton("Install"));
         JButton remove = new JButton("Remove");
         remove.addActionListener(new RemoveButton());
         Manage.add(remove);
         
         RightSide.add(Manage,BorderLayout.NORTH);
-        RightSide.add(new PluginInfo(),BorderLayout.CENTER);
+        
+        info = new PluginInfo(installedPlugins[0]);
+        RightSide.add(info,BorderLayout.CENTER);
         
         p.add(RightSide);
                       
@@ -68,13 +76,21 @@ public class PluginManager
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
 	private static class PluginInfo extends JPanel
 	{
-		PluginInfo()
+		PluginInfo(String name)
 		{
-			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));
+			Plugin plug = Utils.loadPlugin(name);
+        	String Info = "<html>Error: Unable to load Plugin</html>";
+        	if(plug!=null)
+        	{
+        		Info = plug.getInfo();
+        	}
+			add(new JLabel(Info));
 		}
 	}
+	
 	private static class RemoveButton implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
@@ -87,9 +103,65 @@ public class PluginManager
         	{
         		if(list.getSelectedIndex() != -1)
         		{
-        			 BC.PError("Got Selection");
+        			BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			plug.startRemove();
+        			frame.dispose();
+					frame = null;
+					show();
         		}
         	}
         }
 	}
+	
+	private static class ListListen implements ListSelectionListener
+	{
+		public void valueChanged(ListSelectionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			info = new PluginInfo(installedPlugins[list.getSelectedIndex()]);
+        		}
+        	}
+        }
+	}
+	/*
+	private static String[] getPlugins()
+	{
+		String Dir = "plugins/";
+		
+		File[] files = null;
+		FilenameFilter filter = new FilenameFilter(){
+        	public boolean accept(File dir, String name)
+        	{
+        		File pdir = new File(dir,name);
+            	if( pdir.isDirectory() )
+            	{
+            		if(Utils.loadPlugin(name)!=null)
+            		{
+            			return true;
+            		}
+            	}
+            	
+            	return false;
+        	}
+    	};
+    	
+    	File src = new File(Dir);
+    	files = src.listFiles(filter);
+    	
+    	String[] plugins = new String[files.length];
+    	for(int i = 0; i < files.length; ++i)
+    	{
+    		plugins[i] = files[i].getName();
+    	}
+    	
+    	return plugins;
+	}*/
 }

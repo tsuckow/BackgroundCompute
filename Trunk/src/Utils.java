@@ -39,7 +39,7 @@ public class Utils
 				
 				MenuItem Item = new MenuItem("Add Project");
 	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Plugins"); 
+         		Item.setActionCommand("AddPlugin"); 
          		
 				popup.add(Item);
 				
@@ -160,6 +160,11 @@ public class Utils
             if( e.getActionCommand().equals("Quit") )
             	System.exit(0);
             if( e.getActionCommand().equals("Plugins") )
+            {
+            	PluginManager.show();
+            }
+            
+            if( e.getActionCommand().equals("AddPlugin") )
             {
             	PluginManager.show();
             }
