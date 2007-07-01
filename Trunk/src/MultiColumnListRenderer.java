@@ -37,15 +37,21 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
                                        boolean cellHasFocus) {
 
 		//Item item = (Item)value;
- 
-		/*second.*/setText( "<html><table style='width:100%; border-collapse: collapse;'><tr><td style='border-width: 1px 1px 1px 1px; padding: 1px 1px 1px 1px; border-style: dotted dotted dotted dotted; border-color: green green green green;'>" + (String)value + "</td><td style='border-width: 1px 1px 1px 1px; padding: 1px 1px 1px 1px; border-style: dotted dotted dotted dotted; border-color: green green green green;'>Testing...</td></tr></table></html>" );
-
-		setBorder(BorderFactory)
-        /*renderer.*/setBackground(isSelected ? list.getSelectionBackground() : null);
-		/*renderer.*/setForeground(isSelected ? list.getSelectionForeground() : null);
+ 		JPanel wow = new JPanel();
+ 		wow.setLayout(new BorderLayout());
+		/*second.*///setText( + "</td><td style='border-width: 1px 1px 1px 1px; padding: 1px 1px 1px 1px; border-style: dotted dotted dotted dotted; border-color: green green green green;'>Testing...</td></tr></table></html>" );
+		//setText(" ");
+		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + (String)value + "</td><td style='text-align:right;'>Running</td></tr></table></html>");
+		
+		
+        wow.add(a,BorderLayout.CENTER);
+       
+        
+        /*renderer.*/wow.setBackground(isSelected ? list.getSelectionBackground() : null);
+		/*renderer.*/wow.setForeground(isSelected ? list.getSelectionForeground() : null);
 
     
 
-        return this;
+        return wow;
     }    
 }
