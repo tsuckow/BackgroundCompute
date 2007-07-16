@@ -64,15 +64,6 @@
 				<path>src\SpringUtilities.java</path>
 			</fileitem>
 			<fileitem>
-				<path>src\Test.java</path>
-			</fileitem>
-			<fileitem>
-				<path>src\TestMe.java</path>
-			</fileitem>
-			<fileitem>
-				<path>src\UseMe.java</path>
-			</fileitem>
-			<fileitem>
 				<path>src\Worker.java</path>
 			</fileitem>
 		</exclude>

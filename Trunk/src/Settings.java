@@ -8,6 +8,7 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -29,33 +30,41 @@ public class Settings
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JPanel p = new JPanel(new SpringLayout());
+		
+		String[] settings = {"server_path", "locale"};
+		
+		int numitems = 0; //Number of rows in dialog
+		for(String item : settings)
+		{
+			try
+			{
+				JLabel l = new JLabel((BC.LTextRB!=null)?BC.LTextRB.getString("Settings_" + item):"Error", JLabel.TRAILING);
+    			p.add(l);
+    			JTextField textField = new JTextField(BC.Settings.getProperty(item), 20);
+    			l.setLabelFor(textField);
+    			p.add(textField);
 				
-				JLabel l = new JLabel("Server Path: ", JLabel.TRAILING);
-    			p.add(l);
-    			JTextField textField = new JTextField(BC.Settings.getProperty("server_path"), 10);
-    			l.setLabelFor(textField);
-    			p.add(textField);
-    			
-    			l = new JLabel("Language: ", JLabel.TRAILING);
-    			p.add(l);
-    			textField = new JTextField(BC.Settings.getProperty("locale"), 10);
-    			l.setLabelFor(textField);
-    			p.add(textField);
-    			
-    			l = new JLabel("Test: ", JLabel.TRAILING);
-    			p.add(l);
-    			textField = new JTextField(10);
-    			l.setLabelFor(textField);
-    			p.add(textField);
+				++numitems;
+			}
+			catch(MissingResourceException e)
+			{
+				Utils.iconMessage("Opps", "Locale Data Missing", TrayIcon.MessageType.ERROR);
+			}
+		}
              	
 				//Lay out the panel.
 				SpringUtilities.makeCompactGrid(p,
-                              3, 2, //rows, cols
+                              numitems, 2, //rows, cols
                               6, 6,        //initX, initY
                               6, 6);       //xPad, yPad
                       
 				frame.setContentPane(p);
 				frame.pack();
 				frame.setVisible(true);
+	}
+	
+	class msgHandler extends WindowAdapter
+	{
+		
 	}
 }
