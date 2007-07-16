@@ -12,8 +12,6 @@ import java.awt.event.*;
 import java.net.*; //URL
 import java.io.*;//File
 
-import javax.swing.*;
-
 public class Utils
 {
 	private Utils(){} //Since this only contains static members, prevent an instance of this class from being created.  

@@ -12,8 +12,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.io.*;//File
-
 public class PluginManager
 {
 	private static JFrame frame = null;
@@ -79,6 +77,11 @@ public class PluginManager
 	
 	private static class PluginInfo extends JPanel
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		PluginInfo(String name)
 		{
 			Plugin plug = Utils.loadPlugin(name);

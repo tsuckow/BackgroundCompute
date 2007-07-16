@@ -11,10 +11,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class PluginManager
+public class PluginAdder
 {
 	private static JFrame frame = null;
-	private PluginManager(){}
+	private PluginAdder(){}
 	private static JList list = null;
 	
 	public static void show()
@@ -70,6 +70,11 @@ public class PluginManager
 	}
 	private static class PluginInfo extends JPanel
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		PluginInfo()
 		{
 			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));

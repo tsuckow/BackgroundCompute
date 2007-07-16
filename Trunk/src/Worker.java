@@ -6,15 +6,6 @@
  * @version 1.00 2007/2/10
  */
  
-import java.io.*;//File
-
-import java.net.*; //URL
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-
 import java.util.*;
 
 public class Worker extends Thread

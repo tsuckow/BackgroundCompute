@@ -11,6 +11,10 @@ import java.awt.*;
 
 public class MultiColumnListRenderer extends DefaultListCellRenderer
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String [] status = new String[3];
     public MultiColumnListRenderer()
     {        
