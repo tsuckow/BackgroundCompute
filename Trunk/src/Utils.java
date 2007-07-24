@@ -12,15 +12,35 @@ import java.awt.event.*;
 import java.net.*; //URL
 import java.io.*;//File
 
+/**
+ * 
+ * Utilities for Background Compute
+ * 
+ * @author Deathbob
+ * 
+ * @version 0.1
+ * 
+ *
+ */
 public class Utils
 {
 	private Utils(){} //Since this only contains static members, prevent an instance of this class from being created.  
 	
 	//Locks
-	final static Object lock_tray = new int[1];
+	private final static Object lock_tray = new int[1];//Create a REALLY SMALL but unique object.
 	
 	private static TrayIcon trayIcon = null;
 	
+	//TODO: Make tray icon subclass
+	
+	/**
+	 * 
+	 * Creates a Tray Icon if one does not already exist.
+	 * 
+	 * @author Deathbob
+	 * 
+	 */
+	//TODO: Make sure only one instance
 	public static void iconCreate()
 	{
 		synchronized(lock_tray)
@@ -88,10 +108,24 @@ public class Utils
 			}
 			
 			//Don't put this in the sync or it will deadlock ;)
+			//TODO: Remove this line
 			iconMessage("Tray Icon","This was created in utils",TrayIcon.MessageType.INFO);
 		}
 	}
 	
+	/**
+	 * 
+	 * Creates Info Balloon at Tray Icon.
+	 * 
+	 * @author Deathbob
+	 * 
+	 * @param title Info Balloon Title
+	 * @param msg Message to display
+	 * @param type Icon to Display
+	 * 
+	 * @see Utils
+	 *
+	 */
 	public static void iconMessage(String title, String msg, TrayIcon.MessageType type)
 	{
 		synchronized(lock_tray)
@@ -100,6 +134,15 @@ public class Utils
 		}
 	}
 	
+	/**
+	 * 
+	 * Loads a Plugin located in the "plugin" subdirectory.
+	 * 
+	 * @author Deathbob 
+	 * @param name Name of plugin to load or null on failure.
+	 * @return instance of Plugin given by name. 
+	 */
+	//TODO: exception handling needs work.
 	public static Plugin loadPlugin(String name)
 	{
 		if(name == null) return null;
@@ -179,6 +222,13 @@ public class Utils
 		}
 	}
 	
+	/**
+	 * 
+	 * Attempts to mount every installed plugin and returns name of classes of Type Plugin.
+	 * 
+	 * @author Deathbob
+	 * @return array of Plugin names that are installed.
+	 */
 	public static String[] getLocalPlugins()
 	{
 		String Dir = "plugins/";

@@ -7,7 +7,6 @@
  */
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -28,6 +27,8 @@ public class Settings
 		
 		frame = new JFrame("Settings");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		SettingsMsgHandler a = new SettingsMsgHandler();
+		frame.addWindowListener(a);
 		
 		JPanel p = new JPanel(new SpringLayout());
 		
@@ -61,10 +62,5 @@ public class Settings
 				frame.setContentPane(p);
 				frame.pack();
 				frame.setVisible(true);
-	}
-	
-	class msgHandler extends WindowAdapter
-	{
-		
 	}
 }
