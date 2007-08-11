@@ -16,6 +16,8 @@ abstract public class Plugin
 	
 	protected static boolean norun = false;
 	
+	protected static int maxCores = 1;
+	
     protected synchronized void runner()
     {
     	running = true;
@@ -33,17 +35,65 @@ abstract public class Plugin
     }
     
     
+    /**
+     * Main function of Plugin
+     * DO NOT CALL DIRECTLY - CALL start()
+     * 
+     * @author Deathbob
+     */
+    public void run()
+    {
+    	return;
+    }
     
-    abstract protected void run(); //Should not be called by a plugin
+    /**
+     * Main update function of Plugin
+     * If returning TRUE, Plugin SHOULD set norun to TRUE to prevent problems.
+     * DO NOT CALL DIRECTLY - CALL startUpdate()
+     * 
+     * @author Deathbob
+     * @return TRUE - If restart of app is needed; False - No restart needed
+     */
+	public boolean update()
+	{
+		return false;
+	}
     
-	abstract protected void update(); //Should not be called by a plugin
+    abstract public void remove(); //Should not be called by a plugin
     
-    abstract protected void remove(); //Should not be called by a plugin
+    /**
+	 * 
+	 * Retrieves the number of preferred cores by the Plugin. The Plugin will be givin this many cores provided it is not greater than availCores.
+	 * 
+	 * @author Deathbob 
+	 * @param availCores Number of cores the plugin has to work with.
+	 * @return number of preferred cores or 0 to indicate desire to skip.
+	 */
+    public int preferredCores(int availCores)
+    {
+    	if(availCores > 0 && !norun && !running)
+    		return 1;
+    	else
+    		return 0;
+    }
     
     
-    
+    /**
+	 * 
+	 * Retrieves the name of the Plugin
+	 * 
+	 * @author Deathbob 
+	 * @return name of Plugin
+	 */
     abstract public String getName();
     
+    /**
+	 * 
+	 * Retrieves the HTML to describe the Plugin
+	 * 
+	 * @author Deathbob 
+	 * @return HTML 
+	 */
     abstract public String getInfo();
     
     abstract public int getState();
@@ -68,15 +118,17 @@ abstract public class Plugin
     		stop = true;
     }
     
-    public void start()
+    public void start(int cores)
     {
-    	if(norun) return;
+    	if(norun || running || cores <= 0) return;
+    	maxCores = cores;
     	runner();
     }
     
     public void startUpdate()
     {
     	if(norun) return;
+    	while(running) stop();
     	updater();
     }
     

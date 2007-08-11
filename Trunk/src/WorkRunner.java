@@ -18,27 +18,21 @@ public class WorkRunner extends Thread
     			Plugin plug = Utils.loadPlugin(Plugins[i]);
     			if(!plug.isRunning())
     			{
-    				plug.update();
-    				plug.start();
-    			}
-    			Plugins = Utils.getLocalPlugins();
-    		}
-    	}
-    	/*
-    	//Hi
-		Plugin test = Utils.loadPlugin("BP");
-			
-		Utils.iconMessage("Loaded","Plugin has been loaded and will now be run...",TrayIcon.MessageType.INFO);
-		
-		try
-		{
-			Thread.sleep(2000);
-		}
-		catch(InterruptedException e)
-		{
-			
-		}
-		
-		test.start();*/
-    }
-}
+    				plug.startUpdate();
+    				
+    				int maxCores = 1; //Number of cores we have available
+    				int pMaxCores = plug.preferredCores(maxCores); //Get how many Plugin wants
+    				if(pMaxCores > maxCores) pMaxCores = maxCores; //Don't get greedy
+    				
+    				if(pMaxCores > 0) plug.start( pMaxCores );
+    			}//~If
+    			
+    			Plugins = Utils.getLocalPlugins();//Refresh Plugin List
+    			
+    		}//~For
+    		
+    	}//~While
+    	
+    }//~FUNC run
+
+}//~CLASS WorkRunner
