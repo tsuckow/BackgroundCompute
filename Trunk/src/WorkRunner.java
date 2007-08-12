@@ -26,7 +26,12 @@ public class WorkRunner extends Thread
     				
     				if(pMaxCores > 0) plug.start( pMaxCores );
     			}//~If
-    			
+    			try
+		    	{
+		    		Thread.sleep(5000);
+		    	}
+		    	catch(InterruptedException e)
+		    	{ 	}
     			Plugins = Utils.getLocalPlugins();//Refresh Plugin List
     			
     		}//~For

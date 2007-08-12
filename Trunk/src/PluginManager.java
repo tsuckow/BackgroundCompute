@@ -19,6 +19,7 @@ public class PluginManager
 	private static JList list = null;
 	private static String[] installedPlugins = null;
 	private static JPanel info = null;
+	private static javax.swing.Timer timer = null;
 	
 	public static void show()
 	{
@@ -35,16 +36,19 @@ public class PluginManager
 		JPanel p = new JPanel();
 		
 		installedPlugins = Utils.getLocalPlugins();
+		
+		//TODO: THIS MAY BE NO LONGER NEEDED
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
-			Plugin plug = Utils.loadPlugin(installedPlugins[i]);
-			pluginList[i] = plug.getName();
+			
+			pluginList[i] = installedPlugins[i];
 		}
 				
 		list = new JList(pluginList); //data has type Object[]
 		MultiColumnListRenderer renderer = new MultiColumnListRenderer();
 		list.setCellRenderer(renderer);
+		
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		//list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
@@ -54,6 +58,10 @@ public class PluginManager
 		listScroller.setPreferredSize(new Dimension(150, 80));
         
         p.add(listScroller);
+        
+        if(timer != null) timer.stop();
+        timer = new javax.swing.Timer(2000,new RefreshList(list));
+		timer.start();
         
         JPanel RightSide = new JPanel();
         RightSide.setLayout(new BorderLayout());
@@ -92,6 +100,24 @@ public class PluginManager
         	}
 			add(new JLabel(Info));
 		}
+	}
+	
+	private static class RefreshList implements ActionListener
+	{
+		JList list = null;
+		public RefreshList(JList l)
+		{
+			list=l;
+		}
+		
+		public void actionPerformed(ActionEvent e)
+        {
+			if( !list.isDisplayable() ) //Destroy Timer if window closed
+			{
+				timer.stop();
+			}
+			list.repaint();
+        }
 	}
 	
 	private static class RemoveButton implements ActionListener

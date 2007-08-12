@@ -196,6 +196,7 @@ public class Utils
 	{
 		public void actionPerformed(ActionEvent e)
         {
+			try{
 			if(e == null) return;
             if(e.getActionCommand() == null) return;
             if( e.getActionCommand().equals("Quit") )
@@ -218,6 +219,11 @@ public class Utils
             if( e.getActionCommand().equals("Settings") )
             {
             	Settings.show();
+			}
+			}
+			catch(Exception ex)
+			{
+				iconMessage( ex.getMessage() ,"Unhandled Exception", TrayIcon.MessageType.ERROR);				
 			}
 		}
 	}

@@ -12,6 +12,8 @@ abstract public class Plugin
 {
 	protected static boolean running = false;
 	
+	protected static boolean updating = false;
+	
 	protected static boolean stop = false;
 	
 	protected static boolean norun = false;
@@ -29,7 +31,9 @@ abstract public class Plugin
     protected synchronized void updater()
     {
     	running = true;
+    	updating = true;
     	update();
+    	updating = false;
     	running = false;
     	stop = false;
     }
@@ -105,6 +109,11 @@ abstract public class Plugin
     public boolean isRunning()
     {
     	return running;
+    }
+    
+    public boolean isUpdating()
+    {
+    	return running?updating:false;
     }
     
     public boolean isStopping()

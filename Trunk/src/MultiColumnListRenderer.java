@@ -11,20 +11,16 @@ import java.awt.*;
 
 public class MultiColumnListRenderer extends DefaultListCellRenderer
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	String [] status = new String[3];
+	
     public MultiColumnListRenderer()
     {        
         status[0] = "images/status_green.png";
 		status[1] = "images/status_red.png";
 		status[2] = "images/status_blue.png";
     }
-	
-	
-	
+    
     /*
      * This method finds the image and text corresponding
      * to the selected value and returns the label, set up
@@ -35,24 +31,32 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
                                        Object value,
                                        int index,
                                        boolean isSelected,
-                                       boolean cellHasFocus) {
-
-		//Item item = (Item)value;
- 		JPanel wow = new JPanel();
- 		wow.setLayout(new BorderLayout());
-		/*second.*///setText( + "</td><td style='border-width: 1px 1px 1px 1px; padding: 1px 1px 1px 1px; border-style: dotted dotted dotted dotted; border-color: green green green green;'>Testing...</td></tr></table></html>" );
-		//setText(" ");
-		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + (String)value + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[0]) + "'></td></tr></table></html>");
+                                       boolean cellHasFocus)
+    {
+    	
+    	
+    	JPanel wow = new JPanel();
+    	try
+    	{
+    		wow.setLayout(new BorderLayout());
+ 		
+    		Plugin plug = Utils.loadPlugin( (String)value );
+    		
+    		
+    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ plug.isRunning()?( plug.isUpdating()?3:0 ):1 ]) + "'></td></tr></table></html>");
 		
-		
-        wow.add(a,BorderLayout.CENTER);
+    		wow.add(a,BorderLayout.CENTER);
        
-        
-        /*renderer.*/wow.setBackground(isSelected ? list.getSelectionBackground() : null);
-		/*renderer.*/wow.setForeground(isSelected ? list.getSelectionForeground() : null);
+    		/*renderer.*/wow.setBackground(isSelected ? list.getSelectionBackground() : null);
+    		/*renderer.*/wow.setForeground(isSelected ? list.getSelectionForeground() : null);
 
-    
+    	}
+    	catch(Exception ex)
+    	{
+    		Utils.iconMessage( ex.getMessage() ,"Unhandled Exception in Renderer", TrayIcon.MessageType.ERROR);				
+    	}
 
         return wow;
     }    
+    
 }
