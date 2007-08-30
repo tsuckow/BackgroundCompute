@@ -19,7 +19,7 @@ import java.net.*; //URL
 
 import java.security.*; //For MD5
  
-public class BC
+public class BC implements Runnable
 {
 	private static Properties defaultSettings()
 	{
@@ -34,6 +34,11 @@ public class BC
 	
 	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
 	public static ResourceBundle LTextRB = null;
+	
+	public void run()
+	{
+		createAndShowGUI();
+	}
 	
     private static void createAndShowGUI() {
         //Create and set up the window.
@@ -297,7 +302,10 @@ public class BC
     	}
         
         frame.dispose();
-		frame = null;  
+		frame = null; 
+		
+		//Start the mainapp
+		javax.swing.SwingUtilities.invokeLater( new mainapp() );
     }
 
     public static void main(String[] args)
@@ -312,11 +320,13 @@ public class BC
 		//{
         //    	public void run()
         //    	{
-                	createAndShowGUI();
+        //        	createAndShowGUI();
         //		}
         //});
         
-    	javax.swing.SwingUtilities.invokeLater( new mainapp() );
+    	javax.swing.SwingUtilities.invokeLater( new BC() );
+    	
+    	//javax.swing.SwingUtilities.invokeLater( new mainapp() );
     }
     
 	static public String LocaleFormat(String template, Object[] Args)
