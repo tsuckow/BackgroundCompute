@@ -11,6 +11,8 @@ import java.awt.event.*;
 
 import java.net.*; //URL
 import java.io.*;//File
+import java.util.HashMap;
+import java.lang.String;
 
 /**
  * 
@@ -30,6 +32,8 @@ public class Utils
 	private final static Object lock_tray = new int[1];//Create a REALLY SMALL but unique object.
 	
 	private static TrayIcon trayIcon = null;
+	
+	private static HashMap<String,Plugin> PluginCache = new HashMap<String,Plugin>();
 	
 	//TODO: Make tray icon subclass
 	
@@ -145,6 +149,7 @@ public class Utils
 	//TODO: exception handling needs work.
 	public static Plugin loadPlugin(String name)
 	{
+		
 		if(name == null) return null;
 		
 		ClassLoader CL = BC.class.getClassLoader();
@@ -152,6 +157,10 @@ public class Utils
 		URLClassLoader UCL = null;
 		
 		Plugin test = null;
+		
+		//Load from cache if availible
+		test = PluginCache.get(name + "_Plugin");
+		if(test != null) return test;
 		
 		try
 		{
@@ -189,6 +198,7 @@ public class Utils
 			return null;
 		}	
 		
+		PluginCache.put(name + "_Plugin", test);
 		return test;
 	}
 	

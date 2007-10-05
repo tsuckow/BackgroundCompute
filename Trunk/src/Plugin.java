@@ -10,15 +10,15 @@ import javax.swing.*;
 
 abstract public class Plugin
 {
-	protected static boolean running = false;
+	protected boolean running = false;
 	
-	protected static boolean updating = false;
+	protected boolean updating = false;
 	
-	protected static boolean stop = false;
+	protected boolean stop = false;
 	
-	protected static boolean norun = false;
+	protected boolean norun = false;
 	
-	protected static int maxCores = 1;
+	protected int maxCores = 1;
 	
     protected synchronized void runner()
     {

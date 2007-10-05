@@ -18,7 +18,7 @@ public class PluginManager
 	private PluginManager(){}
 	private static JList list = null;
 	private static String[] installedPlugins = null;
-	private static JPanel info = null;
+	private static JLabel info = null;
 	private static javax.swing.Timer timer = null;
 	
 	public static void show()
@@ -67,13 +67,13 @@ public class PluginManager
         RightSide.setLayout(new BorderLayout());
         
         JPanel Manage = new JPanel();
-        JButton remove = new JButton("Remove");
-        remove.addActionListener(new RemoveButton());
-        Manage.add(remove);
+        JButton stop = new JButton("Stop");
+        stop.addActionListener(new StopButton());
+        Manage.add(stop);
         
         RightSide.add(Manage,BorderLayout.NORTH);
-        
-        info = new PluginInfo(installedPlugins[0]);
+        info = new JLabel("Loading");
+        PluginInfo(info,installedPlugins[0]);
         RightSide.add(info,BorderLayout.CENTER);
         
         p.add(RightSide);
@@ -83,23 +83,15 @@ public class PluginManager
 		frame.setVisible(true);
 	}
 	
-	private static class PluginInfo extends JPanel
+	private static void PluginInfo(JLabel label, String name)
 	{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		PluginInfo(String name)
-		{
 			Plugin plug = Utils.loadPlugin(name);
         	String Info = "<html>Error: Unable to load Plugin</html>";
         	if(plug!=null)
         	{
         		Info = plug.getInfo();
         	}
-			add(new JLabel(Info));
-		}
+			label.setText(Info);
 	}
 	
 	private static class RefreshList implements ActionListener
@@ -120,7 +112,7 @@ public class PluginManager
         }
 	}
 	
-	private static class RemoveButton implements ActionListener
+	private static class StopButton implements ActionListener
 	{
 		public void actionPerformed(ActionEvent e)
         {
@@ -134,10 +126,10 @@ public class PluginManager
         		{
         			BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
-        			plug.startRemove();
-        			frame.dispose();
-					frame = null;
-					show();
+        			plug.stop();
+        			//frame.dispose();
+					//frame = null;
+					//show();
         		}
         	}
         }
@@ -155,7 +147,7 @@ public class PluginManager
         	{
         		if(list.getSelectedIndex() != -1)
         		{
-        			info = new PluginInfo(installedPlugins[list.getSelectedIndex()]);
+        			PluginInfo(info, installedPlugins[list.getSelectedIndex()]);
         		}
         	}
         }
