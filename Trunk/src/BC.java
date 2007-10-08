@@ -18,8 +18,11 @@ import java.io.*;//File
 import java.net.*; //URL
 
 import java.security.*; //For MD5
+
+import java.util.List;
+//import java.lang.Integer;
  
-public class BC implements Runnable
+public class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
 {
 	private static Properties defaultSettings()
 	{
@@ -35,85 +38,23 @@ public class BC implements Runnable
 	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
 	public static ResourceBundle LTextRB = null;
 	
-	public void run()
+	private static JLabel Text = null;
+	private static JProgressBar PB = null;
+	private static JWindow frame = null;
+	private static boolean SplashCreated = false;
+	
+	@Override
+	public Object doInBackground()
 	{
 		createAndShowGUI();
+		return new Object();
 	}
 	
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("Updater");
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private void createAndShowGUI()
+    {
+        publish( new Object[] {} ); //Display the Splash Screen
         
-        frame.setSize(300,140);
-    	frame.setResizable(false);
-    	frame.setUndecorated(true);
-
-        //The content pane
-    	JPanel mainPane = new JPanel();
-    	mainPane.setLayout(new BorderLayout());
-    	
-    	mainPane.setBackground(Color.BLACK);
-    	
-    	//Add the background Image
-        //ImageIcon icon = new ImageIcon("Splash.png","Boom");
-        JLabel Logo = new JLabel(new ImageIcon("Splash.png","Updater"));
-        mainPane.add(Logo,BorderLayout.CENTER);
-
-		//Create the bottom
-		JPanel South = new JPanel();
-		South.setLayout(new BorderLayout());
-		South.setBackground(Color.BLACK);
-		
-		//Progress Text
-    	JLabel Text = new JLabel(" Loading Config...");
-    	//ttest = Text;
-    	Text.setForeground(Color.WHITE);
-    	
-    	//Progress Bar, Duh
-    	JProgressBar PB = new JProgressBar();
-		//when the task of (initially) unknown length begins:
-		PB.setIndeterminate(true);
-		
-		South.add(Text,BorderLayout.CENTER);
-		South.add(PB,BorderLayout.EAST);
-    	
-    	mainPane.add(South,BorderLayout.SOUTH);
-    	
-    	frame.setContentPane(mainPane);
-
-        //Display the window.
-        //frame.pack();
-        
-        //Center frame
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension size = frame.getSize();
-		screenSize.height = screenSize.height/2;
-		screenSize.width = screenSize.width/2;
-		size.height = size.height/2;
-		size.width = size.width/2;
-		int y = screenSize.height - size.height;
-		int x = screenSize.width - size.width;
-		frame.setLocation(x, y);
-        
-        try
-    	{
-    		Thread.sleep(50);
-    	}
-    	catch(InterruptedException e)
-    	{
-    	}
-        
-        frame.setVisible(true);
-        
-        try
-    	{
-    		Thread.sleep(50);
-    	}
-    	catch(InterruptedException e)
-    	{
-    	}
-        
+        //TODO:Error Handling
         try{
         	Settings.load( new FileInputStream("Settings.properties") );
         }
@@ -127,6 +68,7 @@ public class BC implements Runnable
         
         //Settings.setProperty("update","no");
         
+      //TODO:Error Handling
         try{
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
         }
@@ -138,7 +80,9 @@ public class BC implements Runnable
         }
         catch(IOException ex)  { } //IO Exception!
         
-        Text.setText( "Loading Locale..." );
+        //Text.setText( "Loading Locale..." );
+        
+        
         
         //Just a sub scope while we make the ResourceBundle
         {
@@ -155,8 +99,7 @@ public class BC implements Runnable
         
         //BPC.remoteToLocal("Title.fla","Test2.fla",PB);
         
-        if(LTextRB!=null) Text.setText( " " + LTextRB.getString("Loading1") );
-        
+        if(LTextRB!=null) publish( new Object[] {(Object)( " " + LTextRB.getString("Loading1") ) } );// Text.setText( " " + LTextRB.getString("Loading1") );
         //
         //BEGIN Updater
         //
@@ -164,8 +107,10 @@ public class BC implements Runnable
         if(Settings.getProperty("update").equals("no"))
         {
         	System.out.println("Skip Update");
-        	frame.dispose();
-			frame = null;
+        	//frame.dispose();
+			//frame = null;
+        	publish( new Object[] {} ); //Destroy the Splash Screen
+			javax.swing.SwingUtilities.invokeLater( new mainapp() );
 			return;
         }
         
@@ -175,8 +120,8 @@ public class BC implements Runnable
         
         boolean updated = false;
         
-        if(LTextRB!=null) Text.setText( " " + LTextRB.getString("Lists1") );
-    	remoteToLocal("HashList.php?R=Y&File=Lists.txt", "Lists.txt", PB); //Retrieve the list of update lists
+        if(LTextRB!=null) publish( new Object[] {(Object)( " " + LTextRB.getString("Lists1") ) } );//Text.setText( " " + LTextRB.getString("Lists1") );
+    	remoteToLocal("HashList.php?R=Y&File=Lists.txt", "Lists.txt");//, PB); //Retrieve the list of update lists
     	
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
@@ -202,8 +147,9 @@ public class BC implements Runnable
         		}
         	}
         	
-        	Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
-        	remoteToLocal("HashList.php?File=" + name,name, PB);
+        	publish( new Object[] {(Object)( " " + LocaleFormat( "Lists2", new Object[] { name } ) ) } );
+        	//Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
+        	remoteToLocal("HashList.php?File=" + name,name);//, PB);
         	if( getLocalHash(name).compareTo( hash ) != 0 )
         	{
         		//ERROR
@@ -251,12 +197,14 @@ public class BC implements Runnable
         			}
         		}
         		
-        		Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
+        		publish( new Object[] {(Object)( " " + LocaleFormat( "Checking1", new Object[] { name } ) ) } );
+        		//Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
         		if( getLocalHash(name).compareTo( hash ) != 0 )
         		{
         			updated = true;
-        			Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
-        			if( !remoteToLocal(name,"Download.tmp",PB) )
+        			publish( new Object[] {(Object)( " " + LocaleFormat( "Downloading1", new Object[] { name } ) ) } );
+        			//Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
+        			if( !remoteToLocal(name,"Download.tmp"))//,PB) )
         			{
         				PError("Failed to download update, Program Is In Inconsistant State");
         				System.exit(-1);
@@ -272,13 +220,15 @@ public class BC implements Runnable
         			dest.delete();
         			if( src.renameTo( dest ) )
         			{
-        				Text.setText( " Moved." ); //*****************************************************
+        				publish( new Object[] {(Object)( " Updated File." ) } );
+        				//Text.setText( " Moved." ); //*****************************************************
         			}
         		}
         	}
         	if(updated) //If we did something... restart.
     		{
     			restart("BC");
+    			publish( new Object[] {} ); //Destroy the Splash Screen
     			System.exit(0);
     		}
         }
@@ -292,7 +242,7 @@ public class BC implements Runnable
         //END Updater
         //
         
-               
+        /*	
         try
     	{
     		Thread.sleep(200);
@@ -300,12 +250,141 @@ public class BC implements Runnable
     	catch(InterruptedException e)
     	{
     	}
+    	*/
         
-        frame.dispose();
-		frame = null; 
+        //frame.dispose();
+		//frame = null;
+    	publish( new Object[] {} ); //Destroy the Splash Screen
 		
 		//Start the mainapp
 		javax.swing.SwingUtilities.invokeLater( new mainapp() );
+    }
+    
+    @Override    
+    protected void process(List<Object[]> chunks)
+    {
+        for (Object row[] : chunks) {
+        	if(row.length == 0)
+            {
+            	if(SplashCreated)
+            	{
+            		//Destroy
+            		frame.dispose();
+            		frame = null;
+            		SplashCreated = false;
+            	
+            	}
+            	else
+            	{
+            		//Create
+            		//Create and set up the window.
+                    /*JWindow*/ frame = new JWindow();//"Updater");
+                    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    
+                    frame.setSize(300,140);
+                	//frame.setResizable(false);
+                	//frame.setUndecorated(true);
+
+                    //The content pane
+                	JPanel mainPane = new JPanel();
+                	mainPane.setLayout(new BorderLayout());
+                	
+                	mainPane.setBackground(Color.BLACK);
+                	
+                	//Add the background Image
+                    //ImageIcon icon = new ImageIcon("Splash.png","Boom");
+                    JLabel Logo = new JLabel(new ImageIcon("Splash.png","Updater"));
+                    mainPane.add(Logo,BorderLayout.CENTER);
+
+            		//Create the bottom
+            		JPanel South = new JPanel();
+            		South.setLayout(new BorderLayout());
+            		South.setBackground(Color.BLACK);
+            		
+            		//Progress Text
+                	/*JLabel*/ Text = new JLabel(" Loading Config...");
+                	//ttest = Text;
+                	Text.setForeground(Color.WHITE);
+                	
+                	//Progress Bar, Duh
+                	/*JProgressBar*/ PB = new JProgressBar();
+            		//when the task of (initially) unknown length begins:
+            		PB.setIndeterminate(true);
+            		
+            		South.add(Text,BorderLayout.CENTER);
+            		South.add(PB,BorderLayout.EAST);
+                	
+                	mainPane.add(South,BorderLayout.SOUTH);
+                	
+                	frame.setContentPane(mainPane);
+
+                    //Display the window.
+                    //frame.pack();
+                    
+                    //Center frame
+            		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            		Dimension size = frame.getSize();
+            		screenSize.height = screenSize.height/2;
+            		screenSize.width = screenSize.width/2;
+            		size.height = size.height/2;
+            		size.width = size.width/2;
+            		int y = screenSize.height - size.height;
+            		int x = screenSize.width - size.width;
+            		frame.setLocation(x, y);
+                    
+            		/*
+                    try
+                	{
+                		Thread.sleep(50);
+                	}
+                	catch(InterruptedException e)
+                	{
+                	}
+                	*/
+                    
+                    frame.setVisible(true);
+                    
+                    /*
+                    try
+                	{
+                		Thread.sleep(50);
+                	}
+                	catch(InterruptedException e)
+                	{
+                	}
+                	*/
+                    SplashCreated = true;
+            	}
+            		
+            }
+        	else if(row.length == 1)
+            {
+            	if(row[0] instanceof String)
+            	{
+            		Text.setText((String) row[0]);
+            	}
+            }
+            else if(row.length == 3)
+            {
+            	//Min, Max, Val (Max is -1 for Indeterminate)
+            	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer)
+            	{
+            		if((Integer)row[1] == -1)
+	            	{
+                		PB.setIndeterminate(true);
+	            	}
+            		else
+            		{
+            			PB.setMinimum((Integer)row[0]);
+                		PB.setMaximum((Integer)row[1]);
+                		PB.setValue((Integer)row[2]);
+                		PB.setIndeterminate(false);
+            		}
+            	}
+            	
+            }
+            
+        }
     }
 
     public static void main(String[] args)
@@ -324,7 +403,11 @@ public class BC implements Runnable
         //		}
         //});
         
-    	javax.swing.SwingUtilities.invokeLater( new BC() );
+    	//javax.swing.SwingUtilities.invokeLater( new BC() );
+    	
+    	//BC BCT = new BC();
+		//BCT.start();
+    	(new BC()).execute();
     	
     	//javax.swing.SwingUtilities.invokeLater( new mainapp() );
     }
@@ -478,16 +561,20 @@ public class BC implements Runnable
     }
     
     //Do a file transfer.
-    static public boolean remoteToLocal(String sFile, String dFile, JProgressBar PB)
+    public boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
     {
+    	int PBVal = 0;
+    	int RemoteSize = getRemoteSize(sFile);
+    	
     	//Set Progress Bar State
-    	if(PB != null)
+    	publish(new Object[] {(Object)(Integer)0, (Object)(Integer)RemoteSize, (Object)(Integer)0});//Min, Max, Val (Max is -1 for Indeterminate)
+    	/*if(PB != null)
     	{
     		PB.setMinimum(0);
     		PB.setMaximum(getRemoteSize(sFile));
     		PB.setValue(0);
     		PB.setIndeterminate(false);
-    	}
+    	}*/
     		
     	try
     	{ 
@@ -505,7 +592,10 @@ public class BC implements Runnable
 			while ( ( count = bis.read(buffer) ) != -1)
 			{ 
 				fos.write(buffer,0,count);
-				if(PB != null) PB.setValue(PB.getValue()+count);
+				PBVal += count;
+				
+				publish(new Object[] {(Object)(Integer)0, (Object)(Integer)RemoteSize, (Object)(Integer)PBVal});//Min, Max, Val (Max is -1 for Indeterminate)
+				//if(PB != null) PB.setValue(PBVal);
 			} 
 			
 			fos.close();
@@ -516,24 +606,28 @@ public class BC implements Runnable
     		
     		//Malformed Path, SERVER_PATH wrong?
     		//Reset
-			if(PB != null) PB.setIndeterminate(true);
+			publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
+			//if(PB != null) PB.setIndeterminate(true);
 			return false;
     	}
 		catch(IOException ioe)
 		{
 			//Reset
-			if(PB != null) PB.setIndeterminate(true);
+			publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
+			//if(PB != null) PB.setIndeterminate(true);
 			return false;
         }
         catch(Exception e)
         {
         	//Reset
-            if(PB != null) PB.setIndeterminate(true);
+        	publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
+            //if(PB != null) PB.setIndeterminate(true);
             return false;
         }
         
         //Reset
-        if(PB != null) PB.setIndeterminate(true);
+        publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
+        //if(PB != null) PB.setIndeterminate(true);
 		return true;
     }
     

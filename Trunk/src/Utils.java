@@ -176,7 +176,7 @@ public class Utils
 			
 			test = (Plugin)UCL.loadClass(name + "_Plugin").newInstance();
 			
-		}
+		}//TODO:IMprove the error messages
 		catch(ClassNotFoundException ex)
 		{
 			BC.PError("Class not found: " + "plugins/" + name + "/" + name + "_Plugin");
