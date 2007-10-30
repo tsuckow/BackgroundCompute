@@ -18,8 +18,6 @@ abstract public class Plugin
 	
 	protected boolean norun = false;
 	
-	protected int maxCores = 1;
-	
     protected synchronized void runner()
     {
     	running = true;
@@ -63,24 +61,7 @@ abstract public class Plugin
 		return false;
 	}
     
-    abstract public void remove(); //Should not be called by a plugin
-    
-    /**
-	 * 
-	 * Retrieves the number of preferred cores by the Plugin. The Plugin will be givin this many cores provided it is not greater than availCores.
-	 * 
-	 * @author Deathbob 
-	 * @param availCores Number of cores the plugin has to work with.
-	 * @return number of preferred cores or 0 to indicate desire to skip.
-	 */
-    public int preferredCores(int availCores)
-    {
-    	if(availCores > 0 && !norun && !running)
-    		return 1;
-    	else
-    		return 0;
-    }
-    
+    abstract public void remove(); //Should not be called by a plugin  
     
     /**
 	 * 
@@ -127,10 +108,50 @@ abstract public class Plugin
     		stop = true;
     }
     
-    public void start(int cores)
+    /**
+     * Decides if another core is desired by the plugin.
+     * 
+     * Returns True - Another Processing Core Wanted ; False - Forfeit Core
+     * 
+     * Must be overwritten to be used.
+     * 
+     * @author Deathbob
+     * 
+     *  
+     * @return False - Never want a core
+     */
+    public boolean needCore()
     {
-    	if(norun || running || cores <= 0) return;
-    	maxCores = cores;
+    	return false;
+    }
+    
+    /**
+     * An additional CPU Core for processing
+     * 
+     * Must be overwritten to be used.
+     * 
+     */
+    protected void Core() {return;}
+    
+    /**
+     * Starts the plugin or if it is already running spawns a new core (If Desired)
+     * 
+     * @see #needCore()
+     */
+    public void start()
+    {
+    	if(norun) return;
+    	if(running)
+    	{
+    		if( needCore() )
+    		{
+    			Core();
+    		}
+    		else
+    		{
+    			return;
+    		}
+    	}
     	runner();
     }
     

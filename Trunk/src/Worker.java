@@ -18,7 +18,7 @@ public class Worker extends Thread
     	{
     		try
 	    	{
-	    		Thread.sleep(2000);
+	    		Thread.sleep(1000);
 	    	}
 	    	catch(InterruptedException e)
 	    	{ 	}
@@ -29,6 +29,7 @@ public class Worker extends Thread
 	    	if(maxthreads > threads.size() && Plugins.length > threads.size())
 	    	{
 	    		WorkRunner runner = new WorkRunner();
+	    		runner.setPriority(Thread.MIN_PRIORITY);
 	    		runner.start();
 	    		threads.add(runner);
 	    	}
@@ -38,7 +39,7 @@ public class Worker extends Thread
 	    		threads.get(0).end();
 	    		try
 		    	{
-		    		Thread.sleep(5000);
+		    		Thread.sleep(2000);
 		    	}
 		    	catch(InterruptedException e)
 		    	{ 	}

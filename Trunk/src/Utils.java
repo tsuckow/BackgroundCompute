@@ -110,11 +110,7 @@ public class Utils
         		// ...
          			
 			}
-			
-			//Don't put this in the sync or it will deadlock ;)
-			//TODO: Remove this line
-			iconMessage("Tray Icon","This was created in utils",TrayIcon.MessageType.INFO);
-		}
+		}//End Sync
 	}
 	
 	/**

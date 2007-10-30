@@ -33,6 +33,8 @@ public class PluginManager
 		frame = new JFrame("Project Manager");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
+		frame.setResizable(false);
+		
 		JPanel p = new JPanel();
 		
 		installedPlugins = Utils.getLocalPlugins();
@@ -51,16 +53,17 @@ public class PluginManager
 		
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		//list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-		list.setVisibleRowCount(-1);
+		list.setVisibleRowCount(10);
 		list.addListSelectionListener(new ListListen());
 				
 		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(150, 80));
+		listScroller.setMinimumSize(new Dimension(150,160));
+		listScroller.setPreferredSize(new Dimension(150, 250));
         
         p.add(listScroller);
         
         if(timer != null) timer.stop();
-        timer = new javax.swing.Timer(2000,new RefreshList(list));
+        timer = new javax.swing.Timer(1000,new RefreshList(list));
 		timer.start();
         
         JPanel RightSide = new JPanel();
@@ -73,6 +76,8 @@ public class PluginManager
         
         RightSide.add(Manage,BorderLayout.NORTH);
         info = new JLabel("Loading");
+        info.setMinimumSize(new Dimension(320,160));
+        info.setMaximumSize(new Dimension(320,160));
         PluginInfo(info,installedPlugins[0]);
         RightSide.add(info,BorderLayout.CENTER);
         
@@ -80,6 +85,23 @@ public class PluginManager
                       
 		frame.setContentPane(p);
 		frame.pack();
+		
+		//Center frame
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension size = frame.getSize();
+		
+		listScroller.setSize(new Dimension(150, size.height));
+		
+		screenSize.height = screenSize.height/2;
+		screenSize.width = screenSize.width/2;
+		size.height = size.height/2;
+		size.width = size.width/2;
+		int y = screenSize.height - size.height;
+		int x = screenSize.width - size.width;
+		frame.setLocation(x, y);
+		
+		listScroller.setPreferredSize(new Dimension(150, size.height));
+		
 		frame.setVisible(true);
 	}
 	
@@ -91,7 +113,7 @@ public class PluginManager
         	{
         		Info = plug.getInfo();
         	}
-			label.setText(Info);
+			label.setText("<html><div width='320px' height='160px'>" + Info + "</div><html>");
 	}
 	
 	private static class RefreshList implements ActionListener
@@ -124,7 +146,7 @@ public class PluginManager
         	{
         		if(list.getSelectedIndex() != -1)
         		{
-        			BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			plug.stop();
         			//frame.dispose();

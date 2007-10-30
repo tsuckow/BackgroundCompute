@@ -19,12 +19,7 @@ public class WorkRunner extends Thread
     			if(!plug.isRunning())
     			{
     				plug.startUpdate();
-    				
-    				int maxCores = 1; //Number of cores we have available
-    				int pMaxCores = plug.preferredCores(maxCores); //Get how many Plugin wants
-    				if(pMaxCores > maxCores) pMaxCores = maxCores; //Don't get greedy
-    				
-    				if(pMaxCores > 0) plug.start( pMaxCores );
+    				plug.start();
     			}//~If
     			try
 		    	{
