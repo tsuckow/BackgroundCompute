@@ -36,7 +36,7 @@ abstract public class Plugin
     	stop = false;
     }
     
-    
+    //FIXME: Protected
     /**
      * Main function of Plugin
      * DO NOT CALL DIRECTLY - CALL start()
@@ -48,6 +48,7 @@ abstract public class Plugin
     	return;
     }
     
+    //FIXME: Protected
     /**
      * Main update function of Plugin
      * If returning TRUE, Plugin SHOULD set norun to TRUE to prevent problems.

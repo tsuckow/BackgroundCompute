@@ -65,12 +65,6 @@ public class Utils
          		
 				popup.add(Item);
 				
-				Item = new MenuItem("Remove Project");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("RemovePlugin"); 
-         		
-				popup.add(Item);
-				
 				Item = new MenuItem("Current Projects");
 	         	Item.addActionListener(listener);
          		Item.setActionCommand("Plugins"); 
@@ -215,11 +209,6 @@ public class Utils
             if( e.getActionCommand().equals("AddPlugin") )
             {
             	PluginManager.show();
-            }
-            
-            if( e.getActionCommand().equals("RemovePlugin") )
-            {
-            	PluginRemover.show();
             }
             		
             if( e.getActionCommand().equals("Settings") )

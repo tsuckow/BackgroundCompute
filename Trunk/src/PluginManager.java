@@ -73,6 +73,12 @@ public class PluginManager
         JButton stop = new JButton("Stop");
         stop.addActionListener(new StopButton());
         Manage.add(stop);
+        JButton remove = new JButton("Remove");
+        remove.addActionListener(new RemoveButton());
+        Manage.add(remove);
+        JButton status = new JButton("Status");
+        status.addActionListener(new StatusButton());
+        Manage.add(status);
         
         RightSide.add(Manage,BorderLayout.NORTH);
         info = new JLabel("Loading");
@@ -149,6 +155,61 @@ public class PluginManager
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			plug.stop();
+        			//frame.dispose();
+					//frame = null;
+					//show();
+        		}
+        	}
+        }
+	}
+	
+	private static class RemoveButton implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			int n = JOptionPane.showConfirmDialog(
+        				    frame,
+        				    "Are you sure you want to uninstall: \"" + plug.getName() + "\"",
+        				    "Remove Plugin?",
+        				    JOptionPane.YES_NO_OPTION,
+        				    JOptionPane.QUESTION_MESSAGE);
+        			if(n == JOptionPane.YES_OPTION)
+        			{
+        				plug.startRemove();
+        				frame.dispose();
+        				frame = null;
+        				show();
+        			}
+        		}
+        	}
+        }
+	}
+	
+	private static class StatusButton implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			//plug.stop();
         			//frame.dispose();
 					//frame = null;
 					//show();
