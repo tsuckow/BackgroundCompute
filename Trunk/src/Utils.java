@@ -1,8 +1,10 @@
 /**
  * @(#)Utils.java
  *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2007 Thomas Suckow (Deathbob)
  *
- * @author 
+ * @author Deathbob
  * @version 1.00 2007/2/11
  */
  
@@ -14,16 +16,6 @@ import java.io.*;//File
 import java.util.HashMap;
 import java.lang.String;
 
-/**
- * 
- * Utilities for Background Compute
- * 
- * @author Deathbob
- * 
- * @version 0.1
- * 
- *
- */
 public class Utils
 {
 	private Utils(){} //Since this only contains static members, prevent an instance of this class from being created.  

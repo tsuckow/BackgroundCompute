@@ -1,6 +1,8 @@
 /**
  * @(#)Worker.java
  *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2007 Thomas Suckow (Deathbob)
  *
  * @author 
  * @version 1.00 2007/2/10
