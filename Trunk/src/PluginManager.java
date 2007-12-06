@@ -209,6 +209,28 @@ public class PluginManager
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			JFrame bob = new JFrame(plug.getName());
+        			bob.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        			
+        			bob.setResizable(true);
+        			
+        			bob.setContentPane(plug.getStatus());
+        			bob.pack();
+        			
+        			//Center frame
+        			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        			Dimension size = bob.getSize();
+        			
+        			screenSize.height = screenSize.height/2;
+        			screenSize.width = screenSize.width/2;
+        			size.height = size.height/2;
+        			size.width = size.width/2;
+        			int y = screenSize.height - size.height;
+        			int x = screenSize.width - size.width;
+        			bob.setLocation(x, y);
+        			
+        			bob.setVisible(true);
+        			
         			//plug.stop();
         			//frame.dispose();
 					//frame = null;
