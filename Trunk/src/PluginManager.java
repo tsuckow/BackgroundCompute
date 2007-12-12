@@ -212,7 +212,7 @@ public class PluginManager
         			JFrame bob = new JFrame(plug.getName());
         			bob.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         			
-        			bob.setResizable(true);
+        			bob.setResizable(false);
         			
         			bob.setContentPane(plug.getStatus());
         			bob.pack();
