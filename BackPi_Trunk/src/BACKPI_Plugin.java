@@ -7,7 +7,6 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import java.util.concurrent.*;
-import java.util.*;
 
 public class BACKPI_Plugin extends Plugin
 {

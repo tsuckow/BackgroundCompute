@@ -5,8 +5,6 @@ public class BACKPI_Status
 	
 	public coreMode Mode = coreMode.Initilizing;
 	
-	public int Percent = 0;
-	
 	public long Range = 1;
 	
 	public long Iteration = 0;
