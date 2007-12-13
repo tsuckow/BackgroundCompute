@@ -1,3 +1,5 @@
+//http://java.sun.com/docs/books/tutorial/uiswing/layout/spring.html
+
 import javax.swing.*;
 import javax.swing.SpringLayout;
 import java.awt.*;
