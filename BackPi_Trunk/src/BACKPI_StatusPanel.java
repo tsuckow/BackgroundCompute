@@ -58,15 +58,22 @@ public class BACKPI_StatusPanel extends JPanel
         				if(max > tPane.getTabCount())
         				{
         					//TODO: Add new tab / create tabs
-        					JPanel a = new JPanel();
+        					JPanel a = new JPanel(new SpringLayout());
         					
+        					a.add( new JLabel("Iteration #:", JLabel.TRAILING) );
         					JTextField tf = new JTextField(20);
         					tf.setName("Iteration");
         					a.add( tf );
         					
+        					a.add( new JLabel("Range #:", JLabel.TRAILING) );
         					tf = new JTextField(20);
         					tf.setName("Range");
         					a.add( tf );
+        					
+        					SpringUtilities.makeCompactGrid(a,
+                                    2, 2, //rows, cols
+                                    6, 6,        //initX, initY
+                                    6, 6);       //xPad, yPad
         					
         					tPane.addTab("Thread " + (tPane.getTabCount()+1), a);
         				}
@@ -89,8 +96,8 @@ public class BACKPI_StatusPanel extends JPanel
         				do{
         					name = a.getComponent(j).getName();
         					++j;
-        				}while( !name.equals("Iteration") && j < a.getComponentCount() );
-        				if(name.equals("Iteration"))
+        				}while( (name==null || !name.equals("Iteration")) && j < a.getComponentCount() );
+        				if(name!=null && name.equals("Iteration"))
         				{
         					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.Iteration) );
         				}
@@ -98,8 +105,8 @@ public class BACKPI_StatusPanel extends JPanel
         				do{
         					name = a.getComponent(j).getName();
         					++j;
-        				}while( !name.equals("Range") && j < a.getComponentCount() );
-        				if(name.equals("Range"))
+        				}while( (name==null || !name.equals("Range")) && j < a.getComponentCount() );
+        				if(name!=null && name.equals("Range"))
         				{
         					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.Range) );
         				}
@@ -127,7 +134,7 @@ public class BACKPI_StatusPanel extends JPanel
         	}
         	catch(Exception e)
         	{
-        		BC.PError( e.getMessage() );
+        		BC.PError( e.getMessage() + Utils.getStackTrace(e) );
         	}
         }
     }

@@ -463,7 +463,8 @@ public class BACKPI_Plugin extends Plugin
     @Override
     protected void Core()
     {
-    	long n = 1;
+    	run();
+    	/*long n = 1;
     	
     	while(true)
     	{
@@ -629,25 +630,10 @@ public class BACKPI_Plugin extends Plugin
     		//
     		
     		n+=9;
-    		/*
-    		//Utils.iconMessage("GRUB!","Message: " + i,TrayIcon.MessageType.INFO);
-    		try
-    		{
-    			Thread.sleep(5000);
-    		}
-    		catch(InterruptedException e)
-    		{
-    		}
-    		try
-    		{
-    			Thread.sleep(1);
-    		}
-    		catch(InterruptedException e)
-    		{
-    		}
-    		*/
+
     		if(isStopping()) return;
     	}
+    	*/
     }
     
     public void remove()
