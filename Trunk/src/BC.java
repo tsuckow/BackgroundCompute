@@ -20,7 +20,7 @@
  * support@defcon1.hopto.org
  *
  * @author Deathbob
- * @version 1.00 2006/12/20
+ * @version 0.1 2006/12/20
  */
 
  

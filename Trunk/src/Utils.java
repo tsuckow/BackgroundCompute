@@ -33,7 +33,6 @@ public class Utils
 	 * 
 	 * Creates a Tray Icon if one does not already exist.
 	 * 
-	 * @author Deathbob
 	 * 
 	 */
 	//TODO: Make sure only one instance
@@ -103,8 +102,6 @@ public class Utils
 	 * 
 	 * Creates Info Balloon at Tray Icon.
 	 * 
-	 * @author Deathbob
-	 * 
 	 * @param title Info Balloon Title
 	 * @param msg Message to display
 	 * @param type Icon to Display
@@ -124,7 +121,6 @@ public class Utils
 	 * 
 	 * Loads a Plugin located in the "plugin" subdirectory.
 	 * 
-	 * @author Deathbob 
 	 * @param name Name of plugin to load or null on failure.
 	 * @return instance of Plugin given by name. 
 	 */
@@ -219,7 +215,6 @@ public class Utils
 	 * 
 	 * Attempts to mount every installed plugin and returns name of classes of Type Plugin.
 	 * 
-	 * @author Deathbob
 	 * @return array of Plugin names that are installed.
 	 */
 	public static String[] getLocalPlugins()

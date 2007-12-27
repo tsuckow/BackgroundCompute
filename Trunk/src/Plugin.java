@@ -4,11 +4,16 @@
  * Background Compute ( Manages Distributed Projects )
  * Copyright (C) 2007 Thomas Suckow (Deathbob)
  *
- * @author 
- * @version 1.00 2007/2/11
  */
 
 import javax.swing.*;
+
+/**
+ * This is a test Description
+ *
+ * @author Deathbob 
+ * @version 0.2 2007/2/11
+ */
 
 abstract public class Plugin
 {
@@ -43,7 +48,6 @@ abstract public class Plugin
      * Main function of Plugin
      * DO NOT CALL DIRECTLY - CALL start()
      * 
-     * @author Deathbob
      */
     public void run()
     {
@@ -52,11 +56,10 @@ abstract public class Plugin
     
     //FIXME: Protected
     /**
-     * Main update function of Plugin
+     * Main update function of Plugin.
      * If returning TRUE, Plugin SHOULD set norun to TRUE to prevent problems.
      * DO NOT CALL DIRECTLY - CALL startUpdate()
      * 
-     * @author Deathbob
      * @return TRUE - If restart of app is needed; False - No restart needed
      */
 	public boolean update()
@@ -70,7 +73,6 @@ abstract public class Plugin
 	 * 
 	 * Retrieves the name of the Plugin
 	 * 
-	 * @author Deathbob 
 	 * @return name of Plugin
 	 */
     abstract public String getName();
@@ -79,7 +81,6 @@ abstract public class Plugin
 	 * 
 	 * Retrieves the HTML to describe the Plugin
 	 * 
-	 * @author Deathbob 
 	 * @return HTML 
 	 */
     abstract public String getInfo();
@@ -118,7 +119,6 @@ abstract public class Plugin
      * 
      * Must be overwritten to be used.
      * 
-     * @author Deathbob
      * 
      *  
      * @return False - Never want a core
