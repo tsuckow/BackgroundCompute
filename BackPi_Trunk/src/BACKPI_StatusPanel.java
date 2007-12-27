@@ -1,3 +1,13 @@
+/**
+ * @(#)BACKPI_StatusPanel.java
+ *
+ * Background Pi ( Computes Decimal Digits of Pi )
+ * Copyright (C) 2007 Thomas Suckow (Deathbob)
+ *
+ * @author Deathbob
+ * @version 0.1 2007/2/11
+ */
+
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 

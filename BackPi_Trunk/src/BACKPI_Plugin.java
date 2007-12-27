@@ -1,3 +1,28 @@
+/**
+ * @(#)BACKPI_Plugin.java
+ *
+ * Background Pi ( Computes Decimal Digits of Pi )
+ * Copyright (C) 2007 Thomas Suckow (Deathbob)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * support@defcon1.hopto.org
+ *
+ * @author Deathbob
+ * @version 0.1 2006/12/20
+ */
+
 import java.awt.TrayIcon;
 import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -164,6 +189,16 @@ public class BACKPI_Plugin extends Plugin
    	    return (long)Math.floor( ( bound )/( Math.log( bound )-1.083) );
    	}
    	
+   	private boolean coreShutdown(BACKPI_Status status)
+   	{
+   		if( isStopping() )
+   		{
+   			Threads.remove(status);
+   			return true;
+   		}
+   		return false;
+   	}
+   	
    	@Override
     public void run()
     {
@@ -193,11 +228,11 @@ public class BACKPI_Plugin extends Plugin
 
     		for(a=2;a<=(3*N);a=next_prime(a))
     		{
-    			if(isStopping()) return;
+    			if(coreShutdown(status)) return;
     			
     			status.Iteration = PrimeCount(a);
     			
-    			if(isStopping()) return;
+    			if(coreShutdown(status)) return;
     			
     		    vmax=(int)(Math.log(3*N)/Math.log(a));
     		    if (a==2) {
@@ -428,7 +463,7 @@ public class BACKPI_Plugin extends Plugin
     		{
     		}
     		*/
-    		if(isStopping()) return;
+    		if(coreShutdown(status)) return;
     	}
     }
     
@@ -464,176 +499,6 @@ public class BACKPI_Plugin extends Plugin
     protected void Core()
     {
     	run();
-    	/*long n = 1;
-    	
-    	while(true)
-    	{
-    		//
-    		//
-    		//
-    		//
-    		
-    		long av,a,vmax,N,num,den,k,kq1,kq2,kq3,kq4,t,v,s,i,t1;
-    		double sum;
-    		
-    		N=(int)((n+20)*Math.log(10)/Math.log(13.5));
-    		sum=0;
-
-    		  for(a=2;a<=(3*N);a=next_prime(a))
-    		  {
-    			  if(isStopping()) return;
-    		    vmax=(int)(Math.log(3*N)/Math.log(a));
-    		    if (a==2) {
-    		      vmax=vmax+(N-n);
-    		      if (vmax<=0) continue;
-    		    }
-    		    av=1;
-    		    for(i=0;i<vmax;i++) av=av*a;
-
-    		    s=0;
-    		    den=1;
-    		    kq1=0;
-    		    kq2=-1;
-    		    kq3=-3;
-    		    kq4=-2;
-    		    if (a==2) {
-    		      num=1;
-    		      v=-n; 
-    		    } else {
-    		      num=pow_mod(2,n,av);
-    		      v=0;
-    		    }
-
-    		    for(k=1;k<=N;k++) {
-
-    		      t=2*k;
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = -1;
-    		    	  long kq = kq1;
-    		    	  long kqinc = 2;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq1 = kq;
-    		      }
-    		      //DIVN(t,a,v,-1,kq1,2);
-    		      num=mul_mod(num,t,av);
-    		      
-    		      t=2*k-1;
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = -1;
-    		    	  long kq = kq2;
-    		    	  long kqinc = 2;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq2 = kq;
-    		      }
-    		      //DIVN(t,a,v,-1,kq2,2);
-    		      num=mul_mod(num,t,av);
-
-    		      t=3*(3*k-1);
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = 1;
-    		    	  long kq = kq3;
-    		    	  long kqinc = 9;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq3 = kq;
-    		      }
-    		      //DIVN(t,a,v,1,kq3,9);
-    		      den=mul_mod(den,t,av);
-
-    		      t=(3*k-2);
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = 1;
-    		    	  long kq = kq4;
-    		    	  long kqinc = 3;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq4 = kq;
-    		      }
-    		      //DIVN(t,a,v,1,kq4,3);
-    		      if (a!=2) t=t*2; else v++;
-    		      den=mul_mod(den,t,av);
-    		      
-    		      if (v > 0) {
-    			if (a!=2) t=inv_mod(den,av);
-    			else t=inv_mod(den,av);
-    			t=mul_mod(t,num,av);
-    			for(i=v;i<vmax;i++) t=mul_mod(t,a,av);
-    			t1=(25*k-3);
-    			t=mul_mod(t,t1,av);
-    			s+=t;
-    			if (s>=av) s-=av;
-    		      }
-    		    }
-
-    		    t=pow_mod(5,n-1,av);
-    		    s=mul_mod(s,t,av);
-    		    sum=((sum+(double) s/ (double) av) % 1.0);
-    		  }
-    		  
-    		  int fsum = new Double(sum * 1000000000).intValue();
-    		
-    		  Utils.iconMessage("BP: " + fsum,"Message: " + n,TrayIcon.MessageType.INFO);
-    		  
-    		//
-    		//
-    		//
-    		//
-    		
-    		n+=9;
-
-    		if(isStopping()) return;
-    	}
-    	*/
     }
     
     public void remove()
