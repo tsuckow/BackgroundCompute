@@ -496,7 +496,7 @@ public class BACKPI_Plugin extends Plugin
     }
     
     @Override
-    protected void Core()
+    protected void core()
     {
     	run();
     }
@@ -505,11 +505,6 @@ public class BACKPI_Plugin extends Plugin
     {
     	//BC.PError("Removing...");
     	//TODO: Add uninstall code (should basicly just delete my own directory)
-    }
-    
-    public int getState()
-    {
-    	return 0;
     }
 }
 
