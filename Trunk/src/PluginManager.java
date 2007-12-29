@@ -214,6 +214,7 @@ public class PluginManager
         			
         			bob.setResizable(false);
         			
+        			//FIXME: Check if null. If it is give some message saying Plugin does not support this.
         			bob.setContentPane(plug.getStatus());
         			bob.pack();
         			
