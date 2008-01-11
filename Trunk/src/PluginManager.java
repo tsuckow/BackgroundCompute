@@ -154,7 +154,7 @@ public class PluginManager
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
-        			plug.stop();
+        			plug.stopAll(true);
         			//frame.dispose();
 					//frame = null;
 					//show();

@@ -19,6 +19,12 @@ import javax.swing.*;
 
 abstract public class Plugin
 {
+	//CONSTS
+	
+	public static enum state {Initilizing, Running, Updating, Stopping, Stopped, Removing};
+	
+	private static enum norunReason {Removal, Update};
+	
 	//
 	//PRIVATE
 	//
@@ -27,7 +33,9 @@ abstract public class Plugin
 	//
 	
 	//Locks  //Create a REALLY SMALL but unique object.
-	private final static Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
+	private final Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
+	
+	private volatile state currentState = state.Stopped;
 	
 	//Variables
 	
@@ -49,54 +57,64 @@ abstract public class Plugin
 	 */
 	private boolean stop = false;
 	
-	/**
-	 * True: The plugin has been locked from running for some reason. (Cannot be undone)
-	 *       Note: If the plugin is already running, this will not stop it.
-	 * False: It is fine for the plugin to run.
-	 */
-	private boolean norun = false;
-	
+
 	//Functions
 	
-	/**
-	 * Handles starting the plugin's main method.
-	 */
-    private final synchronized void runner()
-    {
-    	//TODO: ADD Additional Sanity Checks Here
-    	running = true;
-    	run();
-    	running = false;
-    	stop = false;
-    }
-    
-    /**
-	 * Handles starting the plugin's update method.
-	 */
-    private final synchronized void updater()
-    {
-    	//TODO: ADD Additional Sanity Checks Here
-    	running = true;
-    	updating = true;
-    	update();
-    	updating = false;
-    	running = false;
-    	stop = false;
-    }
-    
-	/**
-	 * Handles starting the plugin's remove method.
-	 */
-    private final synchronized void remover()
-    {
-    	//TODO: ADD Additional Sanity Checks Here
-    	norun = true;
-    	running = true;
-    	remove();
-    	running = false;
-    	stop = false;
-    }
-    
+	//Classes
+	
+	private final class noRun
+	{
+		private volatile int flag = 0;
+		
+		/**
+		 * Sets a norun reason flag.
+		 * 
+		 * @param reason Flag to set
+		 * @return True if flag was set; False if the flag was already set
+		 */
+		public final synchronized boolean setFlag(norunReason reason)
+		{
+			int MASK = (int) Math.pow(2, reason.ordinal() );
+					
+			if( (flag & MASK) == MASK )
+			{
+				return false;
+			}
+			else
+			{
+				flag |= MASK;
+				return true;
+			}		
+		}
+		
+		/**
+		 * Clears a norun reason flag.
+		 * 
+		 * @param reason Flag to clear
+		 * @return True if flag was cleared; False if the flag was already cleared
+		 */
+		public final synchronized boolean clearFlag(norunReason reason)
+		{
+			int MASK = (int) Math.pow(2, reason.ordinal() );
+			
+			if( (flag & MASK) != MASK )
+			{
+				return false;
+			}
+			else
+			{
+				flag &= ~MASK;
+				return true;
+			}
+		}
+		
+		public final boolean isOK()
+		{
+			return flag == 0;
+		}
+	}
+    private final noRun norun = new noRun();
+	
     //
 	//PROTECTED
 	//
@@ -111,12 +129,12 @@ abstract public class Plugin
      * Main Method of the Plugin. This is called when the Plugin is started.
      * Tip: If applicable you could override <code>core()</code> to point here.
      */
-    abstract protected void run();
+    abstract protected void main();
     
     /**
      * An additional CPU Core for processing
      * 
-     * Must be overwritten to be used.
+     * Remember to override needCore()
      * 
      */
     protected void core() {return;}
@@ -134,6 +152,17 @@ abstract public class Plugin
 	 * Note: A java class can tamper with its own file while it is running.
 	 */
 	abstract protected void remove();
+	
+	/**
+	 * Called by the plugin to start the update function after all cores have been terminated.
+	 */
+	protected final void startUpdate()
+	{
+		norun.setFlag(norunReason.Update);
+		norun.clearFlag(norunReason.Update);
+		//FIXME: Not thread safe.
+		boolean result = update();
+	}
 	
 	/**
      * Decides if another core is desired by the plugin.
@@ -184,85 +213,9 @@ abstract public class Plugin
      */
     public JPanel getSettings(){return null;}
     
-    /**
-     * Returns whether the Plugin is currently doing something.
-     * 
-     * @return Whether the Plugin is running.
-     */
-    public final boolean isRunning()
+    public final state getState()
     {
-    	return running;
-    }
-    
-    /**
-     * Returns whether the Plugin is currently updating.
-     * 
-     * @return Whether the Plugin is updating.
-     */
-    public final boolean isUpdating()
-    {
-    	return running?updating:false;
-    }
-    
-    /**
-     * Returns whether the Plugin is currently stopping.
-     * 
-     * @return Whether the Plugin is stopping.
-     */
-    public final boolean isStopping()
-    {
-    	return stop;
-    }
-    
-    /**
-     * Stops the Plugin cleanly from whatever it is doing.
-     */
-    public final void stop()
-    {
-    	if(running)
-    		stop = true;
-    }
-    
-    /**
-     * Starts the plugin or if it is already running spawns a new core (If Desired)
-     * 
-     *
-     */
-    public final void start()
-    {
-    	if(norun) return;
-    	if(running)
-    	{
-    		if( needCore() )
-    		{
-    			core();
-    		}
-    		else
-    		{
-    			return;
-    		}
-    	}
-    	runner();
-    }
-    
-    /**
-     * Forces an update. Stops any previous operations.
-     */
-    public final void startUpdate()
-    {
-    	if(norun || updating) return;
-    	while(running) stop();
-    	updater();
-    }
-    
-    /**
-     * Forces a removal (uninstall) of the Plugin. Stops any previous operations.
-     */
-    public final void startRemove()
-    {
-    	norun = true;
-    	while(running) stop();
-    	remover();
+    	return currentState;
     }
     
     /**
@@ -284,8 +237,14 @@ abstract public class Plugin
     {
     	synchronized(lock_core)
 		{
-    		if(norun || !needCore()) return false;
+    		if(!norun.isOK() || !needCore()) return false;
     		//Create if need
+    		
+    		if(false /*need to start main?*/)
+    		{
+    			currentState = state.Initilizing;
+    			
+    		}
 		}
     	return true;
     }
@@ -293,7 +252,7 @@ abstract public class Plugin
     /**
      * Stops 1 running core. If none are running it does nothing.
      */
-    public final void stopCore()
+    public final void stopCore(boolean includeMain)
     {
     	synchronized(lock_core)
 		{
@@ -304,25 +263,27 @@ abstract public class Plugin
     /**
      * Stops all running cores. If none are running it does nothing.
      */
-    public final void stopAll()
+    public final void stopAll(boolean includeMain)
     {
     	synchronized(lock_core)
 		{
-    		//TODO
+    		currentState = state.Stopping;
+    		//TODO: Actually Stop
+    		currentState = state.Stopped;
 		}
     }
     
     /**
      * Shuts down the plugin and starts the uninstall procedure.
      */
-    public final void doRemove()
+    public final void startRemove()
     {
     	synchronized(lock_core)
 		{
-    		norun = true; //Stop all new core operations.
+    		norun.setFlag(norunReason.Removal); //Stop all new core operations.
 		}
     	
-    	stopAll(); //Stop All Cores
+    	stopAll(true); //Stop All Cores
     	
     	remove(); //Call Plugins Removal Method
     	

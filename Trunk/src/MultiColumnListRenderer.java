@@ -43,7 +43,7 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
     		Plugin plug = Utils.loadPlugin( (String)value );
     		
     		
-    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ plug.isRunning()?( plug.isUpdating()?3:0 ):1 ]) + "'></td></tr></table></html>");
+    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ 0 ]) + "'></td></tr></table></html>");
 		
     		wow.add(a,BorderLayout.CENTER);
        

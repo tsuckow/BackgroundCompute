@@ -28,11 +28,10 @@ public class WorkRunner extends Thread
     		for(int i = 0; i < Plugins.length; ++i)
     		{
     			Plugin plug = Utils.loadPlugin(Plugins[i]);
-    			if(!plug.isRunning())
+    			if(plug.getState() == Plugin.state.Stopped)
     			{
     				System.out.println("Started new plugin: " + plug.getName());
-    				plug.startUpdate();
-    				plug.start();
+    				plug.startCore();
     				didsomething = true;
     			}//~If
     			else if(!didsomething && coreOK)
