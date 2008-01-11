@@ -10,6 +10,8 @@ public class BACKPI_Status
 	public long Iteration = 0;
 	public long MaxIteration = 0;
 	
+	public double cputime = -1;//-1, init; -2, not supported
+	
 	public BACKPI_Status()
 	{
 		//Init

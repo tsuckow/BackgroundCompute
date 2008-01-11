@@ -27,15 +27,29 @@ import java.awt.TrayIcon;
 import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import java.util.Properties;
 import java.util.concurrent.*;
+import java.util.Date;
+
+import java.lang.management.*;
 
 public class BACKPI_Plugin extends Plugin
 {
 	private CopyOnWriteArrayList<BACKPI_Status> Threads = new CopyOnWriteArrayList<BACKPI_Status>();
+	private static Properties defaultSettings()
+	{
+		Properties set = new Properties();
+		
+		set.setProperty("username", "");
+		set.setProperty("server_path", "http://defcon1.hopto.org/backpi/");
+		
+		return set;
+	}
+	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
 	
 	public BACKPI_Plugin() //{}
 	{
@@ -44,6 +58,133 @@ public class BACKPI_Plugin extends Plugin
     
     //int i = 0;
     
+	private long comm_nextRange()
+	{
+		try
+		{
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/getNextRange.php?username=" + Settings.getProperty("username"));
+
+            // normalize text representation
+            doc.getDocumentElement ().normalize ();
+            
+            //Get the result tag
+            if( doc.getDocumentElement().getNodeName().equals("result") )
+            {
+            	//Check for server errors.
+            	NodeList Errors = doc.getElementsByTagName("error");
+            	if(Errors.getLength() > 0)
+            	{
+            		for(int j=0; j<Errors.getLength() ; j++)
+            		{
+            			Node Error = Errors.item(j);
+            			System.out.println( Error.getTextContent() );
+            		}
+            	}
+            	else
+            	{
+            		//TODO: When no error take what we need.
+            		NodeList Ranges = doc.getElementsByTagName("range");
+                	//System.out.println( Ranges.getLength() );
+                	if(Ranges.getLength() == 1)
+                	{
+                		Node Range = Ranges.item(0);
+                		//System.out.println( Range.getNodeValue() );
+                		System.out.println( Range.getTextContent() );
+                		return Integer.parseInt(Range.getTextContent());
+                		
+                	}
+                	else
+                	{
+                		//FIXME: no range.
+                	}
+            	}
+            }
+            else
+            {
+            	//TODO: Invalid Result From Server
+            }
+
+
+            
+
+        }catch (SAXParseException err) {
+        System.out.println ("** Parsing error" + ", line " 
+             + err.getLineNumber () + ", uri " + err.getSystemId ());
+        System.out.println(" " + err.getMessage ());
+
+        }catch (SAXException e) {
+        Exception x = e.getException ();
+        ((x == null) ? e : x).printStackTrace ();
+
+        }catch (Throwable th) {
+        th.printStackTrace ();
+        }
+        
+		return 1000;
+	}
+	
+	/**
+	 * 
+	 * Communicates with the server and submits a range
+	 * 
+	 * @param range
+	 * 	Computation Range
+	 * @param data
+	 * 	9 digits
+	 */
+	private void comm_submitRange(long range, int data)
+	{
+		try
+		{
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/submitRange.php?range=" + range + "&data=" + data + "&username=" + Settings.getProperty("username"));
+
+            // normalize text representation
+            doc.getDocumentElement ().normalize ();
+            
+            //Get the result tag
+            if( doc.getDocumentElement().getNodeName().equals("result") )
+            {
+            	//Check for server errors.
+            	NodeList Errors = doc.getElementsByTagName("error");
+            	if(Errors.getLength() > 0)
+            	{
+            		for(int j=0; j<Errors.getLength() ; j++)
+            		{
+            			Node Error = Errors.item(j);
+            			System.out.println( Error.getTextContent() );
+            		}
+            	}
+            	else
+            	{
+            		//FIXME: We don't care
+            	}
+            }
+            else
+            {
+            	//TODO: Invalid Result From Server
+            }
+
+
+            
+
+        }catch (SAXParseException err) {
+        System.out.println ("** Parsing error" + ", line " 
+             + err.getLineNumber () + ", uri " + err.getSystemId ());
+        System.out.println(" " + err.getMessage ());
+
+        }catch (SAXException e) {
+        Exception x = e.getException ();
+        ((x == null) ? e : x).printStackTrace ();
+
+        }catch (Throwable th) {
+        th.printStackTrace ();
+        }
+	}
+	
     private static long mul_mod(long a, long b, long m)//Long in java is a c++ Long Long
     {
     	return (a * b) % m;
@@ -226,11 +367,37 @@ public class BACKPI_Plugin extends Plugin
   			
     		status.Mode = BACKPI_Status.coreMode.Calculating;
 
+    		ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
+    		
+    		long time = new Date().getTime() * 1000000;
+    		long cput = 0;
+    		
     		for(a=2;a<=(3*N);a=next_prime(a))
     		{
     			if(coreShutdown(status)) return;
     			
     			status.Iteration = PrimeCount(a);
+    						
+    			if( TMB.isThreadCpuTimeSupported() )
+    			{
+    				if(new Date().getTime() * 1000000 - time > 1000000000)
+    				{
+    					time = new Date().getTime() * 1000000;
+    					cput = TMB.getCurrentThreadCpuTime();
+    				}
+    				
+    				if(!TMB.isThreadCpuTimeEnabled())
+    				{
+    					TMB.setThreadCpuTimeEnabled(true);
+    				}
+    				
+    				if(new Date().getTime() * 1000000 - time != 0)
+    					status.cputime = (TMB.getCurrentThreadCpuTime() - cput) / (new Date().getTime() * 1000000.0 - time) * 100.0;  				
+    			}
+    			else
+    			{
+    				status.cputime = -2;
+    			}
     			
     			if(coreShutdown(status)) return;
     			
@@ -383,67 +550,8 @@ public class BACKPI_Plugin extends Plugin
     		//
     		//
     		
-    		  try {
-
-    	            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    	            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-    	            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/getNextRange.php");
-
-    	            // normalize text representation
-    	            doc.getDocumentElement ().normalize ();
-    	            
-    	            //Get the result tag
-    	            if( doc.getDocumentElement().getNodeName().equals("result") )
-    	            {
-    	            	//Check for server errors.
-    	            	NodeList Errors = doc.getElementsByTagName("error");
-    	            	if(Errors.getLength() > 0)
-    	            	{
-    	            		for(int j=0; j<Errors.getLength() ; j++)
-    	            		{
-    	            			Node Error = Errors.item(j);
-    	            			System.out.println( Error.getTextContent() );
-    	            		}
-    	            	}
-    	            	else
-    	            	{
-    	            		//TODO: When no error take what we need.
-    	            		NodeList Ranges = doc.getElementsByTagName("range");
-    	                	//System.out.println( Ranges.getLength() );
-    	                	if(Ranges.getLength() == 1)
-    	                	{
-    	                		Node Range = Ranges.item(0);
-    	                		//System.out.println( Range.getNodeValue() );
-    	                		System.out.println( Range.getTextContent() );
-    	                		n = Integer.parseInt(Range.getTextContent());
-    	                		
-    	                	}
-    	                	else
-    	                	{
-    	                		//FIXME: no range.
-    	                	}
-    	            	}
-    	            }
-    	            else
-    	            {
-    	            	//TODO: Invalid Result From Server
-    	            }
-
-
-    	            
-
-    	        }catch (SAXParseException err) {
-    	        System.out.println ("** Parsing error" + ", line " 
-    	             + err.getLineNumber () + ", uri " + err.getSystemId ());
-    	        System.out.println(" " + err.getMessage ());
-
-    	        }catch (SAXException e) {
-    	        Exception x = e.getException ();
-    	        ((x == null) ? e : x).printStackTrace ();
-
-    	        }catch (Throwable th) {
-    	        th.printStackTrace ();
-    	        }
+    		comm_submitRange(n,fsum);
+    		n = comm_nextRange();
     		  
     		//n+=9;
     		

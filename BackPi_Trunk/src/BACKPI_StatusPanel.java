@@ -80,8 +80,13 @@ public class BACKPI_StatusPanel extends JPanel
         					tf.setName("Range");
         					a.add( tf );
         					
+        					a.add( new JLabel("Cpu Time:", JLabel.TRAILING) );
+        					tf = new JTextField(20);
+        					tf.setName("CPU");
+        					a.add( tf );
+        					
         					SpringUtilities.makeCompactGrid(a,
-                                    2, 2, //rows, cols
+                                    3, 2, //rows, cols
                                     6, 6,        //initX, initY
                                     6, 6);       //xPad, yPad
         					
@@ -119,6 +124,15 @@ public class BACKPI_StatusPanel extends JPanel
         				if(name!=null && name.equals("Range"))
         				{
         					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.Range) );
+        				}
+        				
+        				do{
+        					name = a.getComponent(j).getName();
+        					++j;
+        				}while( (name==null || !name.equals("CPU")) && j < a.getComponentCount() );
+        				if(name!=null && name.equals("CPU"))
+        				{
+        					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.cputime) );
         				}
 					}
 					
