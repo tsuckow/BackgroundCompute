@@ -26,6 +26,9 @@ abstract public class Plugin
 	// These shouldn't be tampered with by any other class (Including Inherited Ones).
 	//
 	
+	//Locks  //Create a REALLY SMALL but unique object.
+	private final static Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
+	
 	//Variables
 	
 	/**
@@ -132,6 +135,15 @@ abstract public class Plugin
 	 */
 	abstract protected void remove();
 	
+	/**
+     * Decides if another core is desired by the plugin.
+     * 
+     * Returns True - Another Processing Core Wanted ; False - Forfeit Core
+     * 
+     * @return Default: False - Never want a core.
+     */
+    protected boolean needCore(){return false;}
+	
 	//
 	//PUBLIC
 	//
@@ -187,7 +199,7 @@ abstract public class Plugin
      * 
      * @return Whether the Plugin is updating.
      */
-    publicf final boolean isUpdating()
+    public final boolean isUpdating()
     {
     	return running?updating:false;
     }
@@ -212,20 +224,9 @@ abstract public class Plugin
     }
     
     /**
-     * Decides if another core is desired by the plugin.
-     * 
-     * Returns True - Another Processing Core Wanted ; False - Forfeit Core
-     * 
-     * @return False - Never want a core.
-     */
-    public boolean needCore(){return false;}
-    
-
-    
-    /**
      * Starts the plugin or if it is already running spawns a new core (If Desired)
      * 
-     * @see #needCore()
+     *
      */
     public final void start()
     {
@@ -262,5 +263,69 @@ abstract public class Plugin
     	norun = true;
     	while(running) stop();
     	remover();
-    }  
+    }
+    
+    /**
+     * Checks how many cores are currently active.
+     * 
+     * @return Number of running cores
+     */
+    public final long getRunningCores()
+    {
+    	return 0;
+    }
+    
+    /**
+     * Starts the main core or other cores if needed.
+     * 
+     * @return True if the core was started; False if core not wanted
+     */
+    public final boolean startCore()
+    {
+    	synchronized(lock_core)
+		{
+    		if(norun || !needCore()) return false;
+    		//Create if need
+		}
+    	return true;
+    }
+    
+    /**
+     * Stops 1 running core. If none are running it does nothing.
+     */
+    public final void stopCore()
+    {
+    	synchronized(lock_core)
+		{
+    		//TODO
+		}
+    }
+    
+    /**
+     * Stops all running cores. If none are running it does nothing.
+     */
+    public final void stopAll()
+    {
+    	synchronized(lock_core)
+		{
+    		//TODO
+		}
+    }
+    
+    /**
+     * Shuts down the plugin and starts the uninstall procedure.
+     */
+    public final void doRemove()
+    {
+    	synchronized(lock_core)
+		{
+    		norun = true; //Stop all new core operations.
+		}
+    	
+    	stopAll(); //Stop All Cores
+    	
+    	remove(); //Call Plugins Removal Method
+    	
+    	//TODO: Remove from Plugin Cache and do garbage collection multiple times.
+    }
 }

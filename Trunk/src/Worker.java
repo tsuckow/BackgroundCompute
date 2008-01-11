@@ -26,12 +26,12 @@ public class Worker extends Thread
 	    	{ 	}
 	    	
 	    	int maxthreads = Runtime.getRuntime().availableProcessors();
-	    	String[] Plugins = Utils.getLocalPlugins();
 	    	
-	    	if(maxthreads > threads.size() && Plugins.length > threads.size())
+	    	if(maxthreads > threads.size())
 	    	{
 	    		WorkRunner runner = new WorkRunner();
 	    		runner.setPriority(Thread.MIN_PRIORITY);
+	    		System.out.println("Starting new worker thread");
 	    		runner.start();
 	    		threads.add(runner);
 	    	}

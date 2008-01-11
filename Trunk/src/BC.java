@@ -38,8 +38,8 @@ import java.security.*; //For MD5
 
 import java.util.List;
 //import java.lang.Integer;
- 
-public class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
+
+public final class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
 {
 	private static Properties defaultSettings()
 	{
@@ -61,7 +61,7 @@ public class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnabl
 	private static boolean SplashCreated = false;
 	
 	@Override
-	public Object doInBackground()
+	protected Object doInBackground()
 	{
 		createAndShowGUI();
 		return new Object();

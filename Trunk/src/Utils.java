@@ -4,8 +4,6 @@
  * Background Compute ( Manages Distributed Projects )
  * Copyright (C) 2007 Thomas Suckow (Deathbob)
  *
- * @author Deathbob
- * @version 1.00 2007/2/11
  */
  
 import java.awt.*;
@@ -16,12 +14,19 @@ import java.io.*;//File
 import java.util.HashMap;
 import java.lang.String;
 
+/**
+ * Contains many of the various utilities that other parts of the application might need.
+ * 
+ * @author Deathbob
+ * @version 1.00 2007/2/11
+ */
+
 public class Utils
 {
 	private Utils(){} //Since this only contains static members, prevent an instance of this class from being created.  
 	
 	//Locks
-	private final static Object lock_tray = new int[1];//Create a REALLY SMALL but unique object.
+	private final static Object lock_tray = new Object();//Create a REALLY SMALL but unique object.
 	
 	private static TrayIcon trayIcon = null;
 	
