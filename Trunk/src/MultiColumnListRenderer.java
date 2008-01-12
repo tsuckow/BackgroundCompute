@@ -21,6 +21,19 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
 		status[2] = "images/status_blue.png";
     }
     
+    private int stateCode(Plugin.state st)
+    {
+    	switch(st)
+    	{
+    		case Stopped:
+    			return 1;
+    		case Running:
+    			return 0;
+    		default:
+    			return 2;
+    	}
+    }
+    
     /*
      * This method finds the image and text corresponding
      * to the selected value and returns the label, set up
@@ -43,7 +56,7 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
     		Plugin plug = Utils.loadPlugin( (String)value );
     		
     		
-    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ 0 ]) + "'></td></tr></table></html>");
+    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ stateCode( plug.getState() ) ]) + "'></td></tr></table></html>");
 		
     		wow.add(a,BorderLayout.CENTER);
        

@@ -7,6 +7,10 @@
  */
 
 import javax.swing.*;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+import java.nio.DoubleBuffer;
 import java.util.*;
 
 /**
@@ -20,6 +24,7 @@ import java.util.*;
 
 abstract public class Plugin
 {
+	private static final long serialVersionUID = 1L;
 	//CONSTS
 	
 	/**
@@ -40,25 +45,64 @@ abstract public class Plugin
 	private final Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
 	private final Object lock_coreManager = new Object(); //Locks whenever we do something with whether the core manger is running.
 	
-	private volatile state currentState = state.Stopped;
+	private volatile state currentState = state.Stopped;//FIXME: Race condition Exists, Low Priority (Fixed?)
 	
 	//Variables
 	
-	private List<Thread> threadList = Collections.synchronizedList(new LinkedList<Thread>());
+	private List<coreInstance> threadList = Collections.synchronizedList(new LinkedList<coreInstance>());
 	
 	private volatile long threadCount = 0;
 
 	private volatile boolean coreManagerRunning = false;
 	
-	//Functions
-	
 	//Classes
+	
+	private final class coreInstance
+	{
+		private volatile Thread thread = null;
+		private DoubleBuffer CPUbuffer = DoubleBuffer.allocate(20);
+		
+		public coreInstance(Thread t)
+		{
+			this.thread = t;
+		}
+		
+		public Thread getThread()
+		{
+			return thread;
+		}
+		
+		public volatile long measurementStartTime = 0;
+		public volatile long measurementStartCPU = 0;
+		
+		public volatile long CPUThrottle = 100;
+		public volatile boolean doCPUThrottle = false;
+		
+		public synchronized void CPUusagePut(double d)
+		{
+			if(CPUbuffer.remaining() == 0)
+				CPUbuffer.rewind();
+			CPUbuffer.put(d);
+		}
+		
+		public synchronized double CPUusageGetAve()
+		{
+			final double[] usages = CPUbuffer.array();
+			double Ave = 0;
+			for( double usage : usages )
+			{
+				Ave += usage;
+			}
+			return Ave / usages.length;
+		}
+	}
 	
 	private final class coreManager extends Thread
 	{
 		@Override
 		public void run()
 		{
+			ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
 			while(true)
 			{
 				synchronized(lock_core)
@@ -67,18 +111,57 @@ abstract public class Plugin
 					{
 						currentState = state.Initilizing;
 						coreRunner cr = new coreRunner(threadList.size()==0);
-						threadList.add(cr);
+						threadList.add(new coreInstance(cr));
 						cr.setPriority(Thread.MIN_PRIORITY);
 						cr.start();
-						currentState = state.Running;
 					}
 				
 				
-					Iterator<Thread> it = threadList.iterator();
+					Iterator<coreInstance> it = threadList.iterator();
 					while(it.hasNext())
 					{
-						Thread th = it.next();
-						if(!th.isAlive()) it.remove();
+						coreInstance ci = it.next();
+						Thread th = ci.getThread();
+						if(!th.isAlive())
+						{
+							it.remove();
+						}
+						else
+						{
+							//Do CPU Usage stuff
+							if(new Date().getTime() * 1000000 - ci.measurementStartTime > 1 * 1000000000)
+		    				{
+								//Store Numbers
+								if(new Date().getTime() * 1000000 - ci.measurementStartTime != 0)
+									ci.CPUusagePut( ( TMB.getThreadCpuTime(th.getId()) - ci.measurementStartCPU) / (new Date().getTime() * 1000000.0 - ci.measurementStartTime) * 100.0 );
+								
+								//Reset
+		    					ci.measurementStartTime = new Date().getTime() * 1000000;
+		    					if( TMB.isThreadCpuTimeSupported() )
+				    			{
+		    						if(!TMB.isThreadCpuTimeEnabled())
+				    				{
+				    					TMB.setThreadCpuTimeEnabled(true);
+				    				}
+		    						
+		    						ci.measurementStartCPU = TMB.getThreadCpuTime(th.getId());
+				    			}
+		    					
+		    					//Adjust
+		    					if(ci.CPUusageGetAve() > 60 && ci.CPUusageGetAve() != 0)
+		    					{
+		    						ci.CPUThrottle += ci.CPUusageGetAve()-60 +1;
+		    					}
+		    					if(ci.CPUusageGetAve() < 60 - 10 && ci.CPUusageGetAve() != 0)
+		    					{
+		    						ci.CPUThrottle -= (60-10) - ci.CPUusageGetAve() + 1;
+		    					}
+		    					if(ci.CPUThrottle < 1) ci.CPUThrottle = 1;
+		    					ci.doCPUThrottle = true;
+		    					//BC.PError("CPU Test: " + ci.CPUusageGetAve());
+		    					System.out.println("CPU Test: " + ci.CPUusageGetAve());
+		    				}
+						}
 					}
 				}
 				
@@ -118,9 +201,10 @@ abstract public class Plugin
 		@Override
 		public void run()
 		{
+			currentState = state.Running;
 			if(main)
 			{
-				currentState = state.Running;
+				
 				main();
 			}
 			else
@@ -229,13 +313,47 @@ abstract public class Plugin
 	protected final boolean currentCoreShouldExit()
 	{
 		Thread ct = Thread.currentThread();
+		long sleeptime = 0;
 		synchronized(lock_core)
 		{
-			if(threadList.size() > threadCount && threadList.lastIndexOf(ct) == threadList.size()-1)
+			int index = -1;
+			coreInstance ci = null;
+			Iterator<coreInstance> it = threadList.iterator();
+			while(it.hasNext())
 			{
-				return true;
+				ci = it.next();
+				Thread th = ci.getThread();
+				if( ct.equals(th) )
+				{
+					index = threadList.lastIndexOf(ci);
+				}
+			}
+			
+			if(index != -1)
+			{
+				if(threadList.size() > threadCount && index == threadList.size()-1)
+				{
+					return true;
+				}
+			
+				if(ci.doCPUThrottle)
+				{
+					ci.doCPUThrottle = false;
+					sleeptime = ci.CPUThrottle;
+					if(sleeptime < 1) sleeptime = 1;
+				}
 			}
 		}
+		
+		try
+    	{
+			Thread.sleep(sleeptime);
+    	}
+    	catch(InterruptedException e)
+    	{ 	}
+		
+    	if(sleeptime > 0) System.out.println("Slept for: " + sleeptime);
+		
 		return false;
 	}
 	

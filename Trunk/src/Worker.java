@@ -57,9 +57,11 @@ public class Worker extends Thread
 	    			if(!didsomething && coreTotal < maxthreads && cores == coreLevelMin)
 	    			{
 	    				System.out.println("Started core on plugin: " + plug.getName());
-	    				plug.startCore();
-	    				cores = plug.getRunningCores();
-	    				didsomething = true;
+	    				if ( plug.startCore() )//core started.
+	    				{
+	    					cores = plug.getRunningCores();
+	    					didsomething = true;
+	    				}
 	    			}
 	    			
 	    			//Update the stats

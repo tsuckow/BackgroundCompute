@@ -667,7 +667,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     }
     
      //Restart Program (Thanks to the makers of JAP)
-    static public void restart(String ClassName,String App)
+    static public void restart(String ClassName,String App)//FIXME: Failed to work on Fedora 8
 	{
 		String CLASS_PATH = "";
 		if(CLASS_PATHM.indexOf(';') > 0)
@@ -717,7 +717,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 			}
 			catch (Exception a_e)
 			{
-				System.out.println("Error auto-restart: " + ex);
+				PError("Error auto-restart: " + ex);
 			}
 		}
 	}
