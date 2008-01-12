@@ -332,7 +332,7 @@ public class BACKPI_Plugin extends Plugin
    	
    	private boolean coreShutdown(BACKPI_Status status)
    	{
-   		if( isStopping() )
+   		if( currentCoreShouldExit() )
    		{
    			Threads.remove(status);
    			return true;
@@ -341,7 +341,7 @@ public class BACKPI_Plugin extends Plugin
    	}
    	
    	@Override
-    public void run()
+    public void main()
     {
    		BACKPI_Status status = new BACKPI_Status();
    		Threads.add(status);
@@ -575,6 +575,7 @@ public class BACKPI_Plugin extends Plugin
     	}
     }
     
+   	@Override
     public String getName()
     {
     	return "Background Pi";
@@ -586,11 +587,13 @@ public class BACKPI_Plugin extends Plugin
     	return "<img src='" + BACKPI_Plugin.class.getResource("images/Info.png") + "'>";
     }
     
+    @Override
     public JPanel getSettings()
     {
     	return null;
     }
     
+    @Override
     public JPanel getStatus()
     {
     	JPanel statusPanel = new BACKPI_StatusPanel(Threads);
@@ -606,7 +609,7 @@ public class BACKPI_Plugin extends Plugin
     @Override
     protected void core()
     {
-    	run();
+    	main();
     }
     
     public void remove()
