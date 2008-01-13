@@ -22,15 +22,17 @@ public class Worker extends Thread
     { 	
     	long coreLevelMax = 0;//Max's
     	long coreLevelMin = Long.MAX_VALUE;
-    	
+    	long coreTotal = 0;
     	while(true)
     	{
     		long IcoreLevelMax = 0;
-        	long IcoreLevelMin = 0;
-        	long coreTotal = 0;
+        	long IcoreLevelMin = Long.MAX_VALUE;
+        	long IcoreTotal = 0;
+        	
     		boolean didsomething = false;
     		
 	    	int maxthreads = Runtime.getRuntime().availableProcessors();
+	    	if(coreTotal < maxthreads) System.out.println("Idle Cores: " + (maxthreads - coreTotal) + " Min: " + coreLevelMin + " Max: " + coreLevelMax);
 	    	
 	    	String[] Plugins = Utils.getLocalPlugins();
 	    	for(int i = 0; i < Plugins.length; ++i)
@@ -65,7 +67,7 @@ public class Worker extends Thread
 	    			}
 	    			
 	    			//Update the stats
-	    			coreTotal += cores;
+	    			IcoreTotal += cores;
 	    			if(cores < IcoreLevelMin)//Min Search
 	    			{
 	    				IcoreLevelMin = cores;
@@ -79,43 +81,7 @@ public class Worker extends Thread
     	
 	    	coreLevelMax = IcoreLevelMax;
 	    	coreLevelMin = IcoreLevelMin;
-/*	    	
-	    	if(!didsomething && coreCount < maxthreads)
-	    	{
-	    		coreLevel++;
-	    	}
-	    		
-	    	didsomething = false;
-	    	
-	    	
-	    	
-	    	String[] Plugins = Utils.getLocalPlugins();
-	    	for(int i = 0; i < Plugins.length; ++i)
-	    	{
-	    		Plugin plug = Utils.loadPlugin(Plugins[i]);
-	    		if(plug.getState() == Plugin.state.Stopped)
-	    		{
-	    				System.out.println("Started new plugin: " + plug.getName());
-	    				plug.startCore();
-	    				didsomething = true;
-	    			}//~If
-	    			else if(!didsomething && coreOK)
-	    			{
-	    				System.out.println("Started new core: " + plug.getName());
-	    				plug.core();
-	    				didsomething = true;
-	    			}
-	    				
-	    			try
-			    	{
-			    		Thread.sleep(3000);//TODO: Lower this number.
-			    	}
-			    	catch(InterruptedException e)
-			    	{ 	}
-	    			Plugins = Utils.getLocalPlugins();//Refresh Plugin List
-	    			
-	    		}//~For
-*/
+	    	coreTotal = IcoreTotal;
 	    	
 	    	try
 	    	{

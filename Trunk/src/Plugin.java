@@ -129,7 +129,7 @@ abstract public class Plugin
 						else
 						{
 							//Do CPU Usage stuff
-							if(new Date().getTime() * 1000000 - ci.measurementStartTime > 1 * 1000000000)
+							if(new Date().getTime() * 1000000 - ci.measurementStartTime > 0.5 * 1000000000)
 		    				{
 								//Store Numbers
 								if(new Date().getTime() * 1000000 - ci.measurementStartTime != 0)
