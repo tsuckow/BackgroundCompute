@@ -2,7 +2,7 @@
  * @(#)BPC.java
  *
  * Background Compute ( Manages Distributed Projects )
- * Copyright (C) 2007 Thomas Suckow (Deathbob)
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,9 @@
  *
  * support@defcon1.hopto.org
  *
- * @author Deathbob
- * @version 0.1 2006/12/20
+ * 
  */
-
+package net.sf.backcomp.utils;
  
 import javax.swing.*;
 import java.awt.*;
@@ -37,14 +36,23 @@ import java.net.*; //URL
 import java.security.*; //For MD5
 
 import java.util.List;
-//import java.lang.Integer;
 
+
+/**
+ * 
+ * @author Deathbob
+ * @version 0.2 2008/01/23
+ * 
+ * The Loader for Background Compute
+ *
+ */
 public final class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
 {
 	private static Properties defaultSettings()
 	{
 		Properties set = new Properties();
 		
+		set.setProperty("cpu_limit", "80");
 		set.setProperty("locale", "en");
 		set.setProperty("update", "yes");
 		set.setProperty("server_path", "http://defcon1.hopto.org/bc/");
@@ -52,8 +60,8 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		return set;
 	}
 	
-	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
-	public static ResourceBundle LTextRB = null;
+	final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
+	static ResourceBundle LTextRB = null;
 	
 	private static JLabel Text = null;
 	private static JProgressBar PB = null;
@@ -127,7 +135,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         	//frame.dispose();
 			//frame = null;
         	publish( new Object[] {} ); //Destroy the Splash Screen
-			javax.swing.SwingUtilities.invokeLater( new mainapp() );
+			javax.swing.SwingUtilities.invokeLater( new Mainapp() );
 			return;
         }
         
@@ -274,7 +282,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     	publish( new Object[] {} ); //Destroy the Splash Screen
 		
 		//Start the mainapp
-		javax.swing.SwingUtilities.invokeLater( new mainapp() );
+		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
     }
     
     @Override    
@@ -429,7 +437,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     	//javax.swing.SwingUtilities.invokeLater( new mainapp() );
     }
     
-	static public String LocaleFormat(String template, Object[] Args)
+	static String LocaleFormat(String template, Object[] Args)
 	{
 		Locale CurrentLocale = null;
 		if( Settings.getProperty("locale") != null )
@@ -452,7 +460,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 	}
     
     //Get file from remote website, relative to the server_path setting.
-    static public String[] getRemoteList(String file)
+    static String[] getRemoteList(String file)
     {
     	ArrayList<String> data = new ArrayList<String>();
     	try
@@ -489,7 +497,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     }
     
     //Gets size of file on Remote Server (if availible) relative to SERVER_PATH
-    static public int getRemoteSize(String file)
+    static int getRemoteSize(String file)
     {
     	try
     	{
@@ -513,7 +521,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
   		}
     }
     
-    static public String[] getLocalList(String file)
+    static String[] getLocalList(String file)
     {
     	ArrayList<String> data = new ArrayList<String>();
 		try
@@ -539,7 +547,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     }
     
     //Get MD5 Hash as a hex string.
-    static public String getLocalHash(String file)
+    static String getLocalHash(String file)
     {
     	//Byte array because JAVA returns Binary
     	byte[] res;
@@ -578,7 +586,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     }
     
     //Do a file transfer.
-    public boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
+    private boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
     {
     	int PBVal = 0;
     	int RemoteSize = getRemoteSize(sFile);
@@ -648,7 +656,11 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		return true;
     }
     
-    static public void PError(String msg)
+    /**
+     * @deprecated
+     * @param msg
+     */
+    static void PError(String msg)
 	{
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
@@ -661,13 +673,13 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     
     static final String CLASS_PATHM = getClassPath().trim(); //Class Path for restart
     
-    static public void restart(String ClassName)
+    static void restart(String ClassName)
     {
     	restart(ClassName, "");
     }
     
      //Restart Program (Thanks to the makers of JAP)
-    static public void restart(String ClassName,String App)//FIXME: Failed to work on Fedora 8
+    static void restart(String ClassName,String App)//FIXME: Failed to work on Fedora 8
 	{
 		String CLASS_PATH = "";
 		if(CLASS_PATHM.indexOf(';') > 0)
@@ -723,7 +735,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 	}
 	
 	//Return Class Path for update (Thanks to the makers of JAP)
-	protected static String getClassPath()
+	private static String getClassPath()
 	{
 		try
 		{
@@ -766,9 +778,9 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
  *
  * What won't those crazy lawyers think up next? */
  
-	static public String toHexF(byte[] b) { return toHexF(b, b.length); }
+	static String toHexF(byte[] b) { return toHexF(b, b.length); }
  
-	static public String toHexF(byte[] b, int len)
+	static String toHexF(byte[] b, int len)
 	{
 		StringBuffer s = new StringBuffer("");
 		int i;
@@ -783,7 +795,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		return s.toString();
 	}
         
-	static public String toHex(byte b)
+	static String toHex(byte b)
 	{
 		Integer I = new Integer((((int)b) << 24) >>> 24);
 		int i = I.intValue();

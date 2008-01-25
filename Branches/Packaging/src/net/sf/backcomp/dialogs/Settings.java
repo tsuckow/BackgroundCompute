@@ -1,10 +1,13 @@
 /**
  * @(#)Settings.java
  *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
  *
- * @author 
- * @version 1.00 2007/2/22
  */
+package net.sf.backcomp.dialogs;
+
+import net.sf.backcomp.utils.*;
 
 import java.awt.*;
 import java.util.*;
@@ -41,7 +44,7 @@ public class Settings
 			{
 				JLabel l = new JLabel((BC.LTextRB!=null)?BC.LTextRB.getString("Settings_" + item):"Error", JLabel.TRAILING);
     			p.add(l);
-    			JTextField textField = new JTextField(BC.Settings.getProperty(item), 20);
+    			JTextField textField = new JTextField(SettMan.getSetting(item), 20);
     			l.setLabelFor(textField);
     			p.add(textField);
 				
@@ -49,7 +52,7 @@ public class Settings
 			}
 			catch(MissingResourceException e)
 			{
-				Utils.iconMessage("Opps", "Locale Data Missing", TrayIcon.MessageType.ERROR);
+				Tray.iconMessage("Opps", "Locale Data Missing", TrayIcon.MessageType.ERROR);
 			}
 		}
              	

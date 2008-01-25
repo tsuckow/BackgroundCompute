@@ -1,3 +1,4 @@
+package net.sf.backcomp.dialogs;
 /**
  * @(#)Settings.java
  *
@@ -55,10 +56,7 @@ public class PluginAdder
         
         JPanel Manage = new JPanel();
         Manage.add(new JButton("Install"));
-        JButton remove = new JButton("Remove");
-        remove.addActionListener(new RemoveButton());
-        Manage.add(remove);
-        
+
         RightSide.add(Manage,BorderLayout.NORTH);
         RightSide.add(new PluginInfo(),BorderLayout.CENTER);
         
@@ -79,22 +77,5 @@ public class PluginAdder
 		{
 			add(new JLabel("<html>Hi<img src='http://defcon1.hopto.org/Title2.gif'></html>"));
 		}
-	}
-	private static class RemoveButton implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e)
-        {
-        	if(list == null)
-        	{
-        		//Uhoh
-        	}
-        	else
-        	{
-        		if(list.getSelectedIndex() != -1)
-        		{
-        			 BC.PError("Got Selection");
-        		}
-        	}
-        }
 	}
 }

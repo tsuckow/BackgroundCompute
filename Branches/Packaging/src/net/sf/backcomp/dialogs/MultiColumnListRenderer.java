@@ -1,10 +1,14 @@
 /**
  * @(#)MultiColumnListRenderer.java
  *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
  *
- * @author 
- * @version 1.00 2007/6/21
  */
+package net.sf.backcomp.dialogs;
+
+import net.sf.backcomp.plugins.*;
+import net.sf.backcomp.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,7 +57,7 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
     	{
     		wow.setLayout(new BorderLayout());
  		
-    		Plugin plug = Utils.loadPlugin( (String)value );
+    		Plugin plug = PluginLoader.loadPlugin( (String)value );
     		
     		
     		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + BC.class.getResource(status[ stateCode( plug.getState() ) ]) + "'></td></tr></table></html>");
@@ -66,7 +70,7 @@ public class MultiColumnListRenderer extends DefaultListCellRenderer
     	}
     	catch(Exception ex)
     	{
-    		Utils.iconMessage( ex.getMessage() ,"Unhandled Exception in Renderer", TrayIcon.MessageType.ERROR);				
+    		Tray.iconMessage( ex.getMessage() ,"Unhandled Exception in Renderer", TrayIcon.MessageType.ERROR);				
     	}
 
         return wow;
