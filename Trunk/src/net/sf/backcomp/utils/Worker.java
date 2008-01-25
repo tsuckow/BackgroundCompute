@@ -8,6 +8,12 @@
  * @version 1.00 2007/2/10
  */
 
+package net.sf.backcomp.utils;
+
+import net.sf.backcomp.plugins.Plugin;
+import net.sf.backcomp.plugins.PluginLoader;
+
+
 /**
  * This is the class for managing Plugins.
  *  
@@ -16,7 +22,7 @@
  * @version 0.2.0 2008/1/11
  */
 
-public class Worker extends Thread
+class Worker extends Thread
 {	
     public void run()
     { 	
@@ -34,10 +40,10 @@ public class Worker extends Thread
 	    	int maxthreads = Runtime.getRuntime().availableProcessors();
 	    	if(coreTotal < maxthreads) System.out.println("Idle Cores: " + (maxthreads - coreTotal) + " Min: " + coreLevelMin + " Max: " + coreLevelMax);
 	    	
-	    	String[] Plugins = Utils.getLocalPlugins();
+	    	String[] Plugins = PluginLoader.getLocalPlugins();
 	    	for(int i = 0; i < Plugins.length; ++i)
 	    	{
-	    		Plugin plug = Utils.loadPlugin(Plugins[i]);
+	    		Plugin plug = PluginLoader.loadPlugin(Plugins[i]);
 	    		if(plug != null)
 	    		{
 	    			long cores = plug.getRunningCores();

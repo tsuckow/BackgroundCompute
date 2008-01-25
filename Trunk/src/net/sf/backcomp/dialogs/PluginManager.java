@@ -1,16 +1,21 @@
 /**
- * @(#)Settings.java
+ * @(#)PluginManager.java
  *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
  *
- * @author 
- * @version 1.00 2007/2/22
  */
+package net.sf.backcomp.dialogs;
+
+import net.sf.backcomp.plugins.*;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+
 
 public class PluginManager
 {
@@ -37,7 +42,7 @@ public class PluginManager
 		
 		JPanel p = new JPanel();
 		
-		installedPlugins = Utils.getLocalPlugins();
+		installedPlugins = PluginLoader.getLocalPlugins();
 		
 		//TODO: THIS MAY BE NO LONGER NEEDED
 		String[] pluginList = new String[installedPlugins.length];
@@ -113,7 +118,7 @@ public class PluginManager
 	
 	private static void PluginInfo(JLabel label, String name)
 	{
-			Plugin plug = Utils.loadPlugin(name);
+			Plugin plug = PluginLoader.loadPlugin(name);
         	String Info = "<html>Error: Unable to load Plugin</html>";
         	if(plug!=null)
         	{
@@ -153,7 +158,7 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			plug.stopAll(true);
         			//frame.dispose();
 					//frame = null;
@@ -176,7 +181,7 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			int n = JOptionPane.showConfirmDialog(
         				    frame,
         				    "Are you sure you want to uninstall: \"" + plug.getName() + "\"",
@@ -208,7 +213,7 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = Utils.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			JFrame bob = new JFrame(plug.getName());
         			bob.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         			

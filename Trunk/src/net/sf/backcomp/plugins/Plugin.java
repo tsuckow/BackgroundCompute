@@ -5,11 +5,15 @@
  * Copyright (C) 2007 Thomas Suckow (Deathbob)
  *
  */
+package net.sf.backcomp.plugins;
+
+import net.sf.backcomp.debug.*;
 
 import javax.swing.*;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+
 import java.nio.DoubleBuffer;
 import java.util.*;
 
@@ -159,7 +163,7 @@ abstract public class Plugin
 		    					if(ci.CPUThrottle < 1) ci.CPUThrottle = 1;
 		    					ci.doCPUThrottle = true;
 		    					//BC.PError("CPU Test: " + ci.CPUusageGetAve());
-		    					System.out.println("CPU Test: " + ci.CPUusageGetAve());
+		    					Debug.message("CPU Test: " + ci.CPUusageGetAve(),DebugLevel.Debug);
 		    				}
 						}
 					}
@@ -306,7 +310,7 @@ abstract public class Plugin
 		
 		stopAll(true);
 		
-		BC.PError("Attempt to reload Plugin; Not Implemented"); return;
+		Debug.messageDlg("Attempt to reload Plugin; Not Implemented",DebugLevel.NotImplemented); return;
 		//TODO: Reload Code
 	}
 	
@@ -496,7 +500,7 @@ abstract public class Plugin
     	
     	currentState = state.Removing;
     	
-    	BC.PError("Tried to remove a plugin; Not Implemented");
+    	Debug.messageDlg("Tried to remove a plugin; Not Implemented",DebugLevel.NotImplemented);
     	return;
     	
     	//remove(); //Call Plugins Removal Method
