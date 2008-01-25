@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * 
  * @author Deathbob
- * @version 0.2 2008/01/23
+ * @version 0.2 2008/01/25
  * 
  * The Loader for Background Compute
  *
@@ -306,7 +306,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
                     /*JWindow*/ frame = new JWindow();//"Updater");
                     //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     
-                    frame.setSize(300,140);
+                    frame.setSize(300,160);//33x100
                 	//frame.setResizable(false);
                 	//frame.setUndecorated(true);
 
@@ -337,7 +337,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
             		PB.setIndeterminate(true);
             		
             		South.add(Text,BorderLayout.CENTER);
-            		South.add(PB,BorderLayout.EAST);
+            		South.add(PB,BorderLayout.SOUTH);
                 	
                 	mainPane.add(South,BorderLayout.SOUTH);
                 	
@@ -439,17 +439,19 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     
 	static String LocaleFormat(String template, Object[] Args)
 	{
-		Locale CurrentLocale = null;
-		if( Settings.getProperty("locale") != null )
-		{
-			CurrentLocale = new Locale( Settings.getProperty("locale") );
-		}
-		else
-		{
-			CurrentLocale = new Locale( "en" );
-		}
+		
 		if(LTextRB!=null)
 		{	
+			Locale CurrentLocale = null;
+			if( Settings.getProperty("locale") != null )
+			{
+				CurrentLocale = new Locale( Settings.getProperty("locale") );
+			}
+			else
+			{
+				CurrentLocale = new Locale( "en" );
+			}
+			
 			MessageFormat formatter = new MessageFormat( LTextRB.getString( template ), CurrentLocale );
 			return formatter.format(Args);
 		}
