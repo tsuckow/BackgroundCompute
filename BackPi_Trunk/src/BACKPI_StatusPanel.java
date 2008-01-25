@@ -8,10 +8,14 @@
  * @version 0.1 2007/2/11
  */
 
+import net.sf.backcomp.debug.*;
+
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.*;
+
+import net.sf.backcomp.utils.SpringUtilities;
 
 public class BACKPI_StatusPanel extends JPanel
 {
@@ -158,7 +162,7 @@ public class BACKPI_StatusPanel extends JPanel
         	}
         	catch(Exception e)
         	{
-        		BC.PError( e.getMessage() + Utils.getStackTrace(e) );
+        		Debug.messageDlg("Exception in status dialog thread.", DebugLevel.Error, e);
         	}
         }
     }

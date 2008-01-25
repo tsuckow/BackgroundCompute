@@ -23,10 +23,14 @@
  * @version 0.1 2006/12/20
  */
 
+import net.sf.backcomp.plugins.Plugin;
+import net.sf.backcomp.utils.*;
+
 import java.awt.TrayIcon;
 import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -543,7 +547,7 @@ public class BACKPI_Plugin extends Plugin
     		  
     		  int fsum = new Double(sum * 1000000000).intValue();
     		  
-    		  Utils.iconMessage("BP: " + fsum,"Message: " + n,TrayIcon.MessageType.INFO);
+    		  Tray.iconMessage("BP: " + fsum,"Message: " + n,TrayIcon.MessageType.INFO);
     		  
     		//
     		//
