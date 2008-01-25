@@ -110,7 +110,7 @@ public final class Tray
 	 * @param msg Message to display
 	 * @param type Icon to Display
 	 * 
-	 * @see Utils
+	 * @see net.sf.backcomp.utils.Tray
 	 *
 	 */
 	public static void iconMessage(String title, String msg, TrayIcon.MessageType type)

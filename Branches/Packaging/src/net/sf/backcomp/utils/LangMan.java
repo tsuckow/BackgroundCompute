@@ -7,6 +7,8 @@
  */
 package net.sf.backcomp.utils;
 
+import net.sf.backcomp.debug.*;
+
 /**
  * 
  * Manages language localization.
@@ -18,5 +20,27 @@ public final class LangMan
 {
 	private LangMan(){}//This is a static class
 	
+	/**
+	 * 
+	 * @param key Resource Key
+	 * @param alt Alternative if key is empty
+	 * @return Localized value stored at {@code key} or {@code alt} if not found.
+	 */
+	public static String getString(String key, String alt)
+	{
+		if(BC.LTextRB != null)
+		{
+			try
+			{
+				return BC.LTextRB.getString(key);
+			}
+			catch(Exception e)
+			{
+				//No such compatible key.
+				Debug.message("Missing Locale Information For Key: " + key, DebugLevel.Information, e);
+			}
+		}
+		return alt;
+	}
 	
 }

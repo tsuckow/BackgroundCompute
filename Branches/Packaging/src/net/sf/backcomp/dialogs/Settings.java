@@ -9,9 +9,6 @@ package net.sf.backcomp.dialogs;
 
 import net.sf.backcomp.utils.*;
 
-import java.awt.*;
-import java.util.*;
-
 import javax.swing.*;
 
 public class Settings
@@ -40,20 +37,13 @@ public class Settings
 		int numitems = 0; //Number of rows in dialog
 		for(String item : settings)
 		{
-			try
-			{
-				JLabel l = new JLabel((BC.LTextRB!=null)?BC.LTextRB.getString("Settings_" + item):"Error", JLabel.TRAILING);
+				JLabel l = new JLabel(LangMan.getString("Settings_" + item, "Unknown PARM:"), JLabel.TRAILING);
     			p.add(l);
     			JTextField textField = new JTextField(SettMan.getSetting(item), 20);
     			l.setLabelFor(textField);
     			p.add(textField);
 				
 				++numitems;
-			}
-			catch(MissingResourceException e)
-			{
-				Tray.iconMessage("Opps", "Locale Data Missing", TrayIcon.MessageType.ERROR);
-			}
 		}
              	
 				//Lay out the panel.

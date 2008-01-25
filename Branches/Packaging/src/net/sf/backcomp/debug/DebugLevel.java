@@ -1,3 +1,3 @@
 package net.sf.backcomp.debug;
 
-public enum DebugLevel {Error, Warning, Information, NotImplemented, Debug};
+public enum DebugLevel {Fatal, Error, Warning, Information, NotImplemented, Debug};

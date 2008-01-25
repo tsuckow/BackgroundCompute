@@ -7,8 +7,9 @@ package net.sf.backcomp.dialogs;
  * @version 1.00 2007/2/22
  */
 
+import net.sf.backcomp.plugins.*;
+
 import java.awt.*;
-import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -32,7 +33,7 @@ public class PluginAdder
 		
 		JPanel p = new JPanel();
 		
-		String[] installedPlugins = BC.getLocalList("installedplugins.txt");
+		String[] installedPlugins = PluginLoader.getLocalPlugins();
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{

@@ -20,12 +20,21 @@ final class DebugMsg
 {
 	private DebugLevel lvl = DebugLevel.Debug;
 	private String msg = "";
+	private String stack = null;//Stack Trace, if available
 	private long time = 0;
 	
 	public DebugMsg(String msg, DebugLevel lvl)
 	{
 		this.msg = msg;
 		this.lvl = lvl;
+		time = new Date().getTime();
+	}
+	
+	public DebugMsg(String msg, DebugLevel lvl, String stack)
+	{
+		this.msg = msg;
+		this.lvl = lvl;
+		this.stack = stack;
 		time = new Date().getTime();
 	}
 	
@@ -42,5 +51,9 @@ final class DebugMsg
 	public long getTime()
 	{
 		return time;
+	}
+	public String getStack()
+	{
+		return stack;
 	}
 }
