@@ -25,6 +25,7 @@
 
 import net.sf.backcomp.plugins.Plugin;
 import net.sf.backcomp.utils.*;
+import net.sf.backcomp.debug.*;
 
 import java.awt.TrayIcon;
 import javax.swing.JPanel;
@@ -37,38 +38,47 @@ import org.xml.sax.SAXParseException;
 
 import java.util.Properties;
 import java.util.concurrent.*;
-import java.util.Date;
-
-import java.lang.management.*;
 
 public class BACKPI_Plugin extends Plugin
 {
+	
 	private CopyOnWriteArrayList<BACKPI_Status> Threads = new CopyOnWriteArrayList<BACKPI_Status>();
 	private static Properties defaultSettings()
 	{
 		Properties set = new Properties();
 		
-		set.setProperty("username", "");
+		//set.setProperty("username", "");
 		set.setProperty("server_path", "http://defcon1.hopto.org/backpi/");
 		
 		return set;
 	}
+	private static Properties defaultResume()
+	{
+		Properties set = new Properties();
+		
+		set.setProperty("range", "1");
+		set.setProperty("iteration", "0");
+		set.setProperty("sum", "0");
+		
+		return set;
+	}
 	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
+	public final static Properties Resume = new Properties( defaultResume() );//Load settings object with defaults
 	
 	public BACKPI_Plugin() //{}
-	{
-		 
-	}
-    
+	{}
+	
     //int i = 0;
     
+	
 	private long comm_nextRange()
 	{
+        
 		try
 		{
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/getNextRange.php?username=" + Settings.getProperty("username"));
+            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/getNextRange.php" + ( (Settings.getProperty("username") == null)?"":"?username=" + Settings.getProperty("username")) );
 
             // normalize text representation
             doc.getDocumentElement ().normalize ();
@@ -140,11 +150,18 @@ public class BACKPI_Plugin extends Plugin
 	 */
 	private void comm_submitRange(long range, int data)
 	{
+		if(range == 1 && data != 141592653)
+		{
+			Debug.messageDlg("Computation Error Detected In Plugin BACKPI!", DebugLevel.Fatal);
+			stopAll(true);
+			throw new Error("BACKPI: Calculation of range 1 failed.");
+		}
+		
 		try
 		{
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/submitRange.php?range=" + range + "&data=" + data + "&username=" + Settings.getProperty("username"));
+            Document doc = docBuilder.parse ("http://defcon1.hopto.org/backpi/submitRange.php?range=" + range + "&data=" + data + ( (Settings.getProperty("username") == null)?"":"&username=" + Settings.getProperty("username")));
 
             // normalize text representation
             doc.getDocumentElement ().normalize ();
@@ -354,6 +371,8 @@ public class BACKPI_Plugin extends Plugin
     	
     	while(true)
     	{
+    		BACKPI_ResumeData rdata = null;
+    		
     		//
     		//
     		//
@@ -363,45 +382,51 @@ public class BACKPI_Plugin extends Plugin
     		long av,a,vmax,N,num,den,k,kq1,kq2,kq3,kq4,t,v,s,i,t1;
     		double sum;
     		
+    		a=2;
+    		
+    		rdata = BACKPI_ResumeData.resumeNext();
+    		if(rdata != null)
+    		{
+    			n = rdata.range;
+    			a = next_prime(rdata.iteration);
+    			sum = rdata.sum;
+    			
+    			Tray.iconMessage("Iteration: " + a,"Resumed: " + n,TrayIcon.MessageType.INFO);
+    		}
+    		else
+    		{
+    			n = comm_nextRange();
+            	sum = 0;
+            	a=2;
+            	
+            	rdata = new BACKPI_ResumeData();
+            	rdata.range = n;
+            	rdata.iteration = a;
+            	rdata.sum = sum;
+    		}
+    		
+    		if(n <= 0 || a < 2 || sum < 0)
+    		{
+    			Debug.message("BACKPI: Invalid Calculation Setup\n\n" + n + "\n" + a + "\n" + sum, DebugLevel.Error);
+    			continue;
+    		}
+    		
+    		BACKPI_ResumeData.resumeAdd(rdata);
+    		
     		N=(int)((n+20)*Math.log(10)/Math.log(13.5));
-    		sum=0;
     		
     		status.MaxIteration = PrimeCount(3*N);
   			status.Range = n;
   			
     		status.Mode = BACKPI_Status.coreMode.Calculating;
-
-    		ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
     		
-    		long time = new Date().getTime() * 1000000;
-    		long cput = 0;
-    		
-    		for(a=2;a<=(3*N);a=next_prime(a))
+    		for(/*a=2*/;a<=(3*N);a=next_prime(a))
     		{
     			if(coreShutdown(status)) return;
     			
     			status.Iteration = PrimeCount(a);
     						
-    			if( TMB.isThreadCpuTimeSupported() )
-    			{
-    				if(new Date().getTime() * 1000000 - time > 1000000000)
-    				{
-    					time = new Date().getTime() * 1000000;
-    					cput = TMB.getCurrentThreadCpuTime();
-    				}
-    				
-    				if(!TMB.isThreadCpuTimeEnabled())
-    				{
-    					TMB.setThreadCpuTimeEnabled(true);
-    				}
-    				
-    				if(new Date().getTime() * 1000000 - time != 0)
-    					status.cputime = (TMB.getCurrentThreadCpuTime() - cput) / (new Date().getTime() * 1000000.0 - time) * 100.0;  				
-    			}
-    			else
-    			{
-    				status.cputime = -2;
-    			}
+    			status.cputime = getCpuUsage();
     			
     			if(coreShutdown(status)) return;
     			
@@ -541,6 +566,11 @@ public class BACKPI_Plugin extends Plugin
     		    t=pow_mod(5,n-1,av);
     		    s=mul_mod(s,t,av);
     		    sum=((sum+(double) s/ (double) av) % 1.0);
+    		    
+    		    rdata.range = n;
+    		    rdata.iteration = a;
+    		    rdata.sum = sum;
+    		    BACKPI_ResumeData.resumeStore();
     		  }
     		  
     		  status.Mode = BACKPI_Status.coreMode.Communicating;    		  
@@ -555,7 +585,10 @@ public class BACKPI_Plugin extends Plugin
     		//
     		
     		comm_submitRange(n,fsum);
-    		n = comm_nextRange();
+    		BACKPI_ResumeData.resumeRemove(rdata);
+            
+            
+            
     		  
     		//n+=9;
     		

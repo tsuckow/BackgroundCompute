@@ -69,39 +69,47 @@ public class BACKPI_StatusPanel extends JPanel
         			}
         			if(tPane.getTabCount() != max)
         			{
-        				if(max > tPane.getTabCount())
+        				while(max != tPane.getTabCount())
         				{
-        					//TODO: Add new tab / create tabs
-        					JPanel a = new JPanel(new SpringLayout());
-        					
-        					a.add( new JLabel("Iteration #:", JLabel.TRAILING) );
-        					JTextField tf = new JTextField(20);
-        					tf.setName("Iteration");
-        					a.add( tf );
-        					
-        					a.add( new JLabel("Range #:", JLabel.TRAILING) );
-        					tf = new JTextField(20);
-        					tf.setName("Range");
-        					a.add( tf );
-        					
-        					a.add( new JLabel("Cpu Time:", JLabel.TRAILING) );
-        					tf = new JTextField(20);
-        					tf.setName("CPU");
-        					a.add( tf );
-        					
-        					SpringUtilities.makeCompactGrid(a,
-                                    3, 2, //rows, cols
-                                    6, 6,        //initX, initY
-                                    6, 6);       //xPad, yPad
-        					
-        					tPane.addTab("Thread " + (tPane.getTabCount()+1), a);
+        					if(max > tPane.getTabCount())
+        					{
+        						//TODO: Add new tab / create tabs
+        						JPanel a = new JPanel(new SpringLayout());
+        						
+        						a.add( new JLabel("Iteration #:", JLabel.TRAILING) );
+        						JTextField tf = new JTextField(20);
+        						tf.setName("Iteration");
+        						a.add( tf );
+        						
+        						a.add( new JLabel("ItMax #:", JLabel.TRAILING) );
+        						tf = new JTextField(20);
+        						tf.setName("ItMax");
+        						a.add( tf );
+        						
+        						a.add( new JLabel("Range #:", JLabel.TRAILING) );
+        						tf = new JTextField(20);
+        						tf.setName("Range");
+        						a.add( tf );
+        						
+        						a.add( new JLabel("Cpu Time:", JLabel.TRAILING) );
+        						tf = new JTextField(20);
+        						tf.setName("CPU");
+        						a.add( tf );
+        						
+        						SpringUtilities.makeCompactGrid(a,
+        								4, 2, //rows, cols
+        								6, 6,        //initX, initY
+        								6, 6);       //xPad, yPad
+        						
+        						tPane.addTab("Thread " + (tPane.getTabCount()+1), a);
+        					}
+        					else
+        					{
+        						//TODO: Remove Tab / All Tabs
+        						tPane.remove(tPane.getTabCount()-1);
+        					}
+        					//threadcount = max;
         				}
-        				else
-        				{
-        					//TODO: Remove Tab / All Tabs
-        					tPane.remove(tPane.getTabCount()-1);
-        				}
-        				//threadcount = max;
         			}
         			
         			//Update Displayed Info
@@ -119,6 +127,15 @@ public class BACKPI_StatusPanel extends JPanel
         				if(name!=null && name.equals("Iteration"))
         				{
         					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.Iteration) );
+        				}
+        				
+        				do{
+        					name = a.getComponent(j).getName();
+        					++j;
+        				}while( (name==null || !name.equals("ItMax")) && j < a.getComponentCount() );
+        				if(name!=null && name.equals("ItMax"))
+        				{
+        					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.MaxIteration) );
         				}
         				
         				do{
