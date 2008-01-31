@@ -36,6 +36,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.*;
 
@@ -361,6 +362,22 @@ public class BACKPI_Plugin extends Plugin
    		return false;
    	}
    	
+   	private static String formatTime(long timeRemaining)
+   	{
+   		String result = "";
+   		int sec = (int)(timeRemaining/1000) % 60;
+   		int min = (int)(timeRemaining/(1000*60)) % 60;
+   		int hours = (int)(timeRemaining/(1000*60*60)) % 24;
+   		int days = (int)(timeRemaining/(1000*60*60*24)) % 7;
+   		int weeks = (int)(timeRemaining/(1000*60*60*24*7));
+   		if (weeks != 0)
+   			result = weeks + " weeks ";
+   		if (days != 0 || weeks != 0)
+   			result += days + " days ";
+   		result += ((hours<10)?"0":"") + hours + ":" + ((min<10)?"0":"") + min + ":" + ((sec<10)?"0":"") + sec;
+   		return result;
+   	}
+   	
    	@Override
     public void main()
     {
@@ -420,14 +437,35 @@ public class BACKPI_Plugin extends Plugin
   			
     		status.Mode = BACKPI_Status.coreMode.Calculating;
     		
+    		final int iTimeNum = 200;
+    		int iTimePos = 0;
+    		long[] iTime = new long[iTimeNum];
+
+    		
+    		long lTime = new Date().getTime();//Time for 1 loop
+    		
     		for(/*a=2*/;a<=(3*N);a=next_prime(a))
     		{
+    			iTime[iTimePos] = new Date().getTime()-lTime;
+    			lTime = new Date().getTime();
+    			iTimePos = (iTimePos + 1) % iTimeNum;
+    				
     			if(coreShutdown(status)) return;
     			
-    			status.Iteration = PrimeCount(a);
+    			{
+    				status.Iteration = PrimeCount(a);
     						
-    			status.cputime = getCpuUsage();
+    				status.cputime = getCpuUsage();
     			
+    				long timetotal = 0;
+    				for(short j = 0; j < iTimeNum; ++j){timetotal += iTime[j];}
+    				
+    				long timeleft = ( timetotal*( PrimeCount(3*N)-PrimeCount(a) ) /  ( iTimeNum ) ) ;
+    				
+    				status.timeleft = formatTime(timeleft);
+    			
+    			}
+    					
     			if(coreShutdown(status)) return;
     			
     		    vmax=(int)(Math.log(3*N)/Math.log(a));

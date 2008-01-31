@@ -12,6 +12,8 @@ public class BACKPI_Status
 	
 	public double cputime = -1;//-1, init; -2, not supported
 	
+	public String timeleft = "";
+	
 	public BACKPI_Status()
 	{
 		//Init
