@@ -20,7 +20,11 @@ public class Settings
 	{
 		if(frame!=null)
 		{
-			if(frame.isShowing()) return;
+			if(frame.isShowing())
+			{
+				frame.toFront();
+				return;
+			}
 			frame.dispose();
 			frame = null;
 		}

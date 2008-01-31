@@ -314,6 +314,35 @@ abstract public class Plugin
 		//TODO: Reload Code
 	}
 	
+	protected final double getCpuUsage()
+	{
+		Thread ct = Thread.currentThread();
+		synchronized(lock_core)
+		{
+			int index = -1;
+			coreInstance ci = null;
+			Iterator<coreInstance> it = threadList.iterator();
+			while(it.hasNext())
+			{
+				ci = it.next();
+				Thread th = ci.getThread();
+				if( ct.equals(th) )
+				{
+					index = threadList.lastIndexOf(ci);
+				}
+			}
+			
+			if(index != -1)
+			{
+				return ci.CPUusageGetAve();
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	}
+	
 	protected final boolean currentCoreShouldExit()
 	{
 		Thread ct = Thread.currentThread();
@@ -355,8 +384,6 @@ abstract public class Plugin
     	}
     	catch(InterruptedException e)
     	{ 	}
-		
-    	if(sleeptime > 0) System.out.println("Slept for: " + sleeptime);
 		
 		return false;
 	}

@@ -39,15 +39,19 @@ import java.util.List;
 
 
 /**
+ * The Loader for Background Compute
+ * 
  * 
  * @author Deathbob
  * @version 0.2 2008/01/25
- * 
- * The Loader for Background Compute
  *
  */
 public final class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
 {
+	private BC(){}//Only this class can create an instance.
+	
+	//Private Init's
+	
 	private static Properties defaultSettings()
 	{
 		Properties set = new Properties();
@@ -60,13 +64,19 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		return set;
 	}
 	
+	//Private Variables
+	
+	private static JLabel		Text = null;			//Splash Text Line
+	private static JProgressBar	PB = null;				//Splash Progress Bar
+	private static JWindow		frame = null;			//The splash frame
+	private static boolean		SplashCreated = false;	//Is the splash created?
+	
+	//Package Variables
+	
 	final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
 	static ResourceBundle LTextRB = null;
 	
-	private static JLabel Text = null;
-	private static JProgressBar PB = null;
-	private static JWindow frame = null;
-	private static boolean SplashCreated = false;
+	//Functions
 	
 	@Override
 	protected Object doInBackground()
@@ -128,7 +138,6 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         //
         //BEGIN Updater
         //
-        System.out.println("Update?");
         if(Settings.getProperty("update").equals("no"))
         {
         	System.out.println("Skip Update");
@@ -174,12 +183,16 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         	
         	publish( new Object[] {(Object)( " " + LocaleFormat( "Lists2", new Object[] { name } ) ) } );
         	//Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
-        	remoteToLocal("HashList.php?File=" + name,name);//, PB);
         	if( getLocalHash(name).compareTo( hash ) != 0 )
         	{
-        		//ERROR
-        		PError("Failed to download updated hash list, Program Is In Inconsistant State");
-        		System.exit(-1);
+        		remoteToLocal("HashList.php?File=" + name,name);//, PB);
+        	
+        		if( getLocalHash(name).compareTo( hash ) != 0 )
+        		{
+        			//ERROR
+        			PError("Failed to download updated hash list, Program Is In Inconsistant State");
+        			System.exit(-1);
+        		}
         	}
         }
         
@@ -267,25 +280,19 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         //END Updater
         //
         
-        /*	
-        try
-    	{
-    		Thread.sleep(200);
-    	}
-    	catch(InterruptedException e)
-    	{
-    	}
-    	*/
-        
-        //frame.dispose();
-		//frame = null;
     	publish( new Object[] {} ); //Destroy the Splash Screen
 		
-		//Start the mainapp
+		//Start the main application
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
     }
     
-    @Override    
+    /**
+     * 
+     * Updates the splash dialog
+     * 
+     * 
+     */
+    @Override
     protected void process(List<Object[]> chunks)
     {
         for (Object row[] : chunks) {
@@ -419,22 +426,9 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     	}catch(Exception e){} //If can't set native look and feel, oh well.
     	
-    	//Place GUI in event thread.
-		//javax.swing.SwingUtilities.invokeLater( new Runnable()
-		//{
-        //    	public void run()
-        //    	{
-        //        	createAndShowGUI();
-        //		}
-        //});
-        
-    	//javax.swing.SwingUtilities.invokeLater( new BC() );
-    	
-    	//BC BCT = new BC();
-		//BCT.start();
+    	//Start the self enclosed SwingWorker.
     	(new BC()).execute();
     	
-    	//javax.swing.SwingUtilities.invokeLater( new mainapp() );
     }
     
 	static String LocaleFormat(String template, Object[] Args)
