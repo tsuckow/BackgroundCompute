@@ -15,6 +15,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import java.util.Arrays;
+
 
 
 public class PluginManager
@@ -44,15 +46,17 @@ public class PluginManager
 		
 		installedPlugins = PluginLoader.getLocalPlugins();
 		
-		//TODO: THIS MAY BE NO LONGER NEEDED
+		
+		/*
+		//TODO: THIS MAY BE NO LONGER NEEDED 
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{
 			
 			pluginList[i] = installedPlugins[i];
-		}
+		}*/
 				
-		list = new JList(pluginList); //data has type Object[]
+		list = new JList(/*pluginList*/installedPlugins); //data has type Object[]
 		MultiColumnListRenderer renderer = new MultiColumnListRenderer();
 		list.setCellRenderer(renderer);
 		
@@ -129,6 +133,7 @@ public class PluginManager
 	
 	private static class RefreshList implements ActionListener
 	{
+		int regenlist = 1;
 		JList list = null;
 		public RefreshList(JList l)
 		{
@@ -140,6 +145,15 @@ public class PluginManager
 			if( !list.isDisplayable() ) //Destroy Timer if window closed
 			{
 				timer.stop();
+			}
+			if( regenlist++ % 5 == 0)
+			{
+				String[] temp = PluginLoader.getLocalPlugins();
+				if( !Arrays.equals(temp,installedPlugins) )
+				{
+					installedPlugins = temp;
+					list.setListData(installedPlugins);
+				}
 			}
 			list.repaint();
         }
@@ -263,37 +277,4 @@ public class PluginManager
         	}
         }
 	}
-	/*
-	private static String[] getPlugins()
-	{
-		String Dir = "plugins/";
-		
-		File[] files = null;
-		FilenameFilter filter = new FilenameFilter(){
-        	public boolean accept(File dir, String name)
-        	{
-        		File pdir = new File(dir,name);
-            	if( pdir.isDirectory() )
-            	{
-            		if(Utils.loadPlugin(name)!=null)
-            		{
-            			return true;
-            		}
-            	}
-            	
-            	return false;
-        	}
-    	};
-    	
-    	File src = new File(Dir);
-    	files = src.listFiles(filter);
-    	
-    	String[] plugins = new String[files.length];
-    	for(int i = 0; i < files.length; ++i)
-    	{
-    		plugins[i] = files[i].getName();
-    	}
-    	
-    	return plugins;
-	}*/
 }

@@ -243,6 +243,13 @@ abstract public class Plugin
 			}		
 		}
 		
+		public final synchronized boolean isSet(norunReason reason)
+		{
+			int MASK = (int) Math.pow(2, reason.ordinal() );
+					
+			return (flag & MASK) == MASK;	
+		}
+		
 		/**
 		 * Clears a norun reason flag.
 		 * 
@@ -303,15 +310,14 @@ abstract public class Plugin
 	
 	/**
 	 * Called by the plugin to force reload of Plugin.
+	 * Sets a flag indicating to the PluginLoader it should
+	 * remove it from cache and force Garbage Collection. 
 	 */
 	protected final void reload()
 	{
 		norun.setFlag(norunReason.Reload);
 		
 		stopAll(true);
-		
-		Debug.messageDlg("Attempt to reload Plugin; Not Implemented",DebugLevel.NotImplemented); return;
-		//TODO: Reload Code
 	}
 	
 	protected final double getCpuUsage()
@@ -343,7 +349,7 @@ abstract public class Plugin
 		}
 	}
 	
-	protected final boolean currentCoreShouldExit()
+	final protected boolean currentCoreShouldExit()
 	{
 		Thread ct = Thread.currentThread();
 		long sleeptime = 0;
@@ -440,6 +446,15 @@ abstract public class Plugin
     public final state getState()
     {
     	return currentState;
+    }
+    
+    /**
+     * 
+     * @return True if the plugin needs reload
+     */
+    public final boolean needReload()
+    {
+    	return norun.isSet(norunReason.Reload);
     }
     
     /**

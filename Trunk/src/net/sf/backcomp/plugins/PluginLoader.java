@@ -47,6 +47,22 @@ public final class PluginLoader
 		
 		//Load from cache if availible
 		test = PluginCache.get(name + "_Plugin");
+		
+		//Checks if this class is reloading and forces Garbage Collection
+		//This is usually not recommended but this should not happen often.
+		if(test.needReload())
+		{
+			PluginCache.remove(name + "_Plugin");
+			test = null;//Remove our referance.
+			System.gc();
+			try
+	    	{
+				Thread.sleep(100);
+	    	}
+	    	catch(InterruptedException e){}
+			System.gc();
+			return null;
+		}
 		if(test != null) return test;
 		
 		try
@@ -83,7 +99,22 @@ public final class PluginLoader
 		{
 			Debug.message("Class File Corrupted",DebugLevel.Error);
 			return null;
-		}	
+		}
+		
+		//Checks if this class is reloading and forces Garbage Collection
+		//This is usually not recommended but this should not happen often.
+		if(test.needReload())
+		{
+			test = null;//Remove our referance.
+			System.gc();
+			try
+	    	{
+				Thread.sleep(100);
+	    	}
+	    	catch(InterruptedException e){}
+			System.gc();
+			return null;
+		}
 		
 		PluginCache.put(name + "_Plugin", test);
 		return test;
