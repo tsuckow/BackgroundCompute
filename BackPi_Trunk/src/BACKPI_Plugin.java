@@ -470,8 +470,8 @@ public class BACKPI_Plugin extends Plugin
     			
     		    vmax=(int)(Math.log(3*N)/Math.log(a));
     		    if (a==2) {
-    		      vmax=vmax+(N-n);
-    		      if (vmax<=0) continue;
+    		    	vmax=vmax+(N-n);
+    		    	if (vmax<=0) continue;
     		    }
     		    av=1;
     		    for(i=0;i<vmax;i++) av=av*a;
@@ -483,122 +483,154 @@ public class BACKPI_Plugin extends Plugin
     		    kq3=-3;
     		    kq4=-2;
     		    if (a==2) {
-    		      num=1;
-    		      v=-n; 
+    		    	num=1;
+    		    	v=-n; 
     		    } else {
-    		      num=pow_mod(2,n,av);
-    		      v=0;
+    		    	num=pow_mod(2,n,av);
+    		    	v=0;
     		    }
 
-    		    for(k=1;k<=N;k++) {
+    		    //These are used in the loop
+    		    long vinc = 0;
+		    	long kq = 0;
+		    	long kqinc = 0;
+    		    for(k=1;k<=N;k++)
+    		    {
 
-    		      t=2*k;
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = -1;
-    		    	  long kq = kq1;
-    		    	  long kqinc = 2;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq1 = kq;
-    		      }
-    		      //DIVN(t,a,v,-1,kq1,2);
-    		      num=mul_mod(num,t,av);
+    		    	t=2*k;
     		      
-    		      t=2*k-1;
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = -1;
-    		    	  long kq = kq2;
-    		    	  long kqinc = 2;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq2 = kq;
-    		      }
-    		      //DIVN(t,a,v,-1,kq2,2);
-    		      num=mul_mod(num,t,av);
+    		    	//DIVN DIVN(t,a,v,vinc,kq,kqinc)
+    		    	vinc = -1;
+    		    	kq = kq1;
+    		    	kqinc = 2;
 
-    		      t=3*(3*k-1);
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = 1;
-    		    	  long kq = kq3;
-    		    	  long kqinc = 9;
+    		    	kq+=kqinc;
+    		    	if (kq >= a)
+    		    	{
+    		    		do
+    		    		{
+    		    			kq-=a;
+    		    		} while(kq>=a);
+    		    		if (kq == 0)
+    		    		{
+    		    			do
+    		    			{
+    		    				t=t/a;
+    		    				v+=vinc;
+    		    			} while ((t % a) == 0);
+    		    		}
+    		    	}
+    		    	
+    		    	kq1 = kq;
+    		    	//DIVN(t,a,v,-1,kq1,2);
+    		    	
+    		    	num=mul_mod(num,t,av);
+    		    	t=2*k-1;
+    		    	
+    		    	//DIVN DIVN(t,a,v,vinc,kq,kqinc)
+    		    	vinc = -1;
+    		    	kq = kq2;
+    		    	kqinc = 2;
+    		    	
+    		    	kq+=kqinc;
+    		    	if (kq >= a)
+    		    	{
+    		    		do
+    		    		{
+    		    			kq-=a;
+    		    		} while(kq>=a);
+    		    		if (kq == 0)
+    		    		{
+    		    			do
+    		    			{
+    		    				t/=a;
+    		    				v+=vinc;
+    		    			} while((t % a) == 0);
+    		    		}
+    		    	}
+    		    	
+    		    	kq2 = kq;
+    		    	//DIVN(t,a,v,-1,kq2,2);
+    		    	
+    		    	num=mul_mod(num,t,av);
+    		    	t=3*(3*k-1);
+    		    	
+    		    	//DIVN DIVN(t,a,v,vinc,kq,kqinc)
+    		    	vinc = 1;
+    		      	kq = kq3;
+    		      	kqinc = 9;
+    		      	
+    		      	kq+=kqinc;
+    		      	if (kq >= a)
+    		      	{
+    		      		do
+    		      		{
+    		      			kq-=a;
+    		      		} while(kq>=a);
+    		      		if (kq == 0)
+    		      		{
+    		      			do
+    		      			{
+    		      				t/=a;
+    		      				v+=vinc;
+    		      			} while((t % a) == 0);
+    		      		}
+    		      	}
+    		      	
+    		      	kq3 = kq;
+    		      	//DIVN(t,a,v,1,kq3,9);
+    		      	
+    		      	den=mul_mod(den,t,av);
+    		      	t=(3*k-2);
+    		      	
+    		      	//DIVN DIVN(t,a,v,vinc,kq,kqinc)
+    		      	vinc = 1;
+    		      	kq = kq4;
+    		      	kqinc = 3;
     		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
+    		      	kq+=kqinc;
+    		      	if (kq >= a)
+    		      	{
+    		      		do
+    		      		{
+    		      			kq-=a;
+    		      		} while(kq>=a);
+    		      		if (kq == 0)
+    		    	  	{
+    		      			do
+    		      			{
+    		      				t/=a;
+    		      				v+=vinc;
+    		      			} while ((t % a) == 0);
+    		    	  	}
+    		      	}
     		    	  
-    		    	  kq3 = kq;
-    		      }
-    		      //DIVN(t,a,v,1,kq3,9);
-    		      den=mul_mod(den,t,av);
-
-    		      t=(3*k-2);
-    		      {//DIVN DIVN(t,a,v,vinc,kq,kqinc)
-    		    	  long vinc = 1;
-    		    	  long kq = kq4;
-    		    	  long kqinc = 3;
-    		    	  
-    		    	  kq+=kqinc;
-    		    	  if (kq >= a)
-    		    	  {
-    		    		  do { kq-=a; } while (kq>=a);
-    		    		  if (kq == 0) {
-    		    	      do
-    		    	      {
-    		    	    	  t=t/a;
-    		    	    	  v+=vinc;
-    		    	      } while ((t % a) == 0);
-    		    	    }
-    		    	  }
-    		    	  
-    		    	  kq4 = kq;
-    		      }
-    		      //DIVN(t,a,v,1,kq4,3);
-    		      if (a!=2) t=t*2; else v++;
-    		      den=mul_mod(den,t,av);
+    		      	kq4 = kq;
+    		      	//DIVN(t,a,v,1,kq4,3);
+    		      	
+    		      	if (a!=2)
+    		      		t=t*2;
+    		      	else
+    		      		v++;
     		      
-    		      if (v > 0) {
-    			if (a!=2) t=inv_mod(den,av);
-    			else t=inv_mod(den,av);
-    			t=mul_mod(t,num,av);
-    			for(i=v;i<vmax;i++) t=mul_mod(t,a,av);
-    			t1=(25*k-3);
-    			t=mul_mod(t,t1,av);
-    			s+=t;
-    			if (s>=av) s-=av;
-    		      }
+    		      	den=mul_mod(den,t,av);
+    		      
+    		      	if (v > 0)
+    		      	{
+    		      		if (a!=2)
+    		      			t=inv_mod(den,av);
+    		      		else
+    		      			t=inv_mod(den,av);
+    		    	  
+    		      		t=mul_mod(t,num,av);
+    		      		for(i=v;i<vmax;i++)
+    		      			t=mul_mod(t,a,av);
+    		      		t1=(25*k-3);
+    		      		t=mul_mod(t,t1,av);
+    		      		s+=t;
+    		      		if (s>=av)
+    		      			s-=av;
+    		      	}
     		    }
 
     		    t=pow_mod(5,n-1,av);
