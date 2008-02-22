@@ -28,15 +28,25 @@ public class PluginManager
 	private static JLabel info = null;
 	private static javax.swing.Timer timer = null;
 	
+	/**
+	 * Creates and displays the PluginManager Dialog.
+	 * If it is already showing it attempts to bring it to the foreground.
+	 */
 	public static void show()
 	{
+		//Does the dialog already exist?
 		if(frame!=null)
 		{
-			if(frame.isShowing()) return;
+			if(frame.isShowing())
+			{
+				frame.toFront();
+				return;
+			}
 			frame.dispose();
 			frame = null;
 		}
 		
+		//Create Dialog
 		frame = new JFrame("Project Manager");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
@@ -44,18 +54,10 @@ public class PluginManager
 		
 		JPanel p = new JPanel();
 		
+		//Get the plugins to populate the list
 		installedPlugins = PluginLoader.getLocalPlugins();
 		
-		
-		/*
-		//TODO: THIS MAY BE NO LONGER NEEDED 
-		String[] pluginList = new String[installedPlugins.length];
-		for(int i = 0; i < installedPlugins.length; ++i)
-		{
-			
-			pluginList[i] = installedPlugins[i];
-		}*/
-				
+		//Generate the list box
 		list = new JList(/*pluginList*/installedPlugins); //data has type Object[]
 		MultiColumnListRenderer renderer = new MultiColumnListRenderer();
 		list.setCellRenderer(renderer);
@@ -64,13 +66,14 @@ public class PluginManager
 		//list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(10);
 		list.addListSelectionListener(new ListListen());
-				
+		//list.setSelectedIndex(0);	
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setMinimumSize(new Dimension(150,160));
 		listScroller.setPreferredSize(new Dimension(150, 250));
         
         p.add(listScroller);
         
+        //Set timer for refreshing the list
         if(timer != null) timer.stop();
         timer = new javax.swing.Timer(1000,new RefreshList(list));
 		timer.start();
@@ -78,6 +81,7 @@ public class PluginManager
         JPanel RightSide = new JPanel();
         RightSide.setLayout(new BorderLayout());
         
+        //Management Buttons
         JPanel Manage = new JPanel();
         JButton stop = new JButton("Stop");
         stop.addActionListener(new StopButton());
@@ -89,6 +93,7 @@ public class PluginManager
         status.addActionListener(new StatusButton());
         Manage.add(status);
         
+        //Plugin info section
         RightSide.add(Manage,BorderLayout.NORTH);
         info = new JLabel("Loading");
         info.setMinimumSize(new Dimension(320,160));
@@ -117,9 +122,16 @@ public class PluginManager
 		
 		listScroller.setPreferredSize(new Dimension(150, size.height));
 		
+		//Go live
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * Generates the HTML for the info pane 
+	 * 
+	 * @param label The info JLabel
+	 * @param name Plugin to get info for
+	 */
 	private static void PluginInfo(JLabel label, String name)
 	{
 			Plugin plug = PluginLoader.loadPlugin(name);

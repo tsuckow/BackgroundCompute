@@ -66,6 +66,12 @@ public final class Tray
          		
 				popup.add(Item);
 				
+				Item = new MenuItem("Debug Window");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("Debug"); 
+         		
+				popup.add(Item);
+				
 				Item = new MenuItem("Settings");
 	         	Item.addActionListener(listener);
          		Item.setActionCommand("Settings"); 
@@ -126,24 +132,30 @@ public final class Tray
 		public void actionPerformed(ActionEvent e)
         {
 			try{
-			if(e == null) return;
-            if(e.getActionCommand() == null) return;
-            if( e.getActionCommand().equals("Quit") )
-            	System.exit(0);
-            if( e.getActionCommand().equals("Plugins") )
-            {
-            	PluginManager.show();
-            }
-            
-            if( e.getActionCommand().equals("AddPlugin") )
-            {
-            	PluginManager.show();
-            }
-            		
-            if( e.getActionCommand().equals("Settings") )
-            {
-            	Settings.show();
-			}
+				if(e == null) return;
+				
+	            if(e.getActionCommand() == null) return;
+	            
+	            if( e.getActionCommand().equals("Quit") )
+	            {
+	            	System.exit(0);
+	            }
+	            else if( e.getActionCommand().equals("Plugins") )
+	            {
+	            	PluginManager.show();
+	            }
+	            else if( e.getActionCommand().equals("AddPlugin") )
+	            {
+	            	PluginManager.show();
+	            }           		
+	            else if( e.getActionCommand().equals("Settings") )
+	            {
+	            	Settings.show();
+				}
+	            else if( e.getActionCommand().equals("Debug") )
+	            {
+	            	DebugDialog.show();
+				}
 			}
 			catch(Exception ex)
 			{
