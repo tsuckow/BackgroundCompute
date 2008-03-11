@@ -13,7 +13,7 @@ import net.sf.backcomp.utils.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class MultiColumnListRenderer extends DefaultListCellRenderer
+class MultiColumnListRenderer extends DefaultListCellRenderer
 {
 	private static final long serialVersionUID = 1L;
 	String [] status = new String[3];

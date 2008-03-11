@@ -151,14 +151,16 @@ abstract public class Plugin
 		    						ci.measurementStartCPU = TMB.getThreadCpuTime(th.getId());
 				    			}
 		    					
+		    					final int cpuGoal = 60;
+		    					
 		    					//Adjust
-		    					if(ci.CPUusageGetAve() > 60 && ci.CPUusageGetAve() != 0)
+		    					if(ci.CPUusageGetAve() > cpuGoal && ci.CPUusageGetAve() != 0)
 		    					{
-		    						ci.CPUThrottle += ci.CPUusageGetAve()-60 +1;
+		    						ci.CPUThrottle += ci.CPUusageGetAve()-cpuGoal +1;
 		    					}
-		    					if(ci.CPUusageGetAve() < 60 - 10 && ci.CPUusageGetAve() != 0)
+		    					if(ci.CPUusageGetAve() < cpuGoal - 10 && ci.CPUusageGetAve() != 0)
 		    					{
-		    						ci.CPUThrottle -= (60-10) - ci.CPUusageGetAve() + 1;
+		    						ci.CPUThrottle -= (cpuGoal-10) - ci.CPUusageGetAve() + 1;
 		    					}
 		    					if(ci.CPUThrottle < 1) ci.CPUThrottle = 1;
 		    					ci.doCPUThrottle = true;

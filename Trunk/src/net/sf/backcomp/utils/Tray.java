@@ -159,7 +159,8 @@ public final class Tray
 			}
 			catch(Exception ex)
 			{
-				iconMessage( ex.getMessage() ,"Unhandled Exception", TrayIcon.MessageType.ERROR);				
+				ex.printStackTrace();
+				iconMessage( "Unhandled Exception in Tray Menu", ex.getMessage(), TrayIcon.MessageType.ERROR);				
 			}
 		}
 	}

@@ -2,7 +2,7 @@
  * @(#)Debug.java
  *
  * Background Compute ( Manages Distributed Projects )
- * Copyright (C) 2007 Thomas Suckow (Deathbob)
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
  *
  */
 package net.sf.backcomp.debug;
@@ -16,21 +16,21 @@ import java.util.Date;
  * @author Deathbob
  *
  */
-final class DebugMsg
+public final class DebugMsg
 {
 	private DebugLevel lvl = DebugLevel.Debug;
 	private String msg = "";
 	private String stack = null;//Stack Trace, if available
 	private long time = 0;
 	
-	public DebugMsg(String msg, DebugLevel lvl)
+	DebugMsg(String msg, DebugLevel lvl)
 	{
 		this.msg = msg;
 		this.lvl = lvl;
 		time = new Date().getTime();
 	}
 	
-	public DebugMsg(String msg, DebugLevel lvl, String stack)
+	DebugMsg(String msg, DebugLevel lvl, String stack)
 	{
 		this.msg = msg;
 		this.lvl = lvl;
