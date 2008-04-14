@@ -97,6 +97,20 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         {
         	//Didn't find settings file
         	//Ask about language?
+        	
+        	/*
+        	File dir = new File("directoryName");
+
+    
+		    // It is also possible to filter the list of returned files.
+		    FilenameFilter filter = new FilenameFilter() {
+		        public boolean accept(File dir, String name) {
+		            return name.startsWith("root_");
+		        }
+		    };
+		    String[] children = dir.list(filter);
+		    
+        	 */
         	System.out.println("FNF");
         }
         catch(IOException ex)  { } //IO Exception!
@@ -109,8 +123,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         }
         catch(FileNotFoundException ex)
         {
-        	//Didn't find settings file
-        	//Ask about language?
+        	//FIXME:Write to file this error.
         	System.out.println("FNF");
         }
         catch(IOException ex)  { } //IO Exception!
@@ -170,6 +183,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         		String[] linea = line.split(";");
         		if(linea.length != 2)
         		{
+        			//FIXME: Handle this anomoly better. User intervention not required.
         			//ERROR
         			PError("Invalid Line in HashList");
         			System.exit(-1);
@@ -685,7 +699,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		// restart command
 		String strRestartCommand = "";
 		
-		System.out.println(CLASS_PATH);
+		//System.out.println(CLASS_PATH);
 
 		//what is used: sun.java or JView?
 		String strJavaVendor = System.getProperty("java.vendor");
@@ -725,6 +739,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 			}
 			catch (Exception a_e)
 			{
+				//FIXME: Log to file or something. Not this.
 				PError("Error auto-restart: " + ex);
 			}
 		}

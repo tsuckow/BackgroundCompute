@@ -76,14 +76,14 @@ public final class DebugDialog
 		list.addListSelectionListener(new ListListen());
 		//list.setSelectedIndex(0);	
 		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setMinimumSize(new Dimension(150,160));
+		listScroller.setMinimumSize(new Dimension(300,160));
 		//listScroller.setPreferredSize(new Dimension(150, 250));
         
         p.add(listScroller,"Center");
         
         //Set timer for refreshing the list
         if(timer != null) timer.stop();
-        timer = new javax.swing.Timer(1000,new RefreshList(list));
+        timer = new javax.swing.Timer(100,new RefreshList(list));
 		timer.start();
 		
 		frame.setContentPane(p);
@@ -103,7 +103,7 @@ public final class DebugDialog
 		int x = screenSize.width - size.width;
 		frame.setLocation(x, y);
 		
-		listScroller.setPreferredSize(new Dimension(150, size.height));		
+		listScroller.setPreferredSize(new Dimension(300, size.height));		
 	}
 	
 	private static class RefreshList implements ActionListener
@@ -127,10 +127,12 @@ public final class DebugDialog
 				if( !Arrays.equals(temp,Msgs) )
 				{
 					Msgs = temp;
+					int sel = list.getSelectedIndex();
 					list.setListData(Msgs);
+					list.setSelectedIndex(sel);
 				}
-			}
-			list.repaint();
+				list.repaint();
+			}		
         }
 	}
 	
