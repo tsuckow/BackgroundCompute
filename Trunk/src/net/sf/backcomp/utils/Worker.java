@@ -44,7 +44,7 @@ class Worker extends Thread
 	    	for(int i = 0; i < Plugins.length; ++i)
 	    	{
 	    		Plugin plug = PluginLoader.loadPlugin(Plugins[i]);
-	    		if(plug != null)
+	    		if(plug != null && plug.getState() != Plugin.state.Paused)
 	    		{
 	    			long cores = plug.getRunningCores();
 	    			

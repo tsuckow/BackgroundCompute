@@ -23,7 +23,7 @@ public final class Debug
 		//Get Time, Add to ArrayList
 		DebugMsg dm = new DebugMsg(msg,lvl);
 		Msgs.add(dm);
-		if(Msgs.size() > 1000) Msgs.remove(0);
+		if(Msgs.size() > 500) Msgs.remove(0);
 	}
 	
 	public static void messageDlg(String msg, DebugLevel lvl)

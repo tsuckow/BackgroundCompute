@@ -185,7 +185,30 @@ public class PluginManager
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
         			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
-        			plug.stopAll(true);
+        			plug.stopAll(true,false);
+        			//frame.dispose();
+					//frame = null;
+					//show();
+        		}
+        	}
+        }
+	}
+	
+	private static class PauseButton implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+        {
+        	if(list == null)
+        	{
+        		//Uhoh
+        	}
+        	else
+        	{
+        		if(list.getSelectedIndex() != -1)
+        		{
+        			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
+        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			plug.stopAll(true,true);
         			//frame.dispose();
 					//frame = null;
 					//show();

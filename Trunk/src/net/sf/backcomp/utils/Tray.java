@@ -54,15 +54,9 @@ public final class Tray
 				// create a popup menu
 				PopupMenu popup = new PopupMenu();
 				
-				MenuItem Item = new MenuItem("Add Project");
+				MenuItem Item = new MenuItem("Manage Projects");
 	         	Item.addActionListener(listener);
-         		Item.setActionCommand("AddPlugin"); 
-         		
-				popup.add(Item);
-				
-				Item = new MenuItem("Current Projects");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Plugins"); 
+         		Item.setActionCommand("Projects"); 
          		
 				popup.add(Item);
 				
@@ -140,14 +134,10 @@ public final class Tray
 	            {
 	            	System.exit(0);
 	            }
-	            else if( e.getActionCommand().equals("Plugins") )
+	            else if( e.getActionCommand().equals("Projects") )
 	            {
 	            	PluginManager.show();
-	            }
-	            else if( e.getActionCommand().equals("AddPlugin") )
-	            {
-	            	PluginManager.show();
-	            }           		
+	            }          		
 	            else if( e.getActionCommand().equals("Settings") )
 	            {
 	            	Settings.show();

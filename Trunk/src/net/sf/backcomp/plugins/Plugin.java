@@ -34,9 +34,10 @@ abstract public class Plugin
 	/**
 	 * The run state the plugin is in.
 	 */
-	public static enum state {Initilizing, Running, Stopping, Stopped, Removing};
+	public static enum state {Initilizing, Running, Stopping, Stopped, Paused, Removing};
 	
 	private static enum norunReason {Removal, Reload};
+	
 	
 	//
 	//PRIVATE
@@ -56,6 +57,8 @@ abstract public class Plugin
 	private List<coreInstance> threadList = Collections.synchronizedList(new LinkedList<coreInstance>());
 	
 	private volatile long threadCount = 0;
+	
+	private volatile static boolean paused = false;
 
 	private volatile boolean coreManagerRunning = false;
 	
@@ -165,7 +168,7 @@ abstract public class Plugin
 		    					if(ci.CPUThrottle < 1) ci.CPUThrottle = 1;
 		    					ci.doCPUThrottle = true;
 		    					//BC.PError("CPU Test: " + ci.CPUusageGetAve());
-		    					Debug.message("CPU Test: " + ci.CPUusageGetAve(),DebugLevel.Debug);
+		    					//Debug.message("CPU Test: " + ci.CPUusageGetAve(),DebugLevel.Debug);
 		    				}
 						}
 					}
@@ -177,7 +180,10 @@ abstract public class Plugin
 					{
 						if(threadList.size() == 0)
 						{
-							currentState = state.Stopped;
+							if(paused)
+								currentState = state.Paused;
+							else
+								currentState = state.Stopped;
 							coreManagerRunning = false;
 							return;
 						}
@@ -318,10 +324,15 @@ abstract public class Plugin
 	protected final void reload()
 	{
 		norun.setFlag(norunReason.Reload);
-		
-		stopAll(true);
+		Debug.message("Plugin Asked for Reload: " + getName(), DebugLevel.Information);
+		stopAll(true,false);
 	}
 	
+	/**
+	 * Retrieves the average computed CPU usage for this plugin.
+	 * 
+	 * @return CPU usage
+	 */
 	protected final double getCpuUsage()
 	{
 		Thread ct = Thread.currentThread();
@@ -480,7 +491,9 @@ abstract public class Plugin
 		{
     		if(!norun.isOK() || !needCore()) return false;
 
+    		paused = false;
     		threadCount += 1;
+    		Debug.message("Starting core on Plugin: " + getName(), DebugLevel.Information);
     		
     		synchronized(lock_coreManager)
 			{
@@ -503,14 +516,20 @@ abstract public class Plugin
     	synchronized(lock_core)
 		{
     		if(threadCount > ( includeMain ? 0 : 1 ) )
+    		{
+    			Debug.message("Stopping core on plugin: " + getName(), DebugLevel.Information);
     			threadCount -= 1;
+    		}
 		}
     }
     
     /**
-     * Stops all running cores at the Plugin's convienience. If none are running it does nothing.
+     * Stops all running cores at the Plugin's convenience. If none are running it does nothing.
+     * 
+     * @param includeMain Quit main thread?
+     * @param pause Pause after stop all cores? Only valid if includeMain == true.
      */
-    public final void stopAll(boolean includeMain)
+    public final void stopAll(boolean includeMain, boolean pause)
     {
     	synchronized(lock_core)
 		{
@@ -518,10 +537,20 @@ abstract public class Plugin
     		{
     			currentState = state.Stopping;
     			threadCount = 0;
+    			if(pause)
+    			{
+    				paused = true;
+    				Debug.message("Pausing Plugin: " + getName(), DebugLevel.Information);
+    			}
+    			else
+    			{
+    				Debug.message("Stopping Plugin: " + getName(), DebugLevel.Information);
+    			}
     		}
     		else if(!includeMain && threadCount > 1)
     		{
     			threadCount = 1;
+    			Debug.message("Stopping all subcores on Plugin: " + getName(), DebugLevel.Information);
     		}
 		}
     }
@@ -537,14 +566,15 @@ abstract public class Plugin
 		}
     	
     	currentState = state.Removing;
+    	Debug.message("Removing Plugin: " + getName(), DebugLevel.Information);
     	
-    	stopAll(true); //Stop All Cores
+    	stopAll(true,false); //Stop All Cores
     	
     	//FIXME: Check all cores are stopped. Size of threadList?
     	
     	currentState = state.Removing;
     	
-    	Debug.messageDlg("Tried to remove a plugin; Not Implemented",DebugLevel.NotImplemented);
+    	Debug.messageDlg("Tried to remove a plugin",DebugLevel.NotImplemented);
     	return;
     	
     	//remove(); //Call Plugins Removal Method
