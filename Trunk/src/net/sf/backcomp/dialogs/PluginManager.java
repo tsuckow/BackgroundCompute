@@ -86,6 +86,9 @@ public class PluginManager
         JButton stop = new JButton("Stop");
         stop.addActionListener(new StopButton());
         Manage.add(stop);
+        JButton pause = new JButton("Pause");
+        pause.addActionListener(new PauseButton());
+        Manage.add(pause);
         JButton remove = new JButton("Remove");
         remove.addActionListener(new RemoveButton());
         Manage.add(remove);

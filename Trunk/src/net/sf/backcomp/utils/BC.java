@@ -24,6 +24,7 @@
 package net.sf.backcomp.utils;
  
 import javax.swing.*;
+
 import java.awt.*;
 
 import java.util.*;
@@ -37,6 +38,7 @@ import java.security.*; //For MD5
 
 import java.util.List;
 
+//TODO: Add a mode/way where only non-executables are downloaded and the rest are assumed to be there. 
 
 /**
  * The Loader for Background Compute
@@ -46,7 +48,7 @@ import java.util.List;
  * @version 0.2 2008/01/25
  *
  */
-public final class BC extends SwingWorker<Object,Object[]>//Thread//implements Runnable
+public final class BC extends SwingWorker<Object,Object[]>
 {
 	private BC(){}//Only this class can create an instance.
 	
@@ -111,9 +113,12 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
 		    String[] children = dir.list(filter);
 		    
         	 */
-        	System.out.println("FNF");
+        	System.out.println("No Settings File");
         }
-        catch(IOException ex)  { } //IO Exception!
+        catch(IOException ex)
+        {
+        	System.out.println("IO Error loading file");
+        } //IO Exception!
         
         //Settings.setProperty("update","no");
         
@@ -124,7 +129,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         catch(FileNotFoundException ex)
         {
         	//FIXME:Write to file this error.
-        	System.out.println("FNF");
+        	System.out.println("Failed to save Settings File.");
         }
         catch(IOException ex)  { } //IO Exception!
         
@@ -137,11 +142,24 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
         	Locale UserLocale = new Locale( Settings.getProperty("locale") );
         	try
         	{
-        		LTextRB = ResourceBundle.getBundle("Root",UserLocale);
+        		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+        		
+        		URLClassLoader UCL = null;
+        		
+        		try
+        		{
+        			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
+        			UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
+        		}
+        		catch(MalformedURLException ex)
+        		{
+        			System.out.println("Current Dir Path Malformed!");
+        		}
+        		LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
         	}
         	catch(MissingResourceException e)
         	{
-        		//We don't have any locales
+        		System.out.println("Failed to open language bundle.");
         	}
         }
         
@@ -283,6 +301,11 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
     			publish( new Object[] {} ); //Destroy the Splash Screen
     			System.exit(0);
     		}
+        	try
+        	{
+        		Thread.sleep(1000);
+        	}
+        	catch(Exception ex){}
         }
         
         //**************************************************************
@@ -327,7 +350,7 @@ public final class BC extends SwingWorker<Object,Object[]>//Thread//implements R
                     /*JWindow*/ frame = new JWindow();//"Updater");
                     //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     
-                    frame.setSize(300,160);//33x100
+                    frame.setSize(600,160);//33x100
                 	//frame.setResizable(false);
                 	//frame.setUndecorated(true);
 

@@ -70,6 +70,7 @@ public final class PluginLoader
 		
 		try
 		{
+			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
 			UCL = new URLClassLoader(new URL[]{new File("plugins/" + name + "/").toURI().toURL()},CL);
 		}
 		catch(MalformedURLException ex)
