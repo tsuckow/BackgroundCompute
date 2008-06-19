@@ -70,6 +70,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	private static JLabel		Text = null;			//Splash Text Line
 	private static JProgressBar	PB = null;				//Splash Progress Bar
+	private static JProgressBar	OverallPB = null;		//Overall Progress Bar
 	private static JWindow		frame = null;			//The splash frame
 	private static boolean		SplashCreated = false;	//Is the splash created?
 	
@@ -91,14 +92,13 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
         publish( new Object[] {} ); //Display the Splash Screen
         
-        //TODO:Error Handling
         try{
         	Settings.load( new FileInputStream("Settings.properties") );
         }
         catch(FileNotFoundException ex)
         {
         	//Didn't find settings file
-        	//Ask about language?
+        	//TODO:Ask about language?
         	
         	/*
         	File dir = new File("directoryName");
@@ -122,7 +122,6 @@ public final class BC extends SwingWorker<Object,Object[]>
         
         //Settings.setProperty("update","no");
         
-      //TODO:Error Handling
         try{
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
         }
@@ -148,11 +147,11 @@ public final class BC extends SwingWorker<Object,Object[]>
         		
         		try
         		{
-        			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
         			UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
         		}
         		catch(MalformedURLException ex)
         		{
+        			//TODO: Error Log
         			System.out.println("Current Dir Path Malformed!");
         		}
         		LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
@@ -163,7 +162,6 @@ public final class BC extends SwingWorker<Object,Object[]>
         	}
         }
         
-        //BPC.remoteToLocal("Title.fla","Test2.fla",PB);
         
         if(LTextRB!=null) publish( new Object[] {(Object)( " " + LTextRB.getString("Loading1") ) } );// Text.setText( " " + LTextRB.getString("Loading1") );
         //
@@ -191,9 +189,17 @@ public final class BC extends SwingWorker<Object,Object[]>
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
     	
+    	if(OverallPB != null)
+    	{
+	    	OverallPB.setMinimum(0);
+			OverallPB.setMaximum(100);
+			OverallPB.setValue(0);
+    	}
+    	
     	//Get the sub lists that have the different modules.
     	for( String line : getLocalList("Lists.txt") )
         {
+    		
         	String name = null;
         	String hash = null;
         		
@@ -229,7 +235,10 @@ public final class BC extends SwingWorker<Object,Object[]>
         }
         
         //Do the updating
-        for( String list : getLocalList("Lists.txt") )//Move through the sublists
+    	
+        String[] SubLists = getLocalList("Lists.txt");
+        int subListNum = 0;
+    	for( String list : SubLists )//Move through the sublists
         {
         	String listname = null;
         		
@@ -246,8 +255,10 @@ public final class BC extends SwingWorker<Object,Object[]>
         			listname = linea[0];
         		}
         	}
-        	
-        	for( String line : getLocalList(listname) )//Move through the files
+        
+        	int fileNum = 0;
+        	String[] Lines = getLocalList(listname);
+        	for( String line : Lines )//Move through the files
         	{
         		String name = null;
         		String hash = null;
@@ -293,8 +304,18 @@ public final class BC extends SwingWorker<Object,Object[]>
         				publish( new Object[] {(Object)( " Updated File." ) } );
         				//Text.setText( " Moved." ); //*****************************************************
         			}
+        			
+        			
         		}
+        	
+        		
+        		fileNum++;
+            	if( OverallPB != null )
+            		OverallPB.setValue(100/SubLists.length * subListNum + (100/SubLists.length)/Lines.length * fileNum);
         	}
+        	subListNum++;
+        	if( OverallPB != null )
+        		OverallPB.setValue(100/SubLists.length * subListNum);
         	if(updated) //If we did something... restart.
     		{
     			restart("BC");
@@ -306,8 +327,9 @@ public final class BC extends SwingWorker<Object,Object[]>
         		Thread.sleep(1000);
         	}
         	catch(Exception ex){}
+        	
         }
-        
+    	OverallPB.setValue(100);
         //**************************************************************
         //**************************************************************
         //**************************************************************
@@ -363,7 +385,7 @@ public final class BC extends SwingWorker<Object,Object[]>
                 	//Add the background Image
                     //ImageIcon icon = new ImageIcon("Splash.png","Boom");
                     JLabel Logo = new JLabel(new ImageIcon("Splash.png","Updater"));
-                    mainPane.add(Logo,BorderLayout.CENTER);
+                    mainPane.add(Logo,BorderLayout.WEST);
 
             		//Create the bottom
             		JPanel South = new JPanel();
@@ -377,11 +399,13 @@ public final class BC extends SwingWorker<Object,Object[]>
                 	
                 	//Progress Bar, Duh
                 	/*JProgressBar*/ PB = new JProgressBar();
+                	/*JProgressBar*/ OverallPB = new JProgressBar();
             		//when the task of (initially) unknown length begins:
             		PB.setIndeterminate(true);
             		
-            		South.add(Text,BorderLayout.CENTER);
-            		South.add(PB,BorderLayout.SOUTH);
+            		South.add(Text,BorderLayout.NORTH);
+            		South.add(PB,BorderLayout.CENTER);
+            		South.add(OverallPB,BorderLayout.SOUTH);
                 	
                 	mainPane.add(South,BorderLayout.SOUTH);
                 	
@@ -781,8 +805,14 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 	}
     
-    
-    //HEX
+
+	
+//////////
+//
+//HEX
+//
+//////////
+
 /*
  * Look - it's a disclaimer!
  *

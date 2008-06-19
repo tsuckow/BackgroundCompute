@@ -156,6 +156,8 @@ public final class PluginLoader
     	File src = new File(Dir);
     	files = src.listFiles(filter);
     	
+    	//
+    	//FIXME:Null pointer exception when no plugins. files = null.
     	String[] plugins = new String[files.length];
     	for(int i = 0; i < files.length; ++i)
     	{
