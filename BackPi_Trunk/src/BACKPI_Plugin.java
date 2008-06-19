@@ -154,7 +154,7 @@ public class BACKPI_Plugin extends Plugin
 		if(range == 1 && data != 141592653)
 		{
 			Debug.messageDlg("Computation Error Detected In Plugin BACKPI!", DebugLevel.Fatal);
-			stopAll(true);
+			stopAll(true,true);
 			throw new Error("BACKPI: Calculation of range 1 failed.");
 		}
 		
