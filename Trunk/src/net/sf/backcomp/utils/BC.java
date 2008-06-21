@@ -301,6 +301,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         			dest.delete();
         			if( src.renameTo( dest ) )
         			{
+        				//FIXME: Need Localization.
         				publish( new Object[] {(Object)( " Updated File." ) } );
         				//Text.setText( " Moved." ); //*****************************************************
         			}
@@ -329,7 +330,8 @@ public final class BC extends SwingWorker<Object,Object[]>
         	catch(Exception ex){}
         	
         }
-    	OverallPB.setValue(100);
+    	if(OverallPB != null)
+    		OverallPB.setValue(100);
         //**************************************************************
         //**************************************************************
         //**************************************************************
@@ -346,15 +348,17 @@ public final class BC extends SwingWorker<Object,Object[]>
     }
     
     /**
-     * 
      * Updates the splash dialog
      * 
-     * 
+     * @param chunks A List of queued items to update in order.
      */
     @Override
     protected void process(List<Object[]> chunks)
     {
-        for (Object row[] : chunks) {
+    	//Handle each item in order
+        for (Object row[] : chunks)
+        {
+        	//Create / Destroy Splash Directive
         	if(row.length == 0)
             {
             	if(SplashCreated)
@@ -368,50 +372,60 @@ public final class BC extends SwingWorker<Object,Object[]>
             	else
             	{
             		//Create
+            		
             		//Create and set up the window.
-                    /*JWindow*/ frame = new JWindow();//"Updater");
-                    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    
-                    frame.setSize(600,160);//33x100
-                	//frame.setResizable(false);
-                	//frame.setUndecorated(true);
+                    frame = new JWindow();
+                    frame.setSize(600,100);
 
-                    //The content pane
+                    //The main pane
                 	JPanel mainPane = new JPanel();
                 	mainPane.setLayout(new BorderLayout());
                 	
+                	//Images are transparent, setup the background
                 	mainPane.setBackground(Color.BLACK);
                 	
                 	//Add the background Image
-                    //ImageIcon icon = new ImageIcon("Splash.png","Boom");
-                    JLabel Logo = new JLabel(new ImageIcon("Splash.png","Updater"));
+                    JLabel Logo = new JLabel(new ImageIcon("images" + File.separator + "Logo.png","Updater"));
                     mainPane.add(Logo,BorderLayout.WEST);
-
-            		//Create the bottom
+                    
+                    //New pane for title and progress
+                    JPanel titlePane = new JPanel();
+                    titlePane.setLayout(new BorderLayout());
+                    titlePane.setBackground(Color.BLACK);
+                    
+                    //Title Image
+                    JLabel Title = new JLabel(new ImageIcon("images" + File.separator + "Title.png","Updater"));
+                    titlePane.add(Title,BorderLayout.NORTH);
+                    
+            		//Create the Progress Stuff
             		JPanel South = new JPanel();
             		South.setLayout(new BorderLayout());
             		South.setBackground(Color.BLACK);
             		
             		//Progress Text
-                	/*JLabel*/ Text = new JLabel(" Loading Config...");
-                	//ttest = Text;
+                	Text = new JLabel(" Loading Config...");
                 	Text.setForeground(Color.WHITE);
                 	
                 	//Progress Bar, Duh
-                	/*JProgressBar*/ PB = new JProgressBar();
-                	/*JProgressBar*/ OverallPB = new JProgressBar();
+                	PB = new JProgressBar();
+                	OverallPB = new JProgressBar();
+                	
             		//when the task of (initially) unknown length begins:
             		PB.setIndeterminate(true);
             		
+            		//Put it where it goes
             		South.add(Text,BorderLayout.NORTH);
             		South.add(PB,BorderLayout.CENTER);
             		South.add(OverallPB,BorderLayout.SOUTH);
+            		
+            		titlePane.add(South,BorderLayout.SOUTH);
                 	
-                	mainPane.add(South,BorderLayout.SOUTH);
+                	mainPane.add(titlePane,BorderLayout.CENTER);
                 	
+                	//Main pane for window
                 	frame.setContentPane(mainPane);
 
-                    //Display the window.
+                    
                     //frame.pack();
                     
                     //Center frame
@@ -425,33 +439,16 @@ public final class BC extends SwingWorker<Object,Object[]>
             		int x = screenSize.width - size.width;
             		frame.setLocation(x, y);
                     
-            		/*
-                    try
-                	{
-                		Thread.sleep(50);
-                	}
-                	catch(InterruptedException e)
-                	{
-                	}
-                	*/
-                    
+            		//Display the window.
                     frame.setVisible(true);
                     
-                    /*
-                    try
-                	{
-                		Thread.sleep(50);
-                	}
-                	catch(InterruptedException e)
-                	{
-                	}
-                	*/
                     SplashCreated = true;
             	}
             		
             }
         	else if(row.length == 1)
             {
+        		//If 1 Item, it is text for progress
             	if(row[0] instanceof String)
             	{
             		Text.setText((String) row[0]);
@@ -459,15 +456,18 @@ public final class BC extends SwingWorker<Object,Object[]>
             }
             else if(row.length == 3)
             {
+            	//If 3 items, Progress Bar Update
             	//Min, Max, Val (Max is -1 for Indeterminate)
             	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer)
             	{
             		if((Integer)row[1] == -1)
 	            	{
+            			//Unknown Length
                 		PB.setIndeterminate(true);
 	            	}
             		else
             		{
+            			//Specific Size
             			PB.setMinimum((Integer)row[0]);
                 		PB.setMaximum((Integer)row[1]);
                 		PB.setValue((Integer)row[2]);
@@ -603,7 +603,11 @@ public final class BC extends SwingWorker<Object,Object[]>
     	return data.toArray(new String[]{});
     }
     
-    //Get MD5 Hash as a hex string.
+    /**
+     * Computes the Hex MD5 Hash of a file on the local file system.
+     * @param file Path to file on local file system.
+     * @return Hash string
+     */
     static String getLocalHash(String file)
     {
     	//Byte array because JAVA returns Binary
@@ -629,14 +633,17 @@ public final class BC extends SwingWorker<Object,Object[]>
   		}
   		catch(NoSuchAlgorithmException ex)
   		{
+  			//TODO: Log This.
   			return ""; //MD5 Not availible (Odd)
   		}
   		catch(FileNotFoundException ex)
   		{
+  			//TODO: Log This.
   			return ""; //File not found...
   		}
   		catch(IOException ex)
   		{
+  			//TODO: Log This.
   			return ""; //God only knows what went wrong.
   		}
   		return toHexF(res);//Convert Bin to Hex
@@ -728,7 +735,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     
     //NEW VM
     
-    static final String CLASS_PATHM = getClassPath().trim(); //Class Path for restart
+    static final String CLASS_PATH = getClassPath().trim(); //Class Path for restart
     
     static void restart(String ClassName)
     {
@@ -738,15 +745,14 @@ public final class BC extends SwingWorker<Object,Object[]>
      //Restart Program (Thanks to the makers of JAP)
     static void restart(String ClassName,String App)//FIXME: Failed to work on Fedora 8
 	{
-		String CLASS_PATH = "";
-		if(CLASS_PATHM.indexOf(';') > 0)
-			CLASS_PATH = CLASS_PATHM.substring(0,CLASS_PATHM.indexOf(';')) + App + CLASS_PATHM.substring(CLASS_PATHM.indexOf(';'));
+		String classPath = "";
+		if(CLASS_PATH.indexOf(';') > 0)
+			classPath = CLASS_PATH.substring(0,CLASS_PATH.indexOf(';')) + App + CLASS_PATH.substring(CLASS_PATH.indexOf(';'));
 		else
-			CLASS_PATH = CLASS_PATHM + App;
+			classPath = CLASS_PATH + App;
+		
 		// restart command
 		String strRestartCommand = "";
-		
-		//System.out.println(CLASS_PATH);
 
 		//what is used: sun.java or JView?
 		String strJavaVendor = System.getProperty("java.vendor");
@@ -765,7 +771,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			pathToJava = System.getProperty("java.home") + File.separator + "bin" + File.separator;
 			javaExe = "javaw -cp"; // for windows
 		}
-		strRestartCommand = pathToJava + javaExe + " \"" + CLASS_PATH + "\" " + ClassName;// + m_commandLineArgs;
+		strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
 
 
 
@@ -777,7 +783,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		catch (Exception ex)
 		{
 			javaExe = "java -cp"; // Linux/UNIX
-			strRestartCommand = pathToJava + javaExe + " \"" + CLASS_PATH + "\" " + ClassName;// + m_commandLineArgs;
+			strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
 
 			//System.out.println("JAP restart command: " + strRestartCommand);
 			try
