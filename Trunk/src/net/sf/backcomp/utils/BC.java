@@ -38,8 +38,6 @@ import java.security.*; //For MD5
 
 import java.util.List;
 
-//TODO: Add a mode/way where only non-executables are downloaded and the rest are assumed to be there. 
-
 /**
  * The Loader for Background Compute
  * 
@@ -60,8 +58,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		set.setProperty("cpu_limit", "80");
 		set.setProperty("locale", "en");
-		set.setProperty("update", "yes");
 		set.setProperty("server_path", "http://defcon1.hopto.org/bc/");
+		set.setProperty("updateError", "False");
 		
 		return set;
 	}
@@ -113,28 +111,15 @@ public final class BC extends SwingWorker<Object,Object[]>
 		    String[] children = dir.list(filter);
 		    
         	 */
+        	
+        	//Don't Localize
         	System.out.println("No Settings File");
         }
         catch(IOException ex)
         {
+        	//Don't Localize
         	System.out.println("IO Error loading file");
-        } //IO Exception!
-        
-        //Settings.setProperty("update","no");
-        
-        try{
-        	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
-        }
-        catch(FileNotFoundException ex)
-        {
-        	//FIXME:Write to file this error.
-        	System.out.println("Failed to save Settings File.");
-        }
-        catch(IOException ex)  { } //IO Exception!
-        
-        //Text.setText( "Loading Locale..." );
-        
-        
+        }    
         
         //Just a sub scope while we make the ResourceBundle
         {
@@ -151,31 +136,30 @@ public final class BC extends SwingWorker<Object,Object[]>
         		}
         		catch(MalformedURLException ex)
         		{
-        			//TODO: Error Log
-        			System.out.println("Current Dir Path Malformed!");
+        			//Don't Localize
+        			JOptionPane.showMessageDialog(null,"Current Dir Path Malformed. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
         		}
         		LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
         	}
         	catch(MissingResourceException e)
         	{
+        		//Don't Localize
         		System.out.println("Failed to open language bundle.");
         	}
         }
+         
+        try{
+        	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+        }
+        catch(Exception ex)
+        {
+        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+        }
         
-        
-        if(LTextRB!=null) publish( new Object[] {(Object)( " " + LTextRB.getString("Loading1") ) } );// Text.setText( " " + LTextRB.getString("Loading1") );
+        publish( new Object[] {(Object)( " " + Localize("Loading1") ) } );
         //
         //BEGIN Updater
         //
-        if(Settings.getProperty("update").equals("no"))
-        {
-        	System.out.println("Skip Update");
-        	//frame.dispose();
-			//frame = null;
-        	publish( new Object[] {} ); //Destroy the Splash Screen
-			javax.swing.SwingUtilities.invokeLater( new Mainapp() );
-			return;
-        }
         
         //**************************************************************
         //**************************************************************
@@ -183,7 +167,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         
         boolean updated = false;
         
-        if(LTextRB!=null) publish( new Object[] {(Object)( " " + LTextRB.getString("Lists1") ) } );//Text.setText( " " + LTextRB.getString("Lists1") );
+        publish( new Object[] {(Object)( " " + Localize("Lists1") ) } );//Text.setText( " " + LTextRB.getString("Lists1") );
     	remoteToLocal("HashList.php?R=Y&File=Lists.txt", "Lists.txt");//, PB); //Retrieve the list of update lists
     	
     	//TODO
@@ -207,10 +191,10 @@ public final class BC extends SwingWorker<Object,Object[]>
         		String[] linea = line.split(";");
         		if(linea.length != 2)
         		{
-        			//FIXME: Handle this anomoly better. User intervention not required.
         			//ERROR
-        			PError("Invalid Line in HashList");
-        			System.exit(-1);
+        			//FIXME: Localize
+        			UpdateError("Invalid Line in HashFiles HashList: " + line,null);
+        			//NEVER RETURNS.
         		}
         		else
         		{
@@ -228,6 +212,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		if( getLocalHash(name).compareTo( hash ) != 0 )
         		{
         			//ERROR
+        			//FIXME: Localize
         			PError("Failed to download updated hash list, Program Is In Inconsistant State");
         			System.exit(-1);
         		}
@@ -247,8 +232,9 @@ public final class BC extends SwingWorker<Object,Object[]>
         		if(linea.length != 2)
         		{
         			//ERROR
-        			PError("Invalid Line in HashList");
-        			System.exit(-1);
+        			//FIXME: Localize
+        			UpdateError("Invalid Line in HashFiles HashList: " + list,null);
+        			//NEVER RETURNS.
         		}
         		else
         		{
@@ -268,8 +254,9 @@ public final class BC extends SwingWorker<Object,Object[]>
         			if(linea.length != 2)
         			{
         				//ERROR
-        				PError("Invalid Line in HashList, Program Is In Inconsistant State");
-        				System.exit(-1);
+        				//FIXME: Localize
+            			UpdateError("Invalid Line in HashList: " + line,null);
+            			//NEVER RETURNS.
         			}
         			else
         			{
@@ -279,14 +266,15 @@ public final class BC extends SwingWorker<Object,Object[]>
         		}
         		
         		publish( new Object[] {(Object)( " " + LocaleFormat( "Checking1", new Object[] { name } ) ) } );
-        		//Text.setText( " " + LocaleFormat( "Checking1", new Object[] { name } ) );
+
         		if( getLocalHash(name).compareTo( hash ) != 0 )
         		{
         			updated = true;
         			publish( new Object[] {(Object)( " " + LocaleFormat( "Downloading1", new Object[] { name } ) ) } );
-        			//Text.setText( " " + LocaleFormat( "Downloading1", new Object[] { name } ) );
+
         			if( !remoteToLocal(name,"Download.tmp"))//,PB) )
         			{
+        				//FIXME:Localize
         				PError("Failed to download update, Program Is In Inconsistant State");
         				System.exit(-1);
         			}
@@ -343,6 +331,16 @@ public final class BC extends SwingWorker<Object,Object[]>
         
     	publish( new Object[] {} ); //Destroy the Splash Screen
 		
+        try{
+        	Settings.setProperty("updateError", "False");
+        	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+        }
+        catch(Exception ex)
+        {
+        	//FIXME:Localize
+        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+        }
+    	
 		//Start the main application
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
     }
@@ -403,6 +401,7 @@ public final class BC extends SwingWorker<Object,Object[]>
             		South.setBackground(Color.BLACK);
             		
             		//Progress Text
+            		//Don't Localize
                 	Text = new JLabel(" Loading Config...");
                 	Text.setForeground(Color.WHITE);
                 	
@@ -492,7 +491,41 @@ public final class BC extends SwingWorker<Object,Object[]>
     	
     }
     
-	static String LocaleFormat(String template, Object[] Args)
+    /**
+     * Localizes text based on a template.
+     * 
+     * @param template Localization Template
+     * @return Localized text
+     */
+    static private String Localize(String template)
+	{
+		
+		if(LTextRB!=null)
+		{	
+			try
+			{
+				return LTextRB.getString( template );
+			}
+			catch(Exception e)
+			{
+				//Hmm
+				return " **Localization Template Error** ";
+			}
+		}
+		else
+		{
+			return " **No Locale Availible** ";
+		}
+	}
+    
+    /**
+     * Localizes text based on a template with the pre-localized arguments provided.
+     * 
+     * @param template Localization Template
+     * @param Args Arguments to insert into the localization.
+     * @return Localized text
+     */
+	static private String LocaleFormat(String template, Object[] Args)
 	{
 		
 		if(LTextRB!=null)
@@ -516,45 +549,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 	}
     
-    //Get file from remote website, relative to the server_path setting.
-    static String[] getRemoteList(String file)
-    {
-    	ArrayList<String> data = new ArrayList<String>();
-    	try
-    	{
-    		//Create URL
-    		URL path = new URL(Settings.getProperty("server_path") + file);
-    		
-    		try
-    		{
-    			//Prepare the buffers for reading
-    			BufferedReader in = new BufferedReader(	new InputStreamReader( path.openStream() ) );
-    			//Read it...
-
-    			String inputLine;
-    			while ((inputLine = in.readLine()) != null)
-    			{
-    				data.add(inputLine);
-    			}
-
-				in.close();
-    		}
-    		catch(IOException ex)
-    		{
-    			//File doesn't exist or is unavailible.
-    			//Return empty array
-    		}		
-    	}
-    	catch(MalformedURLException ex)
-    	{
-    		//Malformed Path, SERVER_PATH wrong?
-    		//Return empty array
-    	}
-    	return data.toArray(new String[]{});
-    }
-    
     //Gets size of file on Remote Server (if availible) relative to SERVER_PATH
-    static int getRemoteSize(String file)
+    static private int getRemoteSize(String file)
     {
     	try
     	{
@@ -578,7 +574,7 @@ public final class BC extends SwingWorker<Object,Object[]>
   		}
     }
     
-    static String[] getLocalList(String file)
+    static private String[] getLocalList(String file)
     {
     	ArrayList<String> data = new ArrayList<String>();
 		try
@@ -608,7 +604,7 @@ public final class BC extends SwingWorker<Object,Object[]>
      * @param file Path to file on local file system.
      * @return Hash string
      */
-    static String getLocalHash(String file)
+    static private String getLocalHash(String file)
     {
     	//Byte array because JAVA returns Binary
     	byte[] res;
@@ -633,17 +629,17 @@ public final class BC extends SwingWorker<Object,Object[]>
   		}
   		catch(NoSuchAlgorithmException ex)
   		{
-  			//TODO: Log This.
+  			//FIXME:Localize
+  			PError("Missing MD5 Algorithm in runtime. It is required.");
+  			System.exit(-1);
   			return ""; //MD5 Not availible (Odd)
   		}
   		catch(FileNotFoundException ex)
   		{
-  			//TODO: Log This.
   			return ""; //File not found...
   		}
   		catch(IOException ex)
   		{
-  			//TODO: Log This.
   			return ""; //God only knows what went wrong.
   		}
   		return toHexF(res);//Convert Bin to Hex
@@ -721,15 +717,53 @@ public final class BC extends SwingWorker<Object,Object[]>
     }
     
     /**
-     * @deprecated
-     * @param msg
+     * Displays Error Message
+     * 
+     * @param msg Message
      */
-    static void PError(String msg)
+    static private void PError(String msg)
 	{
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
     
-    
+    /**
+     * Never Returns. Trys restarting and if doesn't help displays error and bails.
+     * 
+     * @param msg Message in error if already restarted once.
+     */
+    private void UpdateError(String msg, Exception ex)
+    {
+    	if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
+    	{
+    		publish( new Object[] {(Object)( " " + Localize("UpdateError1") ) } );
+	    	
+    		try
+    		{
+            	Settings.setProperty("updateError", "True");
+            	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+            	
+	            try
+		    	{
+					Thread.sleep(3000);
+		    	}
+		    	catch(InterruptedException e){}
+		    	
+		    	restart("BC");
+            }
+            catch(Exception e)
+            {
+            	//FIXME:Localize Perror
+            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.","Error",JOptionPane.ERROR_MESSAGE);
+            }
+    	}
+    	else
+    	{
+    		//FIXME:Localize PError
+    		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+    	}
+    	
+    	System.exit(-1);
+    }
     
     
     
@@ -792,7 +826,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			}
 			catch (Exception a_e)
 			{
-				//FIXME: Log to file or something. Not this.
+				//FIXME: Localize
 				PError("Error auto-restart: " + ex);
 			}
 		}
@@ -848,9 +882,9 @@ public final class BC extends SwingWorker<Object,Object[]>
  *
  * What won't those crazy lawyers think up next? */
  
-	static String toHexF(byte[] b) { return toHexF(b, b.length); }
+	static private String toHexF(byte[] b) { return toHexF(b, b.length); }
  
-	static String toHexF(byte[] b, int len)
+	static private String toHexF(byte[] b, int len)
 	{
 		StringBuffer s = new StringBuffer("");
 		int i;
@@ -865,7 +899,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		return s.toString();
 	}
         
-	static String toHex(byte b)
+	static private String toHex(byte b)
 	{
 		Integer I = new Integer((((int)b) << 24) >>> 24);
 		int i = I.intValue();
