@@ -1,0 +1,25 @@
+<project name="Hudson Background Pi" default="compile" basedir=".">
+	<target name="printinfo">
+		<property environment="env" />
+		<echo message="${env.BUILD_TAG}"/>
+	</target>
+	<target name="init" depends="printinfo">
+		<property name="sourceDir" value="src" />
+		<property name="outputDir" value="classes" />
+		<property name="deployJSP" value="/tmp/blackhole" />
+		<property name="deployProperties" value="/tmp/blackhole" />
+	</target>
+	<target name="clean" depends="init">
+		<deltree dir="${outputDir}" />
+	</target>
+	<target name="prepare" depends="clean">
+		<mkdir dir="${outputDir}" />
+	</target>
+	<target name="compile" depends="prepare">
+		<javac srcdir="${sourceDir}" destdir="${outputDir}" />
+	</target>
+	<target name="deploy" depends="compile">
+		<copydir src="${jsp}" dest="${deployJSP}" />
+		<copyfile src="server.properties" dest="${deployProperties}" />
+	</target>
+</project>
