@@ -21,7 +21,9 @@
 	<target name="deploy" depends="compile">
 		<delete dir="${deployDir}" />
 		<mkdir dir="${deployDir}" />
-		<copydir src="${outputDir}" dest="${deployDir}" />
-		<copydir src="${requiredDir}" dest="${deployDir}" />
+		<copy todir="${deployDir}">
+			<fileset dir="${outputDir}"/>
+			<fileset dir="${requiredDir}"/>
+		</copy>
 	</target>
 </project>
