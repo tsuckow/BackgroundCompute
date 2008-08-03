@@ -1,4 +1,4 @@
-<project name="Hudson Background Pi" default="deploy" basedir=".">
+<project name="Background Pi" default="javadoc_deploy" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -7,6 +7,7 @@
 		<property name="sourceDir" value="src" />
 		<property name="outputDir" value="classes" />
 		<property name="requiredDir" value="Required" />
+		<property name="javadocDir" value="doc" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 	</target>
 	<target name="clean" depends="init">
@@ -18,6 +19,38 @@
 	<target name="compile" depends="prepare">
 		<javac srcdir="${sourceDir}" destdir="${outputDir}" />
 	</target>
+	
+	<!-- ====================================================== -->
+	<!-- JavaDocs -->
+	<!-- ====================================================== -->
+	<target name="docs" depends="compile,docs-init" description="Generate JavaDocs.">
+	    <javadoc
+	        destdir="${javadocDir}"
+	        author="true"
+	        version="true"
+	        use="true"
+	        windowtitle="${ant.project.name}"
+	    	sourcepath="${src}"
+	    	extdirs="${lib}"
+	        verbose="false"
+	    >
+	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
+	        <bottom>
+	            <![CDATA[<i>Copyright &#169; 2008 All Rights Reserved.</i>]]>
+	        </bottom>
+	        <tag name="todo" scope="all" description="To do:"/>
+	    </javadoc>
+	</target>
+	<target name="docs-init">
+	    <mkdir dir="${api}"/>
+	</target>
+	<target name="docs-clean">
+	    <delete dir="${api}"/>
+	</target>
+	
+	<!-- ====================================================== -->
+	<!-- Deploy to developement updater -->
+	<!-- ====================================================== -->
 	<target name="deploy" depends="compile">
 		<delete dir="${deployDir}" />
 		<mkdir dir="${deployDir}" />
@@ -25,5 +58,11 @@
 			<fileset dir="${outputDir}"/>
 			<fileset dir="${requiredDir}"/>
 		</copy>
+	</target>
+	
+	<!-- ====================================================== -->
+	<!-- Batch: JavaDoc, Deploy -->
+	<!-- ====================================================== -->
+	<target name="javadoc_deploy" depends="deploy,docs">
 	</target>
 </project>
