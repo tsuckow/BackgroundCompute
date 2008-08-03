@@ -30,7 +30,7 @@
 	        version="true"
 	        use="true"
 	        windowtitle="${ant.project.name}"
-	    	sourcepath="${src}"
+	    	sourcepath="${sourceDir}"
 	    	extdirs="${lib}"
 	        verbose="false"
 	    >
@@ -42,10 +42,10 @@
 	    </javadoc>
 	</target>
 	<target name="docs-init">
-	    <mkdir dir="${api}"/>
+	    <mkdir dir="${javadocDir}"/>
 	</target>
 	<target name="docs-clean">
-	    <delete dir="${api}"/>
+	    <delete dir="${javadocDir}"/>
 	</target>
 	
 	<!-- ====================================================== -->
