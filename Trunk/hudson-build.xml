@@ -25,15 +25,15 @@
 	<!-- JavaDocs -->
 	<!-- ====================================================== -->
 	<target name="docs" depends="compile,docs-init" description="Generate JavaDocs.">
+		<echo message="${lib}"/>
 	    <javadoc
 	        destdir="${javadocDir}"
 	        author="true"
 	        version="true"
 	        use="true"
 	        windowtitle="${ant.project.name}"
-	    	sourcepath="${sourceDir}"
+	    	sourcepathref="${sourceDir}"
 	    	extdirs="${lib}"
-	    	packagenames="*"
 	        verbose="false"
 	    >
 	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
