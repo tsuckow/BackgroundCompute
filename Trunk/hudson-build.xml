@@ -6,6 +6,7 @@
 	<target name="init" depends="printinfo">
 		<property name="sourceDir" value="src" />
 		<property name="outputDir" value="classes" />
+		<property name="requiredDir" value="Required" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 	</target>
 	<target name="clean" depends="init">
@@ -18,6 +19,9 @@
 		<javac srcdir="${sourceDir}" destdir="${outputDir}" />
 	</target>
 	<target name="deploy" depends="compile">
+		<delete dir="${deployDir}" />
+		<mkdir dir="${deployDir}" />
 		<copydir src="${outputDir}" dest="${deployDir}" />
+		<copydir src="${requiredDir}" dest="${deployDir}" />
 	</target>
 </project>
