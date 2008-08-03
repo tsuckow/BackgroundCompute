@@ -12,6 +12,7 @@
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
+		<delete dir="${javadocDir}"/>
 	</target>
 	<target name="prepare" depends="clean">
 		<mkdir dir="${outputDir}" />
@@ -32,20 +33,18 @@
 	        windowtitle="${ant.project.name}"
 	    	sourcepath="${sourceDir}"
 	    	extdirs="${lib}"
+	    	packagenames="*"
 	        verbose="false"
 	    >
 	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
 	        <bottom>
 	            <![CDATA[<i>Copyright &#169; 2008 All Rights Reserved.</i>]]>
 	        </bottom>
-	        <tag name="todo" scope="all" description="To do:"/>
+	        <!-- <tag name="todo" scope="all" description="To do:"/> -->
 	    </javadoc>
 	</target>
 	<target name="docs-init">
 	    <mkdir dir="${javadocDir}"/>
-	</target>
-	<target name="docs-clean">
-	    <delete dir="${javadocDir}"/>
 	</target>
 	
 	<!-- ====================================================== -->
