@@ -32,6 +32,7 @@
 	        use="true"
 	        windowtitle="${ant.project.name}"
 	    	sourcepath="${sourceDir}"
+	    	sourcefiles = "${sourceDir}/BC.java"
 	        verbose="false"
 	    >
 	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
