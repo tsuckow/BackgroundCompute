@@ -31,7 +31,7 @@
 	        version="true"
 	        use="true"
 	        windowtitle="${ant.project.name}"
-	    	sourcepathref="${sourceDir}"
+	    	sourcepath="${sourceDir}"
 	        verbose="false"
 	    >
 	        <doctitle><![CDATA[<h1>${ant.project.name}</h1>]]></doctitle>
