@@ -50,8 +50,8 @@
 	</target>
 
 	<target name="findbugs" depends="compile">
-		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml" debug="true">
-			<sourcePath path="${sourceDir}" />
+		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml">
+			<sourcePath path="${sourceDir}/java" />
 			<class location="${outputDir}" />
 		</findbugs>
 	</target>
