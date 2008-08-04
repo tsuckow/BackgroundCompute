@@ -1,4 +1,4 @@
-<project name="Background Pi" default="javadoc_deploy" basedir=".">
+<project name="Background Pi" default="javadoc_deploy_findbugs" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -8,7 +8,9 @@
 		<property name="outputDir" value="classes" />
 		<property name="requiredDir" value="Required" />
 		<property name="javadocDir" value="doc" />
+		<property name="findbugs.home" value="lib/findbugs" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${findbugs.home}/lib/findbugs-ant.jar" />
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
@@ -46,6 +48,13 @@
 	<target name="docs-init">
 	    <mkdir dir="${javadocDir}"/>
 	</target>
+
+	<target name="findbugs" depends="compile">
+		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml">
+			<sourcePath path="${sourceDir}" />
+			<class location="${outputDir}" />
+		</findbugs>
+	</target>
 	
 	<!-- ====================================================== -->
 	<!-- Deploy to developement updater -->
@@ -63,5 +72,11 @@
 	<!-- Batch: JavaDoc, Deploy -->
 	<!-- ====================================================== -->
 	<target name="javadoc_deploy" depends="deploy,docs">
+	</target>
+	
+	<!-- ====================================================== -->
+	<!-- Batch: JavaDoc, Deploy, findbugs -->
+	<!-- ====================================================== -->
+	<target name="javadoc_deploy_findbugs" depends="deploy,docs,findbugs">
 	</target>
 </project>
