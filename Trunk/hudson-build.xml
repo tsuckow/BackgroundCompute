@@ -51,7 +51,7 @@
 
 	<target name="findbugs" depends="compile">
 		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml">
-			<sourcePath path="${sourceDir}" />
+			<sourcePath path="${sourceDir}/" />
 			<class location="${outputDir}" />
 		</findbugs>
 	</target>
