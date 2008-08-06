@@ -1,6 +1,5 @@
 Splash.png
 Tray.png
-LargeFileTest.mpeg
 images/status_red.png
 images/status_green.png
 images/status_blue.png
