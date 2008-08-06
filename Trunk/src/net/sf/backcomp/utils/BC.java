@@ -759,13 +759,13 @@ public final class BC extends SwingWorker<Object,Object[]>
             catch(Exception e)
             {
             	//FIXME:Localize Perror
-            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.","Error",JOptionPane.ERROR_MESSAGE);
+            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
             }
     	}
     	else
     	{
     		//FIXME:Localize PError
-    		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
     	}
     	
     	throw new IllegalStateException("Update failed", ex);
