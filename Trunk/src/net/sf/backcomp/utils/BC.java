@@ -213,7 +213,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		{
         			//ERROR
         			//FIXME: Localize
-        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + getLocalHash(name) + "\n" + hash);
+        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
         			System.exit(-1);
         		}
         	}
@@ -666,7 +666,12 @@ public final class BC extends SwingWorker<Object,Object[]>
     		//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
 			BufferedInputStream bis = new BufferedInputStream(url.openStream(), 1024);
-
+			//TODO: Download to temp file then move.
+			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
+    		
+			int index = dFile.lastIndexOf(File.separatorChar);
+			if(index != -1) new File(dFile.substring(0,index)).mkdirs();
+			
 			File file = new File(dFile);
 			
 			BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
