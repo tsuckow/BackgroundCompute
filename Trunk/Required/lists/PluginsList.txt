@@ -7,10 +7,3 @@ net/sf/backcomp/plugins/Plugin$coreInstance.class
 net/sf/backcomp/plugins/Plugin.class
 net/sf/backcomp/plugins/PluginLoader$1.class
 net/sf/backcomp/plugins/PluginLoader.class
-plugins/BACKPI/BACKPI_Plugin.class
-plugins/BACKPI/BACKPI_ResumeData.class
-plugins/BACKPI/BACKPI_Status.class
-plugins/BACKPI/BACKPI_Status$coreMode.class
-plugins/BACKPI/BACKPI_StatusPanel.class
-plugins/BACKPI/BACKPI_StatusPanel$SThread.class
-plugins/BACKPI/images/Info.png
