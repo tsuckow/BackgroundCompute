@@ -213,7 +213,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		{
         			//ERROR
         			//FIXME: Localize
-        			PError("Failed to download updated hash list, Program Is In Inconsistant State");
+        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + getLocalHash(name) + "\n" + hash);
         			System.exit(-1);
         		}
         	}
