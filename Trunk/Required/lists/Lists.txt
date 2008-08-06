@@ -1,6 +1,6 @@
-UpdaterList.txt
-MediaList.txt
-DebugList.txt
-UtilsList.txt
-PluginsList.txt
-DialogsList.txt
+lists/UpdaterList.txt
+lists/MediaList.txt
+lists/DebugList.txt
+lists/UtilsList.txt
+lists/PluginsList.txt
+lists/DialogsList.txt
