@@ -58,7 +58,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		set.setProperty("cpu_limit", "80");
 		set.setProperty("locale", "en");
-		set.setProperty("server_path", "http://defcon1.hopto.org/bc/");
+		set.setProperty("server_path", "http://defcon1.hopto.org/updates/bc/");
 		set.setProperty("updateError", "False");
 		
 		return set;
@@ -168,7 +168,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         boolean updated = false;
         
         publish( new Object[] {(Object)( " " + Localize("Lists1") ) } );//Text.setText( " " + LTextRB.getString("Lists1") );
-    	remoteToLocal("HashList.php?R=Y&File=Lists.txt", "Lists.txt");//, PB); //Retrieve the list of update lists
+    	remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt");//, PB); //Retrieve the list of update lists
     	
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
@@ -207,7 +207,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         	//Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
         	if( getLocalHash(name).compareTo( hash ) != 0 )
         	{
-        		remoteToLocal("HashList.php?File=" + name,name);//, PB);
+        		remoteToLocal("HashList.php?Base=dev&File=" + name,name);//, PB);
         	
         		if( getLocalHash(name).compareTo( hash ) != 0 )
         		{
