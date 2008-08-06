@@ -272,7 +272,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         			updated = true;
         			publish( new Object[] {(Object)( " " + LocaleFormat( "Downloading1", new Object[] { name } ) ) } );
 
-        			if( !remoteToLocal(name,"Download.tmp"))//,PB) )
+        			if( !remoteToLocal("dev/" + name,"Download.tmp"))//,PB) )
         			{
         				//FIXME:Localize
         				PError("Failed to download update, Program Is In Inconsistant State");
