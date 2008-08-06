@@ -665,7 +665,6 @@ public final class BC extends SwingWorker<Object,Object[]>
     	{ 
     		//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
-			PError(url.toString());
 			BufferedInputStream bis = new BufferedInputStream(url.openStream(), 1024);
 			//TODO: Download to temp file then move.
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
