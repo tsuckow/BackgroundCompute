@@ -762,7 +762,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
     	}
     	
-    	System.exit(-1);
+    	throw new IllegalStateException("Update failed", ex);
     }
     
     

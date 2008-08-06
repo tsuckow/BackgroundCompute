@@ -1,4 +1,4 @@
-<project name="Background Pi" default="javadoc_deploy_findbugs" basedir=".">
+<project name="Background Compute" default="javadoc_deploy_findbugs" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -51,7 +51,7 @@
 
 	<target name="findbugs" depends="compile">
 		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml">
-			<sourcePath path="${sourceDir}/java" />
+			<sourcePath path="${sourceDir}" />
 			<class location="${outputDir}" />
 		</findbugs>
 	</target>

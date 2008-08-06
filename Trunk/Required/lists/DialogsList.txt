@@ -1,0 +1,14 @@
+net/sf/backcomp/dialogs/MultiColumnListRenderer.class
+net/sf/backcomp/dialogs/PluginManager$ListListen.class
+net/sf/backcomp/dialogs/PluginManager$RefreshList.class
+net/sf/backcomp/dialogs/PluginManager$StopButton.class
+net/sf/backcomp/dialogs/PluginManager$PauseButton.class
+net/sf/backcomp/dialogs/PluginManager$RemoveButton.class
+net/sf/backcomp/dialogs/PluginManager$StatusButton.class
+net/sf/backcomp/dialogs/PluginManager.class
+net/sf/backcomp/dialogs/DebugListRenderer.class
+net/sf/backcomp/dialogs/DebugDialog$ListListen.class
+net/sf/backcomp/dialogs/DebugDialog$RefreshList.class
+net/sf/backcomp/dialogs/DebugDialog.class
+net/sf/backcomp/dialogs/Settings.class
+net/sf/backcomp/dialogs/SettingsMsgHandler.class
