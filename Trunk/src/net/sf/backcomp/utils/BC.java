@@ -72,10 +72,10 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	//Private Variables
 	
-	private static JLabel		Text = null;			//Splash Text Line [Only use in process()!]
-	private static JProgressBar	PB = null;				//Splash Progress Bar [Only use in process()!]
-	private static JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]//FIXME: Its not!
-	private static JWindow		frame = null;			//The splash frame
+	private JLabel		Text = null;			//Splash Text Line [Only use in process()!]
+	private JProgressBar	PB = null;				//Splash Progress Bar [Only use in process()!]
+	private JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]//FIXME: Its not!
+	private JWindow		frame = null;			//The splash frame
 	
 	
 	//Package Variables
@@ -441,7 +441,7 @@ public final class BC extends SwingWorker<Object,Object[]>
      */
     private final void setProgressUnknown(Integer Bar)
     {
-    	publish( new Object[]{Bar,new Integer(0),new Integer(-1),new Integer(0)} );
+    	publish( new Object[]{Bar,Integer.valueOf(0),Integer.valueOf(-1),Integer.valueOf(0)} );
     }
     
     /**
@@ -492,7 +492,7 @@ public final class BC extends SwingWorker<Object,Object[]>
             	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
             	{
             		//PB
-            		if((Integer)row[0] == NUM_PB)
+            		if( ((Integer)row[0]).equals(NUM_PB) )
             		{
             			if(PB != null)
             	    	{
@@ -509,7 +509,7 @@ public final class BC extends SwingWorker<Object,Object[]>
             	    	}
             		}
             		//OverallPB
-            		else if((Integer)row[0] == NUM_OVERALLPB)
+            		else if( ((Integer)row[0]).equals(NUM_OVERALLPB) )
             		{
             			if(OverallPB != null)
             	    	{
@@ -845,12 +845,6 @@ public final class BC extends SwingWorker<Object,Object[]>
 			setProgressUnknown(NUM_PB);
 			return false;
         }
-        catch(Exception e)
-        {
-        	//Reset
-        	setProgressUnknown(NUM_PB);
-            return false;
-        }
         
         //Reset
         setProgressUnknown(NUM_PB);
@@ -1040,7 +1034,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         
 	static private String toHex(byte b)
 	{
-		Integer I = new Integer((((int)b) << 24) >>> 24);
+		Integer I = Integer.valueOf((((int)b) << 24) >>> 24);
 		int i = I.intValue();
  
 		if ( i < (byte)16 )
