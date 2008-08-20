@@ -58,7 +58,7 @@ abstract public class Plugin
 	
 	private volatile long threadCount = 0;
 	
-	private volatile static boolean paused = false;
+	private volatile boolean paused = false;
 
 	private volatile boolean coreManagerRunning = false;
 	

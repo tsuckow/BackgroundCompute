@@ -822,16 +822,18 @@ public final class BC extends SwingWorker<Object,Object[]>
     private boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
     {
     	int PBVal = 0;
+    	BufferedInputStream bis = null;
+    	BufferedOutputStream fos = null;
     	int RemoteSize = getRemoteSize(sFile);
     	
     	//Set Progress Bar State to Empty
     	setProgressValue(NUM_PB, 0, 1, 0);
-    		
+    	    	
     	try
     	{ 
     		//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
-			BufferedInputStream bis = new BufferedInputStream(url.openStream(), 1024);
+			bis = new BufferedInputStream(url.openStream(), 1024);
 
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
     		
@@ -840,7 +842,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			
 			File file = new File(dFile);
 			
-			BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
+			fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
 
 			byte[] buffer = new byte[1024]; 
 
@@ -854,8 +856,6 @@ public final class BC extends SwingWorker<Object,Object[]>
 				setProgressValue(NUM_PB, 0, RemoteSize, PBVal);
 			} 
 			
-			fos.close();
-			bis.close(); 
 		}
 		catch(MalformedURLException ex)
     	{
@@ -871,6 +871,20 @@ public final class BC extends SwingWorker<Object,Object[]>
 			setProgressUnknown(NUM_PB);
 			return false;
         }
+		finally
+		{
+			if(fos != null)
+				try
+				{
+					fos.close();
+				} catch (IOException e) {}
+				
+			if(bis != null)
+				try
+				{
+					bis.close();
+				} catch (IOException e) {} 
+		}
         
         //Reset
         setProgressUnknown(NUM_PB);
@@ -917,7 +931,12 @@ public final class BC extends SwingWorker<Object,Object[]>
 		    	
 		    	restart("BC");
             }
-            catch(Exception e)
+            catch(FileNotFoundException e)
+            {
+            	//FIXME:Localize Perror
+            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
+            }
+            catch(IOException e)
             {
             	//FIXME:Localize Perror
             	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
