@@ -281,7 +281,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		for(int i = 5; i > 0; --i)
         		{
         			//TODO:Localize
-        			setSplashText(" Files Updated. (" + i + ")");
+        			setSplashText(" " + Localize("Updated2") + " (" + i + ")");
         			try
                 	{
                 		Thread.sleep(1000);
@@ -411,8 +411,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     			dest.delete();
     			if( src.renameTo( dest ) )
     			{
-    				//FIXME: Need Localization.
-    				setSplashText( " Updated File." );
+    				setSplashText( " " + LocaleFormat( "Updated1", name ) );
     			}
     			
     			
