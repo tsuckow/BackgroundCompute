@@ -43,7 +43,7 @@ import java.util.List;
  * 
  * 
  * @author Deathbob
- * @version 0.2 2008/01/25
+ * @version 0.2.1 2008/08/17
  *
  */
 public final class BC extends SwingWorker<Object,Object[]>
@@ -64,33 +64,75 @@ public final class BC extends SwingWorker<Object,Object[]>
 		return set;
 	}
 	
+	//Constants
+	
+	static final String 		CLASS_PATH = getClassPath().trim(); //Class Path for restart
+	private final Integer		NUM_PB = 1;
+	private final Integer		NUM_OVERALLPB = 2;
+	
 	//Private Variables
 	
-	private static JLabel		Text = null;			//Splash Text Line
-	private static JProgressBar	PB = null;				//Splash Progress Bar
-	private static JProgressBar	OverallPB = null;		//Overall Progress Bar
+	private static JLabel		Text = null;			//Splash Text Line [Only use in process()!]
+	private static JProgressBar	PB = null;				//Splash Progress Bar [Only use in process()!]
+	private static JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]//FIXME: Its not!
 	private static JWindow		frame = null;			//The splash frame
-	private static boolean		SplashCreated = false;	//Is the splash created?
+	
 	
 	//Package Variables
 	
-	final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
+	final static Properties DefaultSettings = defaultSettings();//Make defaults settings object
+	final static Properties Settings = new Properties( DefaultSettings );//Load settings object with defaults
 	static ResourceBundle LTextRB = null;
 	
 	//Functions
 	
+	public static void main(String[] args)
+    {
+    	try
+		{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    	}catch(Exception e){} //If can't set native look and feel, oh well.
+    	
+    	//Start the self enclosed SwingWorker.
+    	(new BC()).execute();
+    	
+    }
+	
+	
+	//
+	//Swing Worker Meat & Potato's
+	//
+	
+	
+	/**
+	 * Task to perform off of the event thread.
+	 */
 	@Override
 	protected Object doInBackground()
 	{
-		createAndShowGUI();
+		doWork();
+		
+		
+		//I have to return something so return nothing.
 		return new Object();
 	}
 	
-    private void createAndShowGUI()
+	/**
+	 * Handles the splash screen and all tasks performed involving it, including updating the application.
+	 */
+    private void doWork()
     {
-        publish( new Object[] {} ); //Display the Splash Screen
+    	//Display the Splash Screen
+        publish( new Object[] {} ); 
         
-        try{
+        
+        
+        
+        //
+        //Load Settings
+        
+        try
+        {
         	Settings.load( new FileInputStream("Settings.properties") );
         }
         catch(FileNotFoundException ex)
@@ -121,7 +163,11 @@ public final class BC extends SwingWorker<Object,Object[]>
         	System.out.println("IO Error loading file");
         }    
         
-        //Just a sub scope while we make the ResourceBundle
+        
+        
+        //
+        //Load Localization
+        
         {
         	Locale UserLocale = new Locale( Settings.getProperty("locale") );
         	try
@@ -147,7 +193,13 @@ public final class BC extends SwingWorker<Object,Object[]>
         		System.out.println("Failed to open language bundle.");
         	}
         }
-         
+        
+        
+        
+        
+        //
+        //Save Settings
+        
         try{
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
         }
@@ -156,7 +208,15 @@ public final class BC extends SwingWorker<Object,Object[]>
         	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
         }
         
-        publish( new Object[] {(Object)( " " + Localize("Loading1") ) } );
+        
+        
+        
+        //Loading...
+        setSplashText( " " + Localize("Loading1") );
+        
+        
+        
+        
         //
         //BEGIN Updater
         //
@@ -167,18 +227,16 @@ public final class BC extends SwingWorker<Object,Object[]>
         
         boolean updated = false;
         
-        publish( new Object[] {(Object)( " " + Localize("Lists1") ) } );//Text.setText( " " + LTextRB.getString("Lists1") );
-    	remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt");//, PB); //Retrieve the list of update lists
+        //Downloading Lists...
+        setSplashText( " " + Localize("Lists1") );
+        
+        //Retrieve the list of update lists
+    	remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt"); 
     	
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
     	
-    	if(OverallPB != null)
-    	{
-	    	OverallPB.setMinimum(0);
-			OverallPB.setMaximum(100);
-			OverallPB.setValue(0);
-    	}
+    	setProgressValue(NUM_OVERALLPB, 0, 1, 0);
     	
     	//Get the sub lists that have the different modules.
     	for( String line : getLocalList("Lists.txt") )
@@ -203,7 +261,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		}
         	}
         	
-        	publish( new Object[] {(Object)( " " + LocaleFormat( "Lists2", new Object[] { name } ) ) } );
+        	setSplashText( " " + LocaleFormat( "Lists2", name ) );
         	//Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
         	if( getLocalHash(name).compareTo( hash ) != 0 )
         	{
@@ -265,12 +323,12 @@ public final class BC extends SwingWorker<Object,Object[]>
         			}
         		}
         		
-        		publish( new Object[] {(Object)( " " + LocaleFormat( "Checking1", new Object[] { name } ) ) } );
+        		setSplashText( " " + LocaleFormat( "Checking1", name ) );
 
         		if( getLocalHash(name).compareTo( hash ) != 0 )
         		{
         			updated = true;
-        			publish( new Object[] {(Object)( " " + LocaleFormat( "Downloading1", new Object[] { name } ) ) } );
+        			setSplashText( " " + LocaleFormat( "Downloading1", name ) );
 
         			if( !remoteToLocal("dev/" + name,"Download.tmp"))//,PB) )
         			{
@@ -290,7 +348,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         			if( src.renameTo( dest ) )
         			{
         				//FIXME: Need Localization.
-        				publish( new Object[] {(Object)( " Updated File." ) } );
+        				setSplashText( " Updated File." );
         				//Text.setText( " Moved." ); //*****************************************************
         			}
         			
@@ -299,12 +357,16 @@ public final class BC extends SwingWorker<Object,Object[]>
         	
         		
         		fileNum++;
-            	if( OverallPB != null )
-            		OverallPB.setValue(100/SubLists.length * subListNum + (100/SubLists.length)/Lines.length * fileNum);
+        		
+        		//TODO:Explain this formula...
+        		setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum + (100/SubLists.length)/Lines.length * fileNum));
+
         	}
         	subListNum++;
-        	if( OverallPB != null )
-        		OverallPB.setValue(100/SubLists.length * subListNum);
+        	
+        	//TODO:Explain this formula...
+        	setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum));
+
         	if(updated) //If we did something... restart.
     		{
     			restart("BC");
@@ -318,8 +380,10 @@ public final class BC extends SwingWorker<Object,Object[]>
         	catch(Exception ex){}
         	
         }
-    	if(OverallPB != null)
-    		OverallPB.setValue(100);
+    	
+    	//100% Complete
+    	setProgressValue(NUM_OVERALLPB, 0, 1, 1);
+
         //**************************************************************
         //**************************************************************
         //**************************************************************
@@ -343,6 +407,41 @@ public final class BC extends SwingWorker<Object,Object[]>
     	
 		//Start the main application
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
+		
+		//SwingWorker dies.
+    }
+    
+    /**
+     * Text to be shown on splash dialog
+     * 
+     * @param text Text to be displayed on splash.
+     */
+    private final void setSplashText(String text)
+    {
+    	publish( new Object[]{text} );
+    }
+    
+    /**
+     * Sets the Progress Bar Value
+     * 
+     * @param Bar Bar number, Use the constants prefixed with NUM_
+     * @param Min Minimum value for bar
+     * @param Max Maximum value for bar
+     * @param Val The value for the bar
+     */
+    private final void setProgressValue(Integer Bar, Integer Min, Integer Max, Integer Val)
+    {
+    	publish( new Object[]{Bar,Min,Max,Val} );
+    }
+    
+    /**
+     * Sets the Progress Bar to an indeterminant state
+     * 
+     * @param Bar Bar number, Use the constants prefixed with NUM_
+     */
+    private final void setProgressUnknown(Integer Bar)
+    {
+    	publish( new Object[]{Bar,new Integer(0),new Integer(-1),new Integer(0)} );
     }
     
     /**
@@ -359,137 +458,173 @@ public final class BC extends SwingWorker<Object,Object[]>
         	//Create / Destroy Splash Directive
         	if(row.length == 0)
             {
-            	if(SplashCreated)
+        		//Is splash in existance?
+            	if(frame != null)
             	{
             		//Destroy
             		frame.dispose();
-            		frame = null;
-            		SplashCreated = false;
-            	
+            		frame = null;    	
             	}
             	else
             	{
             		//Create
-            		
-            		//Create and set up the window.
-                    frame = new JWindow();
-                    frame.setSize(600,100);
-
-                    //The main pane
-                	JPanel mainPane = new JPanel();
-                	mainPane.setLayout(new BorderLayout());
-                	
-                	//Images are transparent, setup the background
-                	mainPane.setBackground(Color.BLACK);
-                	
-                	//Add the background Image
-                    JLabel Logo = new JLabel(new ImageIcon("images" + File.separator + "Logo.png","Updater"));
-                    mainPane.add(Logo,BorderLayout.WEST);
-                    
-                    //New pane for title and progress
-                    JPanel titlePane = new JPanel();
-                    titlePane.setLayout(new BorderLayout());
-                    titlePane.setBackground(Color.BLACK);
-                    
-                    //Title Image
-                    JLabel Title = new JLabel(new ImageIcon("images" + File.separator + "Title.png","Updater"));
-                    titlePane.add(Title,BorderLayout.NORTH);
-                    
-            		//Create the Progress Stuff
-            		JPanel South = new JPanel();
-            		South.setLayout(new BorderLayout());
-            		South.setBackground(Color.BLACK);
-            		
-            		//Progress Text
-            		//Don't Localize
-                	Text = new JLabel(" Loading Config...");
-                	Text.setForeground(Color.WHITE);
-                	
-                	//Progress Bar, Duh
-                	PB = new JProgressBar();
-                	OverallPB = new JProgressBar();
-                	
-            		//when the task of (initially) unknown length begins:
-            		PB.setIndeterminate(true);
-            		
-            		//Put it where it goes
-            		South.add(Text,BorderLayout.NORTH);
-            		South.add(PB,BorderLayout.CENTER);
-            		South.add(OverallPB,BorderLayout.SOUTH);
-            		
-            		titlePane.add(South,BorderLayout.SOUTH);
-                	
-                	mainPane.add(titlePane,BorderLayout.CENTER);
-                	
-                	//Main pane for window
-                	frame.setContentPane(mainPane);
-
-                    
-                    //frame.pack();
-                    
-                    //Center frame
-            		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            		Dimension size = frame.getSize();
-            		screenSize.height = screenSize.height/2;
-            		screenSize.width = screenSize.width/2;
-            		size.height = size.height/2;
-            		size.width = size.width/2;
-            		int y = screenSize.height - size.height;
-            		int x = screenSize.width - size.width;
-            		frame.setLocation(x, y);
-                    
-            		//Display the window.
-                    frame.setVisible(true);
-                    
-                    SplashCreated = true;
+            		createAndShowGUI();
             	}
             		
             }
+        	//Text Update
         	else if(row.length == 1)
             {
-        		//If 1 Item, it is text for progress
             	if(row[0] instanceof String)
             	{
             		Text.setText((String) row[0]);
             	}
             }
+        	//Progress Bar Update
             else if(row.length == 3)
             {
-            	//If 3 items, Progress Bar Update
-            	//Min, Max, Val (Max is -1 for Indeterminate)
-            	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer)
-            	{
-            		if((Integer)row[1] == -1)
-	            	{
-            			//Unknown Length
-                		PB.setIndeterminate(true);
-	            	}
-            		else
-            		{
-            			//Specific Size
-            			PB.setMinimum((Integer)row[0]);
-                		PB.setMaximum((Integer)row[1]);
-                		PB.setValue((Integer)row[2]);
-                		PB.setIndeterminate(false);
-            		}
-            	}
-            	
+            	PError("This method of updating the Progress Bar is Obsolete");
             }
-            
+        	//Progress Bar Update
+            else if(row.length == 4)
+            {
+            	//Bar, Min, Max, Val (Max is -1 for Indeterminate)
+            	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
+            	{
+            		//PB
+            		if((Integer)row[0] == NUM_PB)
+            		{
+            			if(PB != null)
+            	    	{
+	            			if((Integer)row[1] == -1)
+	    	            	{
+	                			//Unknown
+	                    		PB.setIndeterminate(true);
+	    	            	}
+	                		else
+	                		{
+	                			//Specific Size
+	                			processProgressValue(PB, (Integer)row[0], (Integer)row[1], (Integer)row[2]);
+	                		}
+            	    	}
+            		}
+            		//OverallPB
+            		else if((Integer)row[0] == NUM_OVERALLPB)
+            		{
+            			if(OverallPB != null)
+            	    	{
+	            			if((Integer)row[1] == -1)
+	    	            	{
+	                			//Unknown
+	                    		OverallPB.setIndeterminate(true);
+	    	            	}
+	                		else
+	                		{
+	                			//Specific Size
+	                			processProgressValue(OverallPB, (Integer)row[0], (Integer)row[1], (Integer)row[2]);
+	                		}
+            	    	}
+            		}
+            	}          	
+            }
         }
     }
-
-    public static void main(String[] args)
+    
+    private final void  processProgressValue(JProgressBar Com, int Min, int Max, int Val)
     {
-    	try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    	}catch(Exception e){} //If can't set native look and feel, oh well.
-    	
-    	//Start the self enclosed SwingWorker.
-    	(new BC()).execute();
-    	
+    	Com.setMinimum(Min);
+    	Com.setMaximum(Max);
+    	Com.setValue(Val);
+    	Com.setIndeterminate(false);
     }
+    
+    /**
+     * Creates and displays the splash window.
+     */
+    private void createAndShowGUI()
+    {
+    	//Create and set up the window.
+        frame = new JWindow();
+        frame.setSize(600,100);
+
+        //The main pane
+    	JPanel mainPane = new JPanel();
+    	mainPane.setLayout(new BorderLayout());
+    	
+    	//Images are transparent, setup the background
+    	mainPane.setBackground(Color.BLACK);
+    	
+    	//Add the background Image
+        JLabel Logo = new JLabel(new ImageIcon("images" + File.separator + "Logo.png","Updater"));
+        mainPane.add(Logo,BorderLayout.WEST);
+        
+        //New pane for title and progress
+        JPanel titlePane = new JPanel();
+        titlePane.setLayout(new BorderLayout());
+        titlePane.setBackground(Color.BLACK);
+        
+        //Title Image
+        JLabel Title = new JLabel(new ImageIcon("images" + File.separator + "Title.png","Updater"));
+        titlePane.add(Title,BorderLayout.NORTH);
+        
+		//Create the Progress Stuff
+		JPanel South = new JPanel();
+		South.setLayout(new BorderLayout());
+		South.setBackground(Color.BLACK);
+		
+		//Progress Text
+		//Don't Localize
+    	Text = new JLabel(" Loading Config...");
+    	Text.setForeground(Color.WHITE);
+    	
+    	//Progress Bar, Duh
+    	PB = new JProgressBar();
+    	OverallPB = new JProgressBar();
+    	
+		//when the task of (initially) unknown length begins:
+		PB.setIndeterminate(true);
+		
+		//Put it where it goes
+		South.add(Text,BorderLayout.NORTH);
+		South.add(PB,BorderLayout.CENTER);
+		South.add(OverallPB,BorderLayout.SOUTH);
+		
+		titlePane.add(South,BorderLayout.SOUTH);
+    	
+    	mainPane.add(titlePane,BorderLayout.CENTER);
+    	
+    	//Main pane for window
+    	frame.setContentPane(mainPane);
+
+        
+        //frame.pack();
+        
+        //Center frame
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension size = frame.getSize();
+		screenSize.height = screenSize.height/2;
+		screenSize.width = screenSize.width/2;
+		size.height = size.height/2;
+		size.width = size.width/2;
+		int y = screenSize.height - size.height;
+		int x = screenSize.width - size.width;
+		frame.setLocation(x, y);
+        
+		//Display the window.
+        frame.setVisible(true);
+    }
+
+    //
+	//END Swing Worker Meat & Potato's
+	//
+    
+    
+    
+    
+   
+    //
+    //Gravy
+    //
     
     /**
      * Localizes text based on a template.
@@ -519,13 +654,25 @@ public final class BC extends SwingWorker<Object,Object[]>
 	}
     
     /**
+     * Localizes text based on a template with the pre-localized argument provided.
+     * 
+     * @param template Localization Template
+     * @param Arg Argument to insert into the localization.
+     * @return Localized text
+     */
+    static private String LocaleFormat(String template, String Arg)
+    {
+    	return LocaleFormat(template, new String[]{Arg} );
+    }
+    
+    /**
      * Localizes text based on a template with the pre-localized arguments provided.
      * 
      * @param template Localization Template
      * @param Args Arguments to insert into the localization.
      * @return Localized text
      */
-	static private String LocaleFormat(String template, Object[] Args)
+	static private String LocaleFormat(String template, String[] Args)
 	{
 		
 		if(LTextRB!=null)
@@ -651,15 +798,8 @@ public final class BC extends SwingWorker<Object,Object[]>
     	int PBVal = 0;
     	int RemoteSize = getRemoteSize(sFile);
     	
-    	//Set Progress Bar State
-    	publish(new Object[] {(Object)(Integer)0, (Object)(Integer)RemoteSize, (Object)(Integer)0});//Min, Max, Val (Max is -1 for Indeterminate)
-    	/*if(PB != null)
-    	{
-    		PB.setMinimum(0);
-    		PB.setMaximum(getRemoteSize(sFile));
-    		PB.setValue(0);
-    		PB.setIndeterminate(false);
-    	}*/
+    	//Set Progress Bar State to Empty
+    	setProgressValue(NUM_PB, 0, 1, 0);
     		
     	try
     	{ 
@@ -684,8 +824,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 				fos.write(buffer,0,count);
 				PBVal += count;
 				
-				publish(new Object[] {(Object)(Integer)0, (Object)(Integer)RemoteSize, (Object)(Integer)PBVal});//Min, Max, Val (Max is -1 for Indeterminate)
-				//if(PB != null) PB.setValue(PBVal);
+				//Set progress bar to amount downloaded
+				setProgressValue(NUM_PB, 0, RemoteSize, PBVal);
 			} 
 			
 			fos.close();
@@ -696,28 +836,24 @@ public final class BC extends SwingWorker<Object,Object[]>
     		
     		//Malformed Path, SERVER_PATH wrong?
     		//Reset
-			publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
-			//if(PB != null) PB.setIndeterminate(true);
+			setProgressUnknown(NUM_PB);
 			return false;
     	}
 		catch(IOException ioe)
 		{
 			//Reset
-			publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
-			//if(PB != null) PB.setIndeterminate(true);
+			setProgressUnknown(NUM_PB);
 			return false;
         }
         catch(Exception e)
         {
         	//Reset
-        	publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
-            //if(PB != null) PB.setIndeterminate(true);
+        	setProgressUnknown(NUM_PB);
             return false;
         }
         
         //Reset
-        publish(new Object[] {(Object)(Integer)0, (Object)(Integer) (-1), (Object)(Integer)0});
-        //if(PB != null) PB.setIndeterminate(true);
+        setProgressUnknown(NUM_PB);
 		return true;
     }
     
@@ -740,7 +876,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
     	if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
     	{
-    		publish( new Object[] {(Object)( " " + Localize("UpdateError1") ) } );
+    		setSplashText( " " + Localize("UpdateError1") );
 	    	
     		try
     		{
@@ -773,8 +909,6 @@ public final class BC extends SwingWorker<Object,Object[]>
     
     
     //NEW VM
-    
-    static final String CLASS_PATH = getClassPath().trim(); //Class Path for restart
     
     static void restart(String ClassName)
     {
