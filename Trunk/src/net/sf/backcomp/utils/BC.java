@@ -104,6 +104,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 	//
 	
 	
+	
+	
 	/**
 	 * Task to perform off of the event thread.
 	 */
@@ -116,6 +118,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 		//I have to return something so return nothing.
 		return new Object();
 	}
+	
+	
+	
 	
 	/**
 	 * Handles the splash screen and all tasks performed involving it, including updating the application.
@@ -236,55 +241,19 @@ public final class BC extends SwingWorker<Object,Object[]>
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
     	
+    	//0%
     	setProgressValue(NUM_OVERALLPB, 0, 1, 0);
     	
     	//Get the sub lists that have the different modules.
-    	for( String line : getLocalList("Lists.txt") )
-        {
-    		
-        	String name = null;
-        	String hash = null;
-        		
-        	{
-        		String[] linea = line.split(";");
-        		if(linea.length != 2)
-        		{
-        			//ERROR
-        			//FIXME: Localize
-        			UpdateError("Invalid Line in HashFiles HashList: " + line,null);
-        			//NEVER RETURNS.
-        		}
-        		else
-        		{
-        			name = linea[0];
-        			hash = linea[1];
-        		}
-        	}
-        	
-        	setSplashText( " " + LocaleFormat( "Lists2", name ) );
-        	//Text.setText( " " + LocaleFormat( "Lists2", new Object[] { name } ) );
-        	if( getLocalHash(name).compareTo( hash ) != 0 )
-        	{
-        		remoteToLocal("HashList.php?Base=dev&File=" + name,name);//, PB);
-        	
-        		if( getLocalHash(name).compareTo( hash ) != 0 )
-        		{
-        			//ERROR
-        			//FIXME: Localize
-        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
-        			System.exit(-1);
-        		}
-        	}
-        }
+    	handleUpdateList("Lists.txt","HashList.php?Base=dev&File=",1, 1);
         
         //Do the updating
-    	
-        String[] SubLists = getLocalList("Lists.txt");
+    	String[] SubLists = getLocalList("Lists.txt");
         int subListNum = 0;
     	for( String list : SubLists )//Move through the sublists
         {
-        	String listname = null;
-        		
+    		String listname = null;
+    		
         	{
         		String[] linea = list.split(";");
         		if(linea.length != 2)
@@ -299,69 +268,9 @@ public final class BC extends SwingWorker<Object,Object[]>
         			listname = linea[0];
         		}
         	}
-        
-        	int fileNum = 0;
-        	String[] Lines = getLocalList(listname);
-        	for( String line : Lines )//Move through the files
-        	{
-        		String name = null;
-        		String hash = null;
-        		
-        		{
-        			String[] linea = line.split(";");
-        			if(linea.length != 2)
-        			{
-        				//ERROR
-        				//FIXME: Localize
-            			UpdateError("Invalid Line in HashList: " + line,null);
-            			//NEVER RETURNS.
-        			}
-        			else
-        			{
-        				name = linea[0];
-        				hash = linea[1];
-        			}
-        		}
-        		
-        		setSplashText( " " + LocaleFormat( "Checking1", name ) );
-
-        		if( getLocalHash(name).compareTo( hash ) != 0 )
-        		{
-        			updated = true;
-        			setSplashText( " " + LocaleFormat( "Downloading1", name ) );
-
-        			if( !remoteToLocal("dev/" + name,"Download.tmp"))//,PB) )
-        			{
-        				//FIXME:Localize
-        				PError("Failed to download update, Program Is In Inconsistant State");
-        				System.exit(-1);
-        			}
-        			File src = new File("Download.tmp");
-        		
-        			name = name.replace('/',File.separatorChar); //Make the char for this OS
-        		
-        			int index = name.lastIndexOf(File.separatorChar);
-        			if(index != -1) new File(name.substring(0,index)).mkdirs();
-        			
-        			File dest = new File(name);
-        			dest.delete();
-        			if( src.renameTo( dest ) )
-        			{
-        				//FIXME: Need Localization.
-        				setSplashText( " Updated File." );
-        				//Text.setText( " Moved." ); //*****************************************************
-        			}
-        			
-        			
-        		}
         	
-        		
-        		fileNum++;
-        		
-        		//TODO:Explain this formula...
-        		setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum + (100/SubLists.length)/Lines.length * fileNum));
-
-        	}
+        	updated = handleUpdateList(listname,"dev/",SubLists.length, subListNum);
+        	
         	subListNum++;
         	
         	//TODO:Explain this formula...
@@ -373,9 +282,11 @@ public final class BC extends SwingWorker<Object,Object[]>
     			publish( new Object[] {} ); //Destroy the Splash Screen
     			System.exit(0);
     		}
+        	
+        	//TODO:Remove me. I'm for debug.
         	try
         	{
-        		Thread.sleep(1000);
+        		Thread.sleep(3000);
         	}
         	catch(Exception ex){}
         	
@@ -399,7 +310,12 @@ public final class BC extends SwingWorker<Object,Object[]>
         	Settings.setProperty("updateError", "False");
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
         }
-        catch(Exception ex)
+        catch(FileNotFoundException ex)
+        {
+        	//FIXME:Localize
+        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+        }
+        catch(IOException ex)
         {
         	//FIXME:Localize
         	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
@@ -411,6 +327,101 @@ public final class BC extends SwingWorker<Object,Object[]>
 		//SwingWorker dies.
     }
     
+    
+    
+    /**
+     * Runs through an update list updating each item.
+     * 
+     * @param listname List file name
+     * @param prefix Download prefix
+     * @param numLists Number of update lists
+     * @param listNum This list Number
+     * @return
+     */
+    private boolean handleUpdateList(String listname, String prefix, int numLists, int listNum)
+    {
+    	//Vars
+    	boolean updated = false;
+    	int fileNum = 0;
+    	
+    	
+    	String[] Lines = getLocalList(listname);
+    	for( String line : Lines )//Move through the files
+    	{
+    		String name = null;
+    		String hash = null;
+    		
+    		{
+    			String[] linea = line.split(";");
+    			if(linea.length != 2)
+    			{
+    				//ERROR
+    				//FIXME: Localize
+        			UpdateError("Invalid Line in HashList: " + line,null);
+        			//NEVER RETURNS.
+    			}
+    			else
+    			{
+    				name = linea[0];
+    				hash = linea[1];
+    			}
+    		}
+    		
+    		setSplashText( " " + LocaleFormat( "Checking1", name ) );
+
+    		if( getLocalHash(name).compareTo( hash ) != 0 )
+    		{
+    			updated = true;
+    			setSplashText( " " + LocaleFormat( "Downloading1", name ) );
+
+    			if( !remoteToLocal(prefix + name,"Download.tmp"))//,PB) )
+    			{
+    				//FIXME:Localize
+    				PError("Failed to download update, Program Is In Inconsistant State");
+    				System.exit(-1);
+    			}
+    			File src = new File("Download.tmp");
+    		
+    			//Verify it
+        		if( getLocalHash("Download.tmp").compareTo( hash ) != 0 )
+        		{
+        			//ERROR
+        			//FIXME: Localize
+        			//FIXME: Update Error
+        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
+        			System.exit(-1);
+        		}
+    			
+    			name = name.replace('/',File.separatorChar); //Make the char for this OS
+    		
+    			int index = name.lastIndexOf(File.separatorChar);
+    			if(index != -1) new File(name.substring(0,index)).mkdirs();
+    			
+    			File dest = new File(name);
+    			dest.delete();
+    			if( src.renameTo( dest ) )
+    			{
+    				//FIXME: Need Localization.
+    				setSplashText( " Updated File." );
+    			}
+    			
+    			
+    		}
+    	
+    		
+    		fileNum++;
+    		
+    		//TODO:Explain this formula...
+    		setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
+
+    	}
+    	
+    	return updated;
+    }
+    
+    
+    
+    
     /**
      * Text to be shown on splash dialog
      * 
@@ -420,6 +431,9 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
     	publish( new Object[]{text} );
     }
+    
+    
+    
     
     /**
      * Sets the Progress Bar Value
@@ -434,8 +448,11 @@ public final class BC extends SwingWorker<Object,Object[]>
     	publish( new Object[]{Bar,Min,Max,Val} );
     }
     
+    
+    
+    
     /**
-     * Sets the Progress Bar to an indeterminant state
+     * Sets the Progress Bar to an indeterminate state
      * 
      * @param Bar Bar number, Use the constants prefixed with NUM_
      */
@@ -443,6 +460,9 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
     	publish( new Object[]{Bar,Integer.valueOf(0),Integer.valueOf(-1),Integer.valueOf(0)} );
     }
+    
+    
+    
     
     /**
      * Updates the splash dialog
@@ -481,11 +501,6 @@ public final class BC extends SwingWorker<Object,Object[]>
             	}
             }
         	//Progress Bar Update
-            else if(row.length == 3)
-            {
-            	PError("This method of updating the Progress Bar is Obsolete");
-            }
-        	//Progress Bar Update
             else if(row.length == 4)
             {
             	//Bar, Min, Max, Val (Max is -1 for Indeterminate)
@@ -496,7 +511,7 @@ public final class BC extends SwingWorker<Object,Object[]>
             		{
             			if(PB != null)
             	    	{
-	            			if((Integer)row[1] == -1)
+	            			if((Integer)row[2] == -1)
 	    	            	{
 	                			//Unknown
 	                    		PB.setIndeterminate(true);
@@ -504,7 +519,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	                		else
 	                		{
 	                			//Specific Size
-	                			processProgressValue(PB, (Integer)row[0], (Integer)row[1], (Integer)row[2]);
+	                			processProgressValue(PB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
 	                		}
             	    	}
             		}
@@ -513,7 +528,7 @@ public final class BC extends SwingWorker<Object,Object[]>
             		{
             			if(OverallPB != null)
             	    	{
-	            			if((Integer)row[1] == -1)
+	            			if((Integer)row[2] == -1)
 	    	            	{
 	                			//Unknown
 	                    		OverallPB.setIndeterminate(true);
@@ -521,7 +536,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	                		else
 	                		{
 	                			//Specific Size
-	                			processProgressValue(OverallPB, (Integer)row[0], (Integer)row[1], (Integer)row[2]);
+	                			processProgressValue(OverallPB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
 	                		}
             	    	}
             		}
@@ -778,8 +793,9 @@ public final class BC extends SwingWorker<Object,Object[]>
   		{
   			//FIXME:Localize
   			PError("Missing MD5 Algorithm in runtime. It is required.");
-  			System.exit(-1);
-  			return ""; //MD5 Not availible (Odd)
+  			throw new RuntimeException("Hashing Algorithm is not availible.",ex);
+  			//System.exit(-1);
+  			//return ""; //MD5 Not availible (Odd)
   		}
   		catch(FileNotFoundException ex)
   		{
@@ -806,7 +822,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     		//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
 			BufferedInputStream bis = new BufferedInputStream(url.openStream(), 1024);
-			//TODO: Download to temp file then move.
+
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
     		
 			int index = dFile.lastIndexOf(File.separatorChar);
@@ -851,6 +867,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 		return true;
     }
     
+    
+    
+    
     /**
      * Displays Error Message
      * 
@@ -861,8 +880,11 @@ public final class BC extends SwingWorker<Object,Object[]>
 		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
     
+    
+    
+    
     /**
-     * Never Returns. Trys restarting and if doesn't help displays error and bails.
+     * Never Returns Successfully. Tries restarting and if doesn't help displays error and bails.
      * 
      * @param msg Message in error if already restarted once.
      */
@@ -902,6 +924,8 @@ public final class BC extends SwingWorker<Object,Object[]>
     
     
     
+    
+    //
     //NEW VM
     
     static void restart(String ClassName)
@@ -979,6 +1003,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	}
     
 
+	
 	
 //////////
 //
