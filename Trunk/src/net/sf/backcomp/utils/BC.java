@@ -278,7 +278,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 
         	if(updated) //If we did something... restart.
     		{
-        		for(int i = 5; i > 0; i++)
+        		for(int i = 5; i > 0; --i)
         		{
         			//TODO:Localize
         			setSplashText(" Files Updated. (" + i + ")");
