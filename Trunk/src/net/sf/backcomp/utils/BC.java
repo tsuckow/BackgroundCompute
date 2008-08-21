@@ -245,7 +245,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     	setProgressValue(NUM_OVERALLPB, 0, 1, 0);
     	
     	//Get the sub lists that have the different modules.
-    	handleUpdateList("Lists.txt","HashList.php?Base=dev&File=",1, 1);
+    	handleUpdateList("Lists.txt","HashList.php?Base=dev&File=",1, 0);
         
         //Do the updating
     	String[] SubLists = getLocalList("Lists.txt");
