@@ -280,26 +280,14 @@ public final class BC extends SwingWorker<Object,Object[]>
     		{
         		for(int i = 5; i > 0; --i)
         		{
-        			//TODO:Localize
         			setSplashText(" " + Localize("Updated2") + " (" + i + ")");
-        			try
-                	{
-                		Thread.sleep(1000);
-                	}
-                	catch(Exception ex){}
+        			
+        			sleep(1000);
         		}
     			restart("BC");
     			publish( new Object[] {} ); //Destroy the Splash Screen
-    			System.exit(0);
-    		}
-        	
-        	//TODO:Remove me. I'm for debug.
-        	try
-        	{
-        		Thread.sleep(3000);
-        	}
-        	catch(Exception ex){}
-        	
+    			return;
+    		}       	
         }
     	
     	//100% Complete
@@ -386,8 +374,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 
     			if( !remoteToLocal(prefix + name,"Download.tmp"))//,PB) )
     			{
-    				//FIXME:Localize
-    				PError("Failed to download update, Program Is In Inconsistant State");
+    				//FIXME:UpdateError
+    				//Inconsistent State
+    				PError(Localize("UpdateError2"));
     				System.exit(-1);
     			}
     			File src = new File("Download.tmp");
@@ -638,6 +627,20 @@ public final class BC extends SwingWorker<Object,Object[]>
         frame.setVisible(true);
     }
 
+    /**
+     * Make sure the splash is gone when terminating.
+     */
+    @Override
+    protected void done()
+    {
+    	if(frame != null)
+    	{
+    		//Destroy
+    		frame.dispose();
+    		frame = null;    	
+    	}
+    }
+    
     //
 	//END Swing Worker Meat & Potato's
 	//
@@ -1030,7 +1033,14 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 	}
     
-
+	private static void sleep(long ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}
+		catch(Exception ex){}
+	}
 	
 	
 //////////
