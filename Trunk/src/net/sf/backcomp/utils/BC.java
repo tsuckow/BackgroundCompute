@@ -119,7 +119,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 		catch(Exception ex)
 		{
-			PError("Caught exception at top of Background Thread.\n\nLast Chance.\n\n" + ex.toString() + "\n\n" + makeStackTrace(ex));
+			showError("Caught exception at top of Background Thread.\n\nLast Chance.\n\n" + ex.toString() + "\n\n" + makeStackTrace(ex));
 		}
 		
 		
@@ -137,9 +137,6 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
     	//Display the Splash Screen
         publish( new Object[] {} ); 
-        
-        
-        
         
         //
         //Load Settings
@@ -222,13 +219,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         }
         
         
-        
-        
-        //Loading...
-        setSplashText( " " + Localize("Loading1") );
-        
-        
-        
+
         
         //
         //BEGIN Updater
@@ -241,7 +232,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         boolean updated = false;
         
         //Downloading Lists...
-        setSplashText( " " + Localize("Lists1") );
+        setSplashText( Localize("Lists1","Downloading Lists...") );
         
         //Retrieve the list of update lists
     	remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt"); 
@@ -266,10 +257,9 @@ public final class BC extends SwingWorker<Object,Object[]>
         		String[] linea = list.split(";");
         		if(linea.length != 2)
         		{
-        			//ERROR
-        			//FIXME: Localize
-        			UpdateError("Invalid Line in HashFiles HashList: " + list,null);
-        			//NEVER RETURNS.
+        			//Invalid Line
+        			UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + list,null);
+        			return;
         		}
         		else
         		{
@@ -288,7 +278,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     		{
         		for(int i = 5; i > 0; --i)
         		{
-        			setSplashText(" " + Localize("Updated2") + " (" + i + ")");
+        			setSplashText( Localize("Updated2","Module Updated.") + " (" + i + ")");
         			
         			sleep(1000);
         		}
@@ -310,8 +300,14 @@ public final class BC extends SwingWorker<Object,Object[]>
         //END Updater
         //
         
-    	publish( new Object[] {} ); //Destroy the Splash Screen
-		
+    	
+    	//
+    	//Verify Localization, Restart if problem. 
+		//TODO: This
+    	
+    	
+    	//
+    	//Commit Settings
         try{
         	Settings.setProperty("updateError", "False");
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
@@ -330,7 +326,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		//Start the main application
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
 		
-		//SwingWorker dies.
+		//SwingWorker dies. Splash Screen Dies
     }
     
     
@@ -362,8 +358,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     			if(linea.length != 2)
     			{
     				//ERROR
-    				//FIXME: Localize
-        			UpdateError("Invalid Line in HashList: " + line,null);
+    				UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + line,null);
         			//NEVER RETURNS.
     			}
     			else
@@ -380,11 +375,10 @@ public final class BC extends SwingWorker<Object,Object[]>
     			updated = true;
     			setSplashText( " " + LocaleFormat( "Downloading1", name ) );
 
-    			if( !remoteToLocal(prefix + name,"Download.tmp"))//,PB) )
+    			if( !remoteToLocal(prefix + name,"Download.tmp") )
     			{
     				//FIXME:UpdateError
-    				//Inconsistent State
-    				PError(Localize("UpdateError2"));
+    				showError( LocaleFormat( "Error_Download1", name ) );
     				System.exit(-1);
     			}
     			File src = new File("Download.tmp");
@@ -395,7 +389,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         			//ERROR
         			//FIXME: Localize
         			//FIXME: Update Error
-        			PError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
+        			showError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
         			System.exit(-1);
         		}
     			
@@ -481,22 +475,15 @@ public final class BC extends SwingWorker<Object,Object[]>
     	//Handle each item in order
         for (Object row[] : chunks)
         {
-        	//Create / Destroy Splash Directive
+        	//Create Splash Directive
         	if(row.length == 0)
             {
         		//Is splash in existance?
-            	if(frame != null)
-            	{
-            		//Destroy
-            		frame.dispose();
-            		frame = null;    	
-            	}
-            	else
+            	if(frame == null)
             	{
             		//Create
             		createAndShowGUI();
-            	}
-            		
+            	}	
             }
         	//Text Update
         	else if(row.length == 1)
@@ -667,7 +654,7 @@ public final class BC extends SwingWorker<Object,Object[]>
      * @param template Localization Template
      * @return Localized text
      */
-    static private String Localize(String template)
+    static private String Localize(String template, String defaultText)
 	{
 		
 		if(LTextRB!=null)
@@ -678,13 +665,14 @@ public final class BC extends SwingWorker<Object,Object[]>
 			}
 			catch(Exception e)
 			{
-				//Hmm
-				return " **Localization Template Error** ";
+				//Template missing
+				return "~" + defaultText;
 			}
 		}
 		else
 		{
-			return " **No Locale Availible** ";
+			//No Locale
+			return "#" + defaultText;
 		}
 	}
     
@@ -830,11 +818,8 @@ public final class BC extends SwingWorker<Object,Object[]>
   		}
   		catch(NoSuchAlgorithmException ex)
   		{
-  			//FIXME:Localize
-  			PError("Missing MD5 Algorithm in runtime. It is required.");
-  			throw new RuntimeException("Hashing Algorithm is not availible.",ex);
-  			//System.exit(-1);
-  			//return ""; //MD5 Not availible (Odd)
+  			showError( Localize("Error_MD51","MD5 Algorithm missing") );
+  			throw new ThreadDeath();
   		}
   		catch(FileNotFoundException ex)
   		{
@@ -928,9 +913,24 @@ public final class BC extends SwingWorker<Object,Object[]>
      * 
      * @param msg Message
      */
-    static private void PError(String msg)
+    static private final void showError(String msg)
 	{
-		JOptionPane.showMessageDialog(null,msg,"Error",JOptionPane.ERROR_MESSAGE);
+    	showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
+	}
+
+    
+    
+    
+    /**
+     * Displays Message
+     * 
+     * @param msg Message
+     * @param title Title to display
+     * @param icon JOptionPane icon
+     */
+    static private final void showMsg(String msg, String title, int icon)
+	{
+		JOptionPane.showMessageDialog(null,msg,title,icon);
 	}
     
     
@@ -945,36 +945,34 @@ public final class BC extends SwingWorker<Object,Object[]>
     {
     	if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
     	{
-    		setSplashText( " " + Localize("UpdateError1") );
+    		setSplashText( Localize("Error_Update1","Error while updating. ") );
 	    	
     		try
     		{
             	Settings.setProperty("updateError", "True");
             	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
             	
-	            try
-		    	{
-					Thread.sleep(3000);
-		    	}
-		    	catch(InterruptedException e){}
+            	for(int i = 5; i > 0; --i)
+        		{
+        			setSplashText(  Localize("Error_Update1","Error while updating.") + " (" + i + ")");
+        			
+        			sleep(1000);
+        		}
 		    	
 		    	restart("BC");
             }
-            catch(FileNotFoundException e)
+            catch(Exception e)
             {
-            	//FIXME:Localize Perror
-            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
-            }
-            catch(IOException e)
-            {
-            	//FIXME:Localize Perror
-            	JOptionPane.showMessageDialog(null,"Error while updating and unable to save settings. Bailing Out.\nCheck Permissions & Contact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
+            	String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
+            	String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
+            	showError(Localize("Error_UpdateSave1",defErrMsg) + details);
             }
     	}
     	else
     	{
-    		//FIXME:Localize PError
-    		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
+    		String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
+        	String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");      	
+        	showError(Localize("Error_Update2",defErrMsg) + details);
     	}
     	 
     	//Nuke The Thread.
@@ -1042,8 +1040,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			}
 			catch (Exception a_e)
 			{
-				//FIXME: Localize
-				PError("Error auto-restart: " + ex);
+				showError( Localize("Error_Restart1","Error while trying to restart Background Compute.\n\nError: ") + ex);
 			}
 		}
 	}
