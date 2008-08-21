@@ -67,6 +67,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	//Constants
 	
 	static final String 		CLASS_PATH = getClassPath().trim(); //Class Path for restart
+	static final  String		NEW_LINE = System.getProperty("line.separator");
 	private final Integer		NUM_PB = 1;
 	private final Integer		NUM_OVERALLPB = 2;
 	
@@ -112,7 +113,14 @@ public final class BC extends SwingWorker<Object,Object[]>
 	@Override
 	protected Object doInBackground()
 	{
-		doWork();
+		try
+		{
+			doWork();
+		}
+		catch(Exception ex)
+		{
+			PError("Caught exception at top of Background Thread.\n\nLast Chance.\n\n" + ex.toString() + "\n\n" + makeStackTrace(ex));
+		}
 		
 		
 		//I have to return something so return nothing.
@@ -968,8 +976,9 @@ public final class BC extends SwingWorker<Object,Object[]>
     		//FIXME:Localize PError
     		JOptionPane.showMessageDialog(null,"Error while updating. Bailing Out.\nContact Support.\n\nMessage:\n"+msg,"Error",JOptionPane.ERROR_MESSAGE);
     	}
-    	
-    	throw new IllegalStateException("Update failed", ex);
+    	 
+    	//Nuke The Thread.
+    	throw new ThreadDeath();
     }
     
     
@@ -1050,6 +1059,28 @@ public final class BC extends SwingWorker<Object,Object[]>
 		{
 			return "";
 		}
+	}
+	
+	/**
+	 *Generates a stacktrace as a string
+	 *
+	 * @param aThrowable Throwable object to generate stack trace from
+	 * @return "Stack Trace: <code>stacktrace</code>"
+	 */
+	public static String makeStackTrace(Throwable aThrowable)
+	{
+	    //add the class name and any message passed to constructor
+	    final StringBuilder result = new StringBuilder( "Stack Trace: " );
+	    result.append(aThrowable.toString());
+	    
+	    result.append(NEW_LINE);
+
+	    //add each element of the stack trace
+	    for (StackTraceElement element : aThrowable.getStackTrace() ){
+	      result.append( element );
+	      result.append( NEW_LINE );
+	    }
+	    return result.toString();
 	}
     
 	private static void sleep(long ms)
