@@ -714,7 +714,26 @@ public final class BC extends SwingWorker<Object,Object[]>
 				CurrentLocale = new Locale( "en" );
 			}
 			
-			MessageFormat formatter = new MessageFormat( LTextRB.getString( template ), CurrentLocale );
+			String stringTemplate = null;
+			
+			try
+			{
+				stringTemplate = LTextRB.getString( template );
+			}
+			catch(NullPointerException ex)
+			{
+				return " **Null Localization Template Name** ";
+			}
+			catch(MissingResourceException ex)
+			{
+				return " **Localization Template '" + template + "' Does Not Exist** ";
+			}
+			catch(Exception ex)
+			{
+				return " **Unknown Localization Problem** ";
+			}
+			
+			MessageFormat formatter = new MessageFormat( stringTemplate, CurrentLocale );
 			return formatter.format(Args);
 		}
 		else
