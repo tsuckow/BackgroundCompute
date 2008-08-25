@@ -75,7 +75,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	private JLabel		Text = null;			//Splash Text Line [Only use in process()!]
 	private JProgressBar	PB = null;				//Splash Progress Bar [Only use in process()!]
-	private JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]//FIXME: Its not!
+	private JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]
 	private JWindow		frame = null;			//The splash frame
 	
 	
@@ -204,23 +204,6 @@ public final class BC extends SwingWorker<Object,Object[]>
         	}
         }
         
-        
-        
-        
-        //
-        //Save Settings
-        
-        try{
-        	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
-        }
-        catch(Exception ex)
-        {
-        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
-        }
-        
-        
-
-        
         //
         //BEGIN Updater
         //
@@ -239,6 +222,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     	
     	//TODO
     	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
+    	//2. Use TempFile to download, if problem use old.
     	
     	//0%
     	setProgressValue(NUM_OVERALLPB, 0, 1, 0);
@@ -271,7 +255,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         	
         	subListNum++;
         	
-        	//TODO:Explain this formula...
+        	//100% divided into NumberOfList Pieces, this is piece subListNum
         	setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum));
 
         	if(updated) //If we did something... restart.
@@ -283,7 +267,6 @@ public final class BC extends SwingWorker<Object,Object[]>
         			sleep(1000);
         		}
     			restart("BC");
-    			publish( new Object[] {} ); //Destroy the Splash Screen
     			return;
     		}       	
         }
@@ -302,25 +285,28 @@ public final class BC extends SwingWorker<Object,Object[]>
         
     	
     	//
-    	//Verify Localization, Restart if problem. 
+    	//Verify Localization Exists, Restart if problem. 
 		//TODO: This
     	
     	
     	//
     	//Commit Settings
-        try{
-        	Settings.setProperty("updateError", "False");
+    	Settings.setProperty("updateError", "False");
+        try
+        {       	
         	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
         }
         catch(FileNotFoundException ex)
         {
-        	//FIXME:Localize
-        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+        	String defErrMsg = "Problem saving settings.\n\nError: ";
+        	String details = ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
+        	showError( Localize("Error_Settings1",defErrMsg) + details);
         }
         catch(IOException ex)
         {
-        	//FIXME:Localize
-        	JOptionPane.showMessageDialog(null,"Unable to save settings. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
+        	String defErrMsg = "Problem saving settings.\n\nError: ";
+        	String details = ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
+        	showError( Localize("Error_Settings1",defErrMsg) + details);
         }
     	
 		//Start the main application
@@ -377,23 +363,18 @@ public final class BC extends SwingWorker<Object,Object[]>
 
     			if( !remoteToLocal(prefix + name,"Download.tmp") )
     			{
-    				//FIXME:UpdateError
-    				showError( LocaleFormat( "Error_Download1", name ) );
-    				System.exit(-1);
+    				UpdateError( LocaleFormat( "Error_Download1", name ), null );
     			}
     			File src = new File("Download.tmp");
     		
     			//Verify it
         		if( getLocalHash("Download.tmp").compareTo( hash ) != 0 )
         		{
-        			//ERROR
-        			//FIXME: Localize
-        			//FIXME: Update Error
-        			showError("Failed to download updated hash list, Program Is In Inconsistant State.\n" + name + "\n" + getLocalHash(name) + "\n" + hash);
-        			System.exit(-1);
+        			//Data ERROR
+        			UpdateError( LocaleFormat( "Error_Download2", new String[]{name,getLocalHash(name),hash} ), null );
         		}
     			
-    			name = name.replace('/',File.separatorChar); //Make the char for this OS
+    			name = name.replace('/',File.separatorChar); //Make the slash char for this OS
     		
     			int index = name.lastIndexOf(File.separatorChar);
     			if(index != -1) new File(name.substring(0,index)).mkdirs();
@@ -411,7 +392,8 @@ public final class BC extends SwingWorker<Object,Object[]>
     		
     		fileNum++;
     		
-    		//TODO:Explain this formula...
+    		//(100/numLists * listNum) is the big section for each list
+    		//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
     		setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
 
     	}
@@ -876,12 +858,14 @@ public final class BC extends SwingWorker<Object,Object[]>
     		
     		//Malformed Path, SERVER_PATH wrong?
     		//Reset
+			//TODO:UpdateError
 			setProgressUnknown(NUM_PB);
 			return false;
     	}
 		catch(IOException ioe)
 		{
 			//Reset
+			//TODO:UpdateError
 			setProgressUnknown(NUM_PB);
 			return false;
         }
@@ -991,7 +975,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     }
     
      //Restart Program (Thanks to the makers of JAP)
-    static void restart(String ClassName,String App)//FIXME: Failed to work on Fedora 8
+    static void restart(String ClassName,String App)
 	{
 		String classPath = "";
 		if(CLASS_PATH.indexOf(';') > 0)
