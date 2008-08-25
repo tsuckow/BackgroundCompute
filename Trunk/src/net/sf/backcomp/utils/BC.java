@@ -119,6 +119,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 		catch(Exception ex)
 		{
+			//!Don't Localize
 			showError("Caught exception at top of Background Thread.\n\nLast Chance.\n\n" + ex.toString() + "\n\n" + makeStackTrace(ex));
 		}
 		
@@ -148,28 +149,14 @@ public final class BC extends SwingWorker<Object,Object[]>
         catch(FileNotFoundException ex)
         {
         	//Didn't find settings file
-        	//TODO:Ask about language?
-        	
-        	/*
-        	File dir = new File("directoryName");
-
-    
-		    // It is also possible to filter the list of returned files.
-		    FilenameFilter filter = new FilenameFilter() {
-		        public boolean accept(File dir, String name) {
-		            return name.startsWith("root_");
-		        }
-		    };
-		    String[] children = dir.list(filter);
-		    
-        	 */
-        	
-        	//Don't Localize
+        	//Defaults
+        	//!Don't Localize
         	System.out.println("No Settings File");
         }
         catch(IOException ex)
         {
-        	//Don't Localize
+        	//Defaults
+        	//!Don't Localize
         	System.out.println("IO Error loading file");
         }    
         
@@ -189,17 +176,62 @@ public final class BC extends SwingWorker<Object,Object[]>
         		try
         		{
         			UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
+        			LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
         		}
         		catch(MalformedURLException ex)
         		{
-        			//Don't Localize
-        			JOptionPane.showMessageDialog(null,"Current Dir Path Malformed. You may see odd behaviour.\nContact Support.","Error",JOptionPane.ERROR_MESSAGE);
-        		}
-        		LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
+        			//!Don't Localize
+        			showError("Problem loading localization.\n\n" + makeStackTrace(ex));
+        		}  		
         	}
         	catch(MissingResourceException e)
-        	{
-        		//Don't Localize
+        	{  
+        		//Propose using different language
+        		
+        		
+            	File dir = new File(".");
+
+    		    // It is also possible to filter the list of returned files.
+    		    /*FilenameFilter filter = new FilenameFilter(){
+    		        public boolean accept(File dir, String name)
+    		        {
+    		            return name.startsWith("root_");
+    		        }
+    		    };*/
+            	
+            	//Get all files
+    		    String[] children = dir.list(/*filter*/);
+            	
+    		    //If we found some (I hope so!)
+    		    if(children.length > 0)
+    		    {
+    		    	//Look for language bundles starting with root_
+    		    	ArrayList<String> filtered = new ArrayList<String>();
+    		    	for(int i = 0; i < children.length; ++i)
+    		    	{
+    		    		if( children[i].startsWith("root_") )
+    		    		{
+    		    			filtered.add(children[i]);
+    		    		}
+    		    	}
+    		    	
+    		    	//Put us back in an array
+    		    	children = filtered.toArray( new String[filtered.size()] );
+    		    	
+    		    	//List other languages.
+    		    	if(children.length > 0)
+        		    {
+    		    		System.out.println("Other Languages Found:");
+    		    		for(int i = 0; i < children.length; ++i)
+        		    	{
+    		    			System.out.println(children[i]);
+        		    	}
+        		    	
+    		    		//TODO:Ask about language?
+        		    }   		    	
+    		    }
+    		    
+    		    //!Don't Localize
         		System.out.println("Failed to open language bundle.");
         	}
         }
@@ -286,7 +318,10 @@ public final class BC extends SwingWorker<Object,Object[]>
     	
     	//
     	//Verify Localization Exists, Restart if problem. 
-		//TODO: This
+		if(LTextRB == null)
+		{
+			UpdateError("No Localization is loaded. Cannot continue.",null);
+		}
     	
     	
     	//
@@ -855,18 +890,12 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 		catch(MalformedURLException ex)
     	{
-    		
-    		//Malformed Path, SERVER_PATH wrong?
-    		//Reset
-			//TODO:UpdateError
-			setProgressUnknown(NUM_PB);
+			UpdateError( Localize( "Error_Download3" , "Server URL malformed. The server may be incorrect.") , ex);
 			return false;
     	}
-		catch(IOException ioe)
+		catch(IOException ex)
 		{
-			//Reset
-			//TODO:UpdateError
-			setProgressUnknown(NUM_PB);
+			UpdateError( Localize( "Error_Download4" , "Problem occurred while trying to download.") , ex);
 			return false;
         }
 		finally
