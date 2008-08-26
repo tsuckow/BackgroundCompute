@@ -176,7 +176,7 @@ public final class BC extends SwingWorker<Object,Object[]>
         		try
         		{
         			UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
-        			LTextRB = ResourceBundle.getBundle("Root",UserLocale,UCL);
+        			LTextRB = ResourceBundle.getBundle("Root", UserLocale,UCL);
         		}
         		catch(MalformedURLException ex)
         		{
@@ -186,53 +186,61 @@ public final class BC extends SwingWorker<Object,Object[]>
         	}
         	catch(MissingResourceException e)
         	{  
-        		//Propose using different language
-        		
-        		
-            	File dir = new File(".");
-
-    		    // It is also possible to filter the list of returned files.
-    		    /*FilenameFilter filter = new FilenameFilter(){
-    		        public boolean accept(File dir, String name)
-    		        {
-    		            return name.startsWith("root_");
-    		        }
-    		    };*/
-            	
-            	//Get all files
-    		    String[] children = dir.list(/*filter*/);
-            	
-    		    //If we found some (I hope so!)
-    		    if(children.length > 0)
-    		    {
-    		    	//Look for language bundles starting with root_
-    		    	ArrayList<String> filtered = new ArrayList<String>();
-    		    	for(int i = 0; i < children.length; ++i)
-    		    	{
-    		    		if( children[i].startsWith("root_") )
-    		    		{
-    		    			filtered.add(children[i]);
-    		    		}
-    		    	}
-    		    	
-    		    	//Put us back in an array
-    		    	children = filtered.toArray( new String[filtered.size()] );
-    		    	
-    		    	//List other languages.
-    		    	if(children.length > 0)
-        		    {
-    		    		System.out.println("Other Languages Found:");
-    		    		for(int i = 0; i < children.length; ++i)
-        		    	{
-    		    			System.out.println(children[i]);
-        		    	}
-        		    	
-    		    		//TODO:Ask about language?
-        		    }   		    	
-    		    }
-    		    
-    		    //!Don't Localize
-        		System.out.println("Failed to open language bundle.");
+        		//!Don't Localize
+        		System.out.println("No locaLizations found.");
+        	}
+        	
+        	if(LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
+        	{
+	        	//Propose using different language
+	    		
+	    		
+	        	File dir = new File(".");
+	
+			    // It is also possible to filter the list of returned files.
+			    /*FilenameFilter filter = new FilenameFilter(){
+			        public boolean accept(File dir, String name)
+			        {
+			            return name.startsWith("root_");
+			        }
+			    };*/
+	        	
+	        	//Get all files
+			    String[] children = dir.list(/*filter*/);
+	        	
+			    //If we found some (I hope so!)
+			    if(children.length > 0)
+			    {
+			    	//Look for language bundles starting with root_
+			    	ArrayList<String> filtered = new ArrayList<String>();
+			    	for(int i = 0; i < children.length; ++i)
+			    	{
+			    		if( children[i].startsWith("root_") )
+			    		{
+			    			filtered.add(children[i]);
+			    		}
+			    	}
+			    	
+			    	//Put us back in an array
+			    	children = filtered.toArray( new String[filtered.size()] );
+			    	
+			    	//List other languages.
+			    	if(children.length > 0)
+	    		    {
+			    		System.out.println("Other Languages Found:");
+			    		for(int i = 0; i < children.length; ++i)
+	    		    	{
+			    			System.out.println(children[i]);
+	    		    	}
+	    		    	
+			    		
+			    		showMsg("Look for messages.","DEBUG",JOptionPane.INFORMATION_MESSAGE);
+			    		//TODO:Ask about language?
+	    		    }   		    	
+			    }
+			    
+			    //!Don't Localize
+	    		System.out.println("Failed to open language bundle.");
         	}
         }
         
