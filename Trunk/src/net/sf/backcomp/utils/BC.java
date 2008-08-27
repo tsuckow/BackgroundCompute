@@ -215,6 +215,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			    	ArrayList<String> filtered = new ArrayList<String>();
 			    	for(int i = 0; i < children.length; ++i)
 			    	{
+			    		System.out.println(": " + children[i]);
 			    		if( children[i].startsWith("root_") )
 			    		{
 			    			filtered.add(children[i]);
@@ -335,21 +336,40 @@ public final class BC extends SwingWorker<Object,Object[]>
     	//
     	//Commit Settings
     	Settings.setProperty("updateError", "False");
+    	FileOutputStream setOS = null;
         try
-        {       	
-        	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+        {      
+        	setOS = new FileOutputStream("Settings.properties");
+        	Settings.store( setOS , "Background Compute" );
         }
         catch(FileNotFoundException ex)
         {
         	String defErrMsg = "Problem saving settings.\n\nError: ";
-        	String details = ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
+        	String details = "\n\n" + makeStackTrace(ex);
         	showError( Localize("Error_Settings1",defErrMsg) + details);
         }
         catch(IOException ex)
         {
         	String defErrMsg = "Problem saving settings.\n\nError: ";
-        	String details = ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
+        	String details = "\n\n" + makeStackTrace(ex);
         	showError( Localize("Error_Settings1",defErrMsg) + details);
+        }
+        finally
+        {
+        	if( setOS != null )
+        	{
+        		try
+        		{
+					setOS.close();
+				}
+        		catch (IOException ex)
+				{
+                	String defErrMsg = "Problem saving settings.\n\nError: ";
+                	String details = "\n\n" + makeStackTrace(ex);
+        			showError( Localize("Error_Settings1",defErrMsg) + details);
+				}
+        		setOS = null;
+        	}
         }
     	
 		//Start the main application
@@ -909,16 +929,34 @@ public final class BC extends SwingWorker<Object,Object[]>
 		finally
 		{
 			if(fos != null)
+			{
 				try
 				{
 					fos.close();
-				} catch (IOException e) {}
+				}
+				catch(IOException ex)
+				{
+					String defErrMsg = "Problem occurred while trying to download.";
+                	String details = "\n\n" + makeStackTrace(ex);
+        			showError( Localize("Error_Download4",defErrMsg) + details);
+				
+				}
+			}
 				
 			if(bis != null)
+			{
 				try
 				{
 					bis.close();
-				} catch (IOException e) {} 
+				}
+				catch(IOException ex)
+				{
+					String defErrMsg = "Problem occurred while trying to download.";
+                	String details = "\n\n" + makeStackTrace(ex);
+        			showError( Localize("Error_Download4",defErrMsg) + details);
+				
+				}
+			}
 		}
         
         //Reset
