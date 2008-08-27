@@ -11,6 +11,16 @@ import net.sf.backcomp.debug.*;
 
 final class Mainapp implements Runnable {
 	public void run() {
+		Thread.setDefaultUncaughtExceptionHandler(
+				new Thread.UncaughtExceptionHandler(){
+				    //Implements Thread.UncaughtExceptionHandler.uncaughtException()
+				    public void uncaughtException(Thread th, Throwable ex)
+				    {
+				    	Debug.messageDlg("You crashed thread " + th.getName(), DebugLevel.Fatal, ex);
+				    }
+				}
+			);
+		
 		Tray.iconCreate();
 
 		//Add test Debug Messages

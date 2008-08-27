@@ -5,4 +5,5 @@ net/sf/backcomp/utils/SettMan.class
 net/sf/backcomp/utils/Tray$iconListener.class
 net/sf/backcomp/utils/Tray.class
 net/sf/backcomp/utils/Worker.class
+net/sf/backcomp/utils/Mainapp$1.class
 net/sf/backcomp/utils/Mainapp.class
