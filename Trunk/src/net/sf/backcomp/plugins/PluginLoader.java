@@ -16,6 +16,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 
+//FIXME: Who knows what this does.
+
 public final class PluginLoader
 {
 	private PluginLoader(){}//This is a static class
@@ -97,18 +99,10 @@ public final class PluginLoader
 			return null;
 		}
 		
-		//Checks if this class is reloading and forces Garbage Collection
-		//This is usually not recommended but this should not happen often.
+		//Checks if this class is reloading
 		if(test.needReload())
 		{
-			test = null;//Remove our referance.
-			System.gc();
-			try
-	    	{
-				Thread.sleep(100);
-	    	}
-	    	catch(InterruptedException e){}
-			System.gc();
+			test = null;//Remove our reference.
 			return null;
 		}
 		

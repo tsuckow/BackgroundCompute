@@ -7,6 +7,8 @@
  */
 package net.sf.backcomp.utils;
 
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 import net.sf.backcomp.dialogs.*;
 
 import java.awt.AWTException;
@@ -71,6 +73,12 @@ public final class Tray
          		Item.setActionCommand("Settings"); 
          		
 				popup.add(Item);
+				
+				Item = new MenuItem("Nuke");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("Nuke");
+         		
+				popup.add(Item);
          		
          		// create menu item for the default action
         		MenuItem defaultItem = new MenuItem("Quit");
@@ -132,7 +140,11 @@ public final class Tray
 	            
 	            if( e.getActionCommand().equals("Quit") )
 	            {
-	            	System.exit(0);
+	            	throw new ThreadDeath();
+	            }
+	            if( e.getActionCommand().equals("Nuke") )
+	            {
+	            	System.exit(-1);
 	            }
 	            else if( e.getActionCommand().equals("Projects") )
 	            {
@@ -149,8 +161,9 @@ public final class Tray
 			}
 			catch(Exception ex)
 			{
-				ex.printStackTrace();
-				iconMessage( "Unhandled Exception in Tray Menu", ex.getMessage(), TrayIcon.MessageType.ERROR);				
+				Debug.messageDlg("Unhandled Exception in Tray Menu", DebugLevel.Fatal, ex);
+				//ex.printStackTrace();
+				//iconMessage( "Unhandled Exception in Tray Menu", ex.getMessage(), TrayIcon.MessageType.ERROR);				
 			}
 		}
 	}
