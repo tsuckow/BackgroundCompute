@@ -20,7 +20,7 @@
 		<mkdir dir="${outputDir}" />
 	</target>
 	<target name="compile" depends="prepare">
-		<javac srcdir="${sourceDir}" destdir="${outputDir}" />
+		<javac debug="true" srcdir="${sourceDir}" destdir="${outputDir}" />
 	</target>
 	
 	<!-- ====================================================== -->
