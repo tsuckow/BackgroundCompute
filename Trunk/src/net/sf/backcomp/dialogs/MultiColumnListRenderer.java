@@ -7,8 +7,9 @@
  */
 package net.sf.backcomp.dialogs;
 
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 import net.sf.backcomp.plugins.*;
-import net.sf.backcomp.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,7 +72,7 @@ class MultiColumnListRenderer extends DefaultListCellRenderer
     	}
     	catch(Exception ex)
     	{
-    		Tray.iconMessage( ex.getMessage() ,"Unhandled Exception in Renderer", TrayIcon.MessageType.ERROR);				
+    		Debug.messageDlg("Unhandled Exception in Plugin Manager List Renderer", DebugLevel.Error, ex);				
     	}
 
         return wow;

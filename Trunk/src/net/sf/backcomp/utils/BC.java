@@ -142,24 +142,44 @@ public final class BC extends SwingWorker<Object,Object[]>
         //
         //Load Settings
         
-        try
         {
-        	Settings.load( new FileInputStream("Settings.properties") );
+        	FileInputStream SetIS = null;
+	        try
+	        {
+	        	SetIS = new FileInputStream("Settings.properties");
+	        	Settings.load( SetIS );
+	        }
+	        catch(FileNotFoundException ex)
+	        {
+	        	//Didn't find settings file
+	        	//Defaults
+	        	//!Don't Localize
+	        	System.out.println("No Settings File");
+	        }
+	        catch(IOException ex)
+	        {
+	        	//Defaults
+	        	//!Don't Localize
+	        	System.out.println("IO Error loading file");
+	        }
+	        finally
+	        {
+	        	if(SetIS != null)
+				{
+					try
+					{
+						SetIS.close();
+					}
+					catch(IOException ex)
+					{
+						//!Don't Localize
+						String defErrMsg = "Problem occurred while trying to close settings file handle.";
+	                	String details = "\n\n" + makeStackTrace(ex);
+	        			showError( defErrMsg + details);				
+					}
+				}
+	        }
         }
-        catch(FileNotFoundException ex)
-        {
-        	//Didn't find settings file
-        	//Defaults
-        	//!Don't Localize
-        	System.out.println("No Settings File");
-        }
-        catch(IOException ex)
-        {
-        	//Defaults
-        	//!Don't Localize
-        	System.out.println("IO Error loading file");
-        }    
-        
         
         
         //
