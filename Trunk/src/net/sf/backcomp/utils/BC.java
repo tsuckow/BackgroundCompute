@@ -463,13 +463,21 @@ public final class BC extends SwingWorker<Object,Object[]>
     			if(index != -1) new File(name.substring(0,index)).mkdirs();
     			
     			File dest = new File(name);
-    			dest.delete();
-    			if( src.renameTo( dest ) )
+    			if( dest.delete() )
     			{
-    				setSplashText( " " + LocaleFormat( "Updated1", name ) );
+	    			if( src.renameTo( dest ) )
+	    			{
+	    				setSplashText( LocaleFormat( "Updated1", name ) );
+	    			}
+	    			else
+	    			{
+	    				UpdateError( LocaleFormat( "Error_Rename1", name ), null );
+	    			}
     			}
-    			
-    			
+    			else
+    			{
+    				UpdateError( LocaleFormat( "Error_Delete1", name ), null );
+    			}
     		}
     	
     		
@@ -863,6 +871,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     	//Byte array because JAVA returns Binary
     	byte[] res;
   		
+    	FileInputStream fis = null;
   		try
   		{
   			//Get Binary Hash
@@ -872,10 +881,9 @@ public final class BC extends SwingWorker<Object,Object[]>
   			
   			int len;
     		byte[] msg = new byte[len = (int)f.length()]; 
-    		FileInputStream fis = new FileInputStream(f); 
+    		fis = new FileInputStream(f); 
     		if (fis.read(msg) != len) return ""; //Failed to get data
-    		
-    		fis.close();
+    		   		
     	
     		md5.update(msg);
     		
@@ -894,6 +902,24 @@ public final class BC extends SwingWorker<Object,Object[]>
   		{
   			return ""; //God only knows what went wrong.
   		}
+  		finally
+  		{
+  			if(fis != null)
+			{
+				try
+				{
+					fis.close();
+				}
+				catch(IOException ex)
+				{
+					String defErrMsg = "Problem occurred closing file stream.";
+                	String details = "\n\n" + makeStackTrace(ex);
+        			showError( Localize("Error_FileStream1",defErrMsg) + details);
+				
+				}
+			}
+  		}
+  		
   		return toHexF(res);//Convert Bin to Hex
     }
     
@@ -917,7 +943,13 @@ public final class BC extends SwingWorker<Object,Object[]>
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
     		
 			int index = dFile.lastIndexOf(File.separatorChar);
-			if(index != -1) new File(dFile.substring(0,index)).mkdirs();
+			if(index != -1)
+			{
+				if( ! new File(dFile.substring(0,index)).mkdirs() )
+				{
+					UpdateError( LocaleFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
+				}
+			}
 			
 			File file = new File(dFile);
 			
