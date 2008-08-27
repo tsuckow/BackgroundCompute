@@ -74,12 +74,6 @@ public final class Tray
          		Item.setActionCommand("Settings"); 
          		
 				popup.add(Item);
-				
-				Item = new MenuItem("Nuke");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Nuke");
-         		
-				popup.add(Item);
          		
          		// create menu item for the default action
         		MenuItem defaultItem = new MenuItem("Quit");
@@ -157,10 +151,6 @@ public final class Tray
 	            	Plugin.terminate();
 	            	Tray.iconDestroy();
 	            	//throw new ThreadDeath();
-	            }
-	            if( e.getActionCommand().equals("Nuke") )
-	            {
-	            	System.exit(-1);
 	            }
 	            else if( e.getActionCommand().equals("Projects") )
 	            {
