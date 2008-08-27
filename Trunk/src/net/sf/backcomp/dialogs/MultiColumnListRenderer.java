@@ -25,7 +25,7 @@ class MultiColumnListRenderer extends DefaultListCellRenderer
 		status[2] = "images/status_blue.png";
     }
     
-    private int stateCode(Plugin.state st)
+    private int stateCode(Plugin.PluginState st)
     {
     	switch(st)
     	{

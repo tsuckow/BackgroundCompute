@@ -34,7 +34,7 @@ abstract public class Plugin
 	/**
 	 * The run state the plugin is in.
 	 */
-	public static enum state {Initilizing, Running, Stopping, Stopped, Paused, Removing};
+	public static enum PluginState {Initilizing, Running, Stopping, Stopped, Paused, Removing};
 	
 	private static enum norunReason {Removal, Reload};
 	
@@ -50,7 +50,7 @@ abstract public class Plugin
 	private final Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
 	private final Object lock_coreManager = new Object(); //Locks whenever we do something with whether the core manger is running.
 	
-	private volatile state currentState = state.Stopped;//FIXME: Race condition Exists, Low Priority (Fixed?)
+	private volatile PluginState currentState = PluginState.Stopped;//FIXME: Race condition Exists, Low Priority (Fixed?)
 	
 	//Variables
 	
@@ -64,7 +64,7 @@ abstract public class Plugin
 	
 	//Classes
 	
-	private final class coreInstance
+	private static class coreInstance
 	{
 		private volatile Thread thread = null;
 		private DoubleBuffer CPUbuffer = DoubleBuffer.allocate(20);
@@ -116,7 +116,7 @@ abstract public class Plugin
 				{
 					if(threadList.size() < threadCount)
 					{
-						currentState = state.Initilizing;
+						currentState = PluginState.Initilizing;
 						coreRunner cr = new coreRunner(threadList.size()==0);
 						threadList.add(new coreInstance(cr));
 						cr.setPriority(Thread.MIN_PRIORITY);
@@ -181,13 +181,13 @@ abstract public class Plugin
 						if(threadList.size() == 0)
 						{
 							if(paused)
-								currentState = state.Paused;
+								currentState = PluginState.Paused;
 							else
-								currentState = state.Stopped;
+								currentState = PluginState.Stopped;
 							coreManagerRunning = false;
 							return;
 						}
-						currentState = state.Stopping;
+						currentState = PluginState.Stopping;
 					}
 				}
 				
@@ -213,7 +213,7 @@ abstract public class Plugin
 		@Override
 		public void run()
 		{
-			currentState = state.Running;
+			currentState = PluginState.Running;
 			if(main)
 			{
 				
@@ -226,7 +226,7 @@ abstract public class Plugin
 		}
 	}
 	
-	private final class noRun
+	private static final class noRun
 	{
 		private volatile int flag = 0;
 		
@@ -456,7 +456,7 @@ abstract public class Plugin
      */
     public JPanel getSettings(){return null;}
     
-    public final state getState()
+    public final PluginState getState()
     {
     	return currentState;
     }
@@ -535,7 +535,7 @@ abstract public class Plugin
 		{
     		if(includeMain && threadCount > 0)
     		{
-    			currentState = state.Stopping;
+    			currentState = PluginState.Stopping;
     			threadCount = 0;
     			if(pause)
     			{
@@ -565,14 +565,14 @@ abstract public class Plugin
     		norun.setFlag(norunReason.Removal); //Stop all new core operations.
 		}
     	
-    	currentState = state.Removing;
+    	currentState = PluginState.Removing;
     	Debug.message("Removing Plugin: " + getName(), DebugLevel.Information);
     	
     	stopAll(true,false); //Stop All Cores
     	
     	//FIXME: Check all cores are stopped. Size of threadList?
     	
-    	currentState = state.Removing;
+    	currentState = PluginState.Removing;
     	
     	Debug.messageDlg("Tried to remove a plugin",DebugLevel.NotImplemented);
     	return;

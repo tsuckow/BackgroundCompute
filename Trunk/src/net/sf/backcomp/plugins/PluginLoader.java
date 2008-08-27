@@ -45,24 +45,16 @@ public final class PluginLoader
 		
 		Plugin test = null;
 		
-		//Load from cache if availible
+		//Load from cache if available
 		test = PluginCache.get(name + "_Plugin");
 		
 		if(test != null)
 		{
-			//Checks if this class is reloading and forces Garbage Collection
-			//This is usually not recommended but this should not happen often.
+			//Checks if this class is reloading and needs cache clear.
 			if(test.needReload())
 			{
 				PluginCache.remove(name + "_Plugin");
-				test = null;//Remove our referance.
-				System.gc();
-				try
-		    	{
-					Thread.sleep(100);
-		    	}
-		    	catch(InterruptedException e){}
-				System.gc();
+				test = null;//Remove our reference.
 				return null;
 			}
 			return test;
