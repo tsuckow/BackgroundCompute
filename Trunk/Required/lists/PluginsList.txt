@@ -1,9 +1,9 @@
-net/sf/backcomp/plugins/Plugin$state.class
+net/sf/backcomp/plugins/Plugin.class
+net/sf/backcomp/plugins/Plugin$PluginState.class
 net/sf/backcomp/plugins/Plugin$norunReason.class
 net/sf/backcomp/plugins/Plugin$noRun.class
 net/sf/backcomp/plugins/Plugin$coreRunner.class
 net/sf/backcomp/plugins/Plugin$coreManager.class
 net/sf/backcomp/plugins/Plugin$coreInstance.class
-net/sf/backcomp/plugins/Plugin.class
 net/sf/backcomp/plugins/PluginLoader$1.class
 net/sf/backcomp/plugins/PluginLoader.class
