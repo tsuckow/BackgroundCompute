@@ -58,6 +58,8 @@ abstract public class Plugin
 	
 	private volatile long threadCount = 0;
 	
+	private static boolean stopAllPlugins = false;
+	
 	private volatile boolean paused = false;
 
 	private volatile boolean coreManagerRunning = false;
@@ -383,6 +385,13 @@ abstract public class Plugin
 			
 			if(index != -1)
 			{
+				if(stopAllPlugins)
+				{
+					currentState = PluginState.Stopping;
+	    			threadCount = 0;
+					return true;
+				}
+				
 				if(threadList.size() > threadCount && index == threadList.size()-1)
 				{
 					return true;
@@ -580,5 +589,10 @@ abstract public class Plugin
     	//remove(); //Call Plugins Removal Method
     	
     	//TODO: Remove from Plugin Cache and do garbage collection multiple times.
+    }
+    
+    public final static void terminate()
+    {
+    	stopAllPlugins = true;
     }
 }

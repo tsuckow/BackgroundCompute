@@ -10,6 +10,7 @@ package net.sf.backcomp.utils;
 import net.sf.backcomp.debug.Debug;
 import net.sf.backcomp.debug.DebugLevel;
 import net.sf.backcomp.dialogs.*;
+import net.sf.backcomp.plugins.Plugin;
 
 import java.awt.AWTException;
 import java.awt.Image;
@@ -153,6 +154,7 @@ public final class Tray
 	            if( e.getActionCommand().equals("Quit") )
 	            {
 	            	Worker.terminate();
+	            	Plugin.terminate();
 	            	Tray.iconDestroy();
 	            	//throw new ThreadDeath();
 	            }
