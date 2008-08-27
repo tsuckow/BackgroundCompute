@@ -140,7 +140,8 @@ public final class Tray
 	            
 	            if( e.getActionCommand().equals("Quit") )
 	            {
-	            	throw new ThreadDeath();
+	            	Worker.terminate();
+	            	//throw new ThreadDeath();
 	            }
 	            if( e.getActionCommand().equals("Nuke") )
 	            {

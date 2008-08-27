@@ -24,6 +24,8 @@ import net.sf.backcomp.plugins.PluginLoader;
 
 class Worker extends Thread
 {	
+	private static boolean stop = false;
+	
     public void run()
     { 	
     	long coreLevelMax = 0;//Max's
@@ -95,7 +97,13 @@ class Worker extends Thread
 	    	}
 	    	catch(InterruptedException e)
 	    	{ 	}
-    	}
-    	
+	    	
+	    	if(stop) break;
+    	} 	
+    }
+    
+    public static void terminate()
+    {
+    	stop = true;
     }
 }
