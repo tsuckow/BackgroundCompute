@@ -110,6 +110,18 @@ public final class Tray
 		}//End Sync
 	}
 	
+	public static void iconDestroy()
+	{
+		synchronized(lock_tray)
+		{
+			if(trayIcon != null)
+			{
+				SystemTray tray = SystemTray.getSystemTray(); //Get the tray
+				tray.remove(trayIcon);
+			}
+		}//End Sync
+	}
+	
 	/**
 	 * 
 	 * Creates Info Balloon at Tray Icon.
@@ -141,6 +153,7 @@ public final class Tray
 	            if( e.getActionCommand().equals("Quit") )
 	            {
 	            	Worker.terminate();
+	            	Tray.iconDestroy();
 	            	//throw new ThreadDeath();
 	            }
 	            if( e.getActionCommand().equals("Nuke") )
