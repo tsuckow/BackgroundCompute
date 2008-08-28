@@ -1236,8 +1236,14 @@ public final class BC extends SwingWorker<Object,Object[]>
  *
  * What won't those crazy lawyers think up next? */
  
+	/**
+	 * @category HEX
+	 */
 	static private String toHexF(byte[] b) { return toHexF(b, b.length); }
  
+	/**
+	 * @category HEX
+	 */
 	static private String toHexF(byte[] b, int len)
 	{
 		StringBuffer s = new StringBuffer("");
@@ -1253,6 +1259,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 		return s.toString();
 	}
         
+	/**
+	 * @category HEX
+	 */
 	static private String toHex(byte b)
 	{
 		Integer I = Integer.valueOf((((int)b) << 24) >>> 24);

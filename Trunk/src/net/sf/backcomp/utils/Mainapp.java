@@ -12,21 +12,21 @@ import net.sf.backcomp.debug.*;
 final class Mainapp implements Runnable {
 	public void run() {
 		Thread.setDefaultUncaughtExceptionHandler(
-				new Thread.UncaughtExceptionHandler(){
-				    //Implements Thread.UncaughtExceptionHandler.uncaughtException()
-				    public void uncaughtException(Thread th, Throwable ex)
-				    {
-				    	try
-				    	{
-				    		Debug.messageDlg("You crashed thread " + th.getName(), DebugLevel.Fatal, ex);
-				    	}
-				    	catch(Throwable t)
-				    	{
-				    		System.err.println("Oh Shit. Debuging Failed!\n" + t.toString() + "\n" + ex.toString() + "\n\n");
-				    	}
-				    }
-				}
-			);
+			new Thread.UncaughtExceptionHandler(){
+			    //Implements Thread.UncaughtExceptionHandler.uncaughtException()
+			    public void uncaughtException(Thread th, Throwable ex)
+			    {
+			    	try
+			    	{
+			    		Debug.messageDlg("You crashed thread " + th.getName(), DebugLevel.Fatal, ex);
+			    	}
+			    	catch(Throwable t)
+			    	{
+			    		System.err.println("Oh Shit. Debuging Failed!\n" + t.toString() + "\n" + ex.toString() + "\n\n");
+			    	}
+			    }
+			}
+		);
 		
 		Tray.iconCreate();
 
