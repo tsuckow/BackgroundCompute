@@ -43,7 +43,7 @@ public class Settings
 		{
 				JLabel l = new JLabel(LangMan.getString("Settings_" + item, "Unknown PARM:"), JLabel.TRAILING);
     			p.add(l);
-    			JTextField textField = new JTextField(SettingManager.getSetting(item), 20);
+    			JTextField textField = new JTextField(SettingManager.getSetting(item) + (SettingManager.isDefaultSetting(item)?"~~":""), 20);
     			l.setLabelFor(textField);
     			p.add(textField);
 				
