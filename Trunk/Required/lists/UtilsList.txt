@@ -1,7 +1,7 @@
 net/sf/backcomp/utils/BC.class
 net/sf/backcomp/utils/SpringUtilities.class
 net/sf/backcomp/utils/LangMan.class
-net/sf/backcomp/utils/SettingManager.java
+net/sf/backcomp/utils/SettingManager.class
 net/sf/backcomp/utils/Tray$iconListener.class
 net/sf/backcomp/utils/Tray.class
 net/sf/backcomp/utils/Worker.class
