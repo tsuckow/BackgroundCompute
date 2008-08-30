@@ -36,7 +36,7 @@ public class Settings
 		
 		JPanel p = new JPanel(new SpringLayout());
 		
-		String[] settings = {"server_path", "locale"};
+		String[] settings = {"server_path", "locale","cpu_limit"};
 		
 		int numitems = 0; //Number of rows in dialog
 		for(String item : settings)
