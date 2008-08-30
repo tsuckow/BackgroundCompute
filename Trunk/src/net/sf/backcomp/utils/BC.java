@@ -463,7 +463,7 @@ public final class BC extends SwingWorker<Object,Object[]>
     			if(index != -1) new File(name.substring(0,index)).mkdirs();
     			
     			File dest = new File(name);
-    			if( dest.delete() )
+    			if( !dest.exists() || dest.delete() )
     			{
 	    			if( src.renameTo( dest ) )
 	    			{
