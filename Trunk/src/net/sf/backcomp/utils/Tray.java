@@ -74,7 +74,8 @@ public final class Tray
          		Item.setActionCommand("Settings"); 
          		
 				popup.add(Item);
-         		
+				popup.addSeparator();
+
          		// create menu item for the default action
         		MenuItem defaultItem = new MenuItem("Quit");
          		defaultItem.addActionListener(listener);

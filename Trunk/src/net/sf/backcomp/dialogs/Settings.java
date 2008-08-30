@@ -41,18 +41,20 @@ public class Settings
 		int numitems = 0; //Number of rows in dialog
 		for(String item : settings)
 		{
-				JLabel l = new JLabel(LangMan.getString("Settings_" + item, "Unknown PARM:"), JLabel.TRAILING);
+				JLabel l = new JLabel(LangMan.getString("Settings_" + item, item + ":"), JLabel.TRAILING);
     			p.add(l);
     			JTextField textField = new JTextField(SettingManager.getSetting(item) + (SettingManager.isDefaultSetting(item)?"~~":""), 20);
     			l.setLabelFor(textField);
     			p.add(textField);
+    			JCheckBox tb = new JCheckBox("default");
+    			p.add(tb);
 				
 				++numitems;
 		}
              	
 				//Lay out the panel.
 				SpringUtilities.makeCompactGrid(p,
-                              numitems, 2, //rows, cols
+                              numitems, 3, //rows, cols
                               6, 6,        //initX, initY
                               6, 6);       //xPad, yPad
                       
