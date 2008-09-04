@@ -12,7 +12,12 @@
 		<property name="checkstyle.home" value="lib/checkstyle-5.0-beta01" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${findbugs.home}/lib/findbugs-ant.jar" />
-		<taskdef resource="checkstyletask.properties" classpath="lib/checkstyle-5.0-beta01/checkstyle-all-5.0-beta01.jar:lib/Defcon1Checks.jar" />
+		<taskdef resource="checkstyletask.properties">
+			<classpath>
+				<pathelement location="lib/checkstyle-5.0-beta01/checkstyle-all-5.0-beta01.jar"/>
+				<pathelement location="lib/Defcon1Checks.jar"/>
+			</classpath>
+		</taskdef>
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
@@ -61,11 +66,6 @@
 	<target name="checkstyle" depends="compile"
 	 description="Checks that we are using consistant well formed style.">
 		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
-			<classpath>
-				<fileset dir=".">
-					<include name="**/Defcon1Checks.jar"/>
-				</fileset>
-			</classpath>
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
