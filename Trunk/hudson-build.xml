@@ -12,7 +12,7 @@
 		<property name="checkstyle.home" value="lib/checkstyle-5.0-beta01" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${findbugs.home}/lib/findbugs-ant.jar" />
-		<taskdef resource="checkstyletask.properties" classpath="lib/checkstyle-5.0-beta01/checkstyle-all-5.0-beta01.jar" />
+		<taskdef resource="checkstyletask.properties" classpath="lib/checkstyle-5.0-beta01/checkstyle-all-5.0-beta01.jar:lib/Defcon1Checks.jar" />
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
