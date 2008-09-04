@@ -60,8 +60,10 @@
 
 	<target name="checkstyle" depends="compile"
 	 description="Checks that we are using consistant well formed style.">
-		<checkstyle classpath="Trunk/lib/TabOnlyForIndentCheck.jar"
-		 config="config_checkstyle.xml" failOnViolation="false">
+		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
+			<classpath>
+				<pathelement location="lib/Defcon1Checks.jar"/>
+			</classpath>
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
