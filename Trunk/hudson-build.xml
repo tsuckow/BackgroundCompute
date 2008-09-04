@@ -62,7 +62,9 @@
 	 description="Checks that we are using consistant well formed style.">
 		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
 			<classpath>
-				<pathelement location="Trunk/lib/checks"/>
+				<fileset dir=".">
+					<include name="**/Defcon1Checks.jar"/>
+				</fileset>
 			</classpath>
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
