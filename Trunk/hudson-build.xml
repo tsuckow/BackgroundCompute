@@ -58,9 +58,10 @@
 		</findbugs>
 	</target>
 
-	<target name="checkstyle" depends="compile" description="Checks that we are using consistant well formed style.">
-		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
-			<classpath location="lib/TabOnlyForIndentCheck.jar"/>
+	<target name="checkstyle" depends="compile"
+	 description="Checks that we are using consistant well formed style.">
+		<checkstyle classpath="lib/TabOnlyForIndentCheck.jar"
+		 config="config_checkstyle.xml" failOnViolation="false">
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
