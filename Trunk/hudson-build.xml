@@ -1,4 +1,4 @@
-<project name="Background Compute" default="javadoc_deploy_style" basedir=".">
+<project name="Background Compute" default="checkstyle" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -60,10 +60,7 @@
 
 	<target name="checkstyle" depends="compile" description="Checks that we are using consistant well formed style.">
 		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
-			<classpath>
-				<pathelement path="${classpath}"/>
-				<pathelement location="lib/TabOnlyForImport.jar"/>
-			</classpath>
+			
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
