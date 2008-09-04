@@ -13,7 +13,7 @@
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${findbugs.home}/lib/findbugs-ant.jar" />
 		<taskdef resource="checkstyletask.properties">
 			<classpath>
-				
+				<pathelement location="Trunk/lib/checkstyle-5.0-beta01/checkstyle-all-5.0-beta01.jar"/>
 				<pathelement location="lib/Defcon1Checks.jar"/>
 			</classpath>
 		</taskdef>
