@@ -60,8 +60,12 @@
 
 	<target name="checkstyle" depends="compile" description="Checks that we are using consistant well formed style.">
 		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
-		  <fileset dir="src" includes="**/*.java"/>
-		  <formatter type="xml" toFile="checkstyle-result.xml"/>
+			<classpath>
+				<pathelement path="${classpath}"/>
+				<pathelement location="lib/TabOnlyForImport.jar"/>
+			</classpath>
+			<fileset dir="src" includes="**/*.java"/>
+			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
 	</target>
 	

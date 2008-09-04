@@ -88,16 +88,16 @@ public final class BC extends SwingWorker<Object,Object[]>
 	//Functions
 	
 	public static void main(String[] args)
-    {
-    	try
+	{
+		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    	}catch(Exception e){} //If can't set native look and feel, oh well.
-    	
-    	//Start the self enclosed SwingWorker.
-    	(new BC()).execute();
-    	
-    }
+		}catch(Exception e){} //If can't set native look and feel, oh well.
+		
+		//Start the self enclosed SwingWorker.
+		(new BC()).execute();
+		
+	}
 	
 	
 	//
@@ -134,37 +134,37 @@ public final class BC extends SwingWorker<Object,Object[]>
 	/**
 	 * Handles the splash screen and all tasks performed involving it, including updating the application.
 	 */
-    private void doWork()
-    {
-    	//Display the Splash Screen
-        publish( new Object[] {} ); 
-        
-        //
-        //Load Settings
-        
-        {
-        	FileInputStream SetIS = null;
-	        try
-	        {
-	        	SetIS = new FileInputStream("Settings.properties");
-	        	Settings.load( SetIS );
-	        }
-	        catch(FileNotFoundException ex)
-	        {
-	        	//Didn't find settings file
-	        	//Defaults
-	        	//!Don't Localize
-	        	System.out.println("No Settings File");
-	        }
-	        catch(IOException ex)
-	        {
-	        	//Defaults
-	        	//!Don't Localize
-	        	System.out.println("IO Error loading file");
-	        }
-	        finally
-	        {
-	        	if(SetIS != null)
+	private void doWork()
+	{
+		//Display the Splash Screen
+		publish( new Object[] {} ); 
+		
+		//
+		//Load Settings
+		
+		{
+			FileInputStream SetIS = null;
+			try
+			{
+				SetIS = new FileInputStream("Settings.properties");
+				Settings.load( SetIS );
+			}
+			catch(FileNotFoundException ex)
+			{
+				//Didn't find settings file
+				//Defaults
+				//!Don't Localize
+				System.out.println("No Settings File");
+			}
+			catch(IOException ex)
+			{
+				//Defaults
+				//!Don't Localize
+				System.out.println("IO Error loading file");
+			}
+			finally
+			{
+				if(SetIS != null)
 				{
 					try
 					{
@@ -174,480 +174,480 @@ public final class BC extends SwingWorker<Object,Object[]>
 					{
 						//!Don't Localize
 						String defErrMsg = "Problem occurred while trying to close settings file handle.";
-	                	String details = "\n\n" + makeStackTrace(ex);
-	        			showError( defErrMsg + details);				
+						String details = "\n\n" + makeStackTrace(ex);
+						showError( defErrMsg + details);				
 					}
 				}
-	        }
-        }
-        
-        
-        //
-        //Load Localization
-        
-        {
-        	Locale UserLocale = new Locale( Settings.getProperty("locale") );
-        	try
-        	{
-        		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
-        		
-        		URLClassLoader UCL = null;
-        		
-        		try
-        		{
-        			UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
-        			LTextRB = ResourceBundle.getBundle("Root", UserLocale,UCL);
-        		}
-        		catch(MalformedURLException ex)
-        		{
-        			//!Don't Localize
-        			showError("Problem loading localization.\n\n" + makeStackTrace(ex));
-        		}  		
-        	}
-        	catch(MissingResourceException e)
-        	{  
-        		//!Don't Localize
-        		System.out.println("No locaLizations found.");
-        	}
-        	
-        	if(LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
-        	{
-	        	//Propose using different language
-	    		
-	    		
-	        	File dir = new File(".");
+			}
+		}
+		
+		
+		//
+		//Load Localization
+		
+		{
+			Locale UserLocale = new Locale( Settings.getProperty("locale") );
+			try
+			{
+				ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+				
+				URLClassLoader UCL = null;
+				
+				try
+				{
+					UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
+					LTextRB = ResourceBundle.getBundle("Root", UserLocale,UCL);
+				}
+				catch(MalformedURLException ex)
+				{
+					//!Don't Localize
+					showError("Problem loading localization.\n\n" + makeStackTrace(ex));
+				}  		
+			}
+			catch(MissingResourceException e)
+			{  
+				//!Don't Localize
+				System.out.println("No locaLizations found.");
+			}
+			
+			if(LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
+			{
+				//Propose using different language
+				
+				
+				File dir = new File(".");
 	
-			    // It is also possible to filter the list of returned files.
-			    /*FilenameFilter filter = new FilenameFilter(){
-			        public boolean accept(File dir, String name)
-			        {
-			            return name.startsWith("root_");
-			        }
-			    };*/
-	        	
-	        	//Get all files
-			    String[] children = dir.list(/*filter*/);
-	        	
-			    //If we found some (I hope so!)
-			    if(children.length > 0)
-			    {
-			    	//Look for language bundles starting with root_
-			    	ArrayList<String> filtered = new ArrayList<String>();
-			    	for(int i = 0; i < children.length; ++i)
-			    	{
-			    		System.out.println(": " + children[i]);
-			    		if( children[i].startsWith("root_") )
-			    		{
-			    			filtered.add(children[i]);
-			    		}
-			    	}
-			    	
-			    	//Put us back in an array
-			    	children = filtered.toArray( new String[filtered.size()] );
-			    	
-			    	//List other languages.
-			    	if(children.length > 0)
-	    		    {
-			    		System.out.println("Other Languages Found:");
-			    		for(int i = 0; i < children.length; ++i)
-	    		    	{
-			    			System.out.println(children[i]);
-	    		    	}
-	    		    	
-			    		
-			    		showMsg("Look for messages.","DEBUG",JOptionPane.INFORMATION_MESSAGE);
-			    		//TODO:Ask about language?
-	    		    }   		    	
-			    }
-			    
-			    //!Don't Localize
-	    		System.out.println("Failed to open language bundle.");
-        	}
-        }
-        
-        //
-        //BEGIN Updater
-        //
-        
-        //**************************************************************
-        //**************************************************************
-        //**************************************************************
-        
-        boolean updated = false;
-        
-        //Downloading Lists...
-        setSplashText( Localize("Lists1","Downloading Lists...") );
-        
-        //Retrieve the list of update lists
-    	remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt"); 
-    	
-    	//TODO
-    	//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
-    	//2. Use TempFile to download, if problem use old.
-    	
-    	//0%
-    	setProgressValue(NUM_OVERALLPB, 0, 1, 0);
-    	
-    	//Get the sub lists that have the different modules.
-    	handleUpdateList("Lists.txt","HashList.php?Base=dev&File=",1, 0);
-        
-        //Do the updating
-    	String[] SubLists = getLocalList("Lists.txt");
-        int subListNum = 0;
-    	for( String list : SubLists )//Move through the sublists
-        {
-    		String listname = null;
-    		
-        	{
-        		String[] linea = list.split(";");
-        		if(linea.length != 2)
-        		{
-        			//Invalid Line
-        			UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + list,null);
-        			return;
-        		}
-        		else
-        		{
-        			listname = linea[0];
-        		}
-        	}
-        	
-        	updated = handleUpdateList(listname,"dev/",SubLists.length, subListNum);
-        	
-        	subListNum++;
-        	
-        	//100% divided into NumberOfList Pieces, this is piece subListNum
-        	setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum));
+				// It is also possible to filter the list of returned files.
+				/*FilenameFilter filter = new FilenameFilter(){
+					public boolean accept(File dir, String name)
+					{
+						return name.startsWith("root_");
+					}
+				};*/
+				
+				//Get all files
+				String[] children = dir.list(/*filter*/);
+				
+				//If we found some (I hope so!)
+				if(children.length > 0)
+				{
+					//Look for language bundles starting with root_
+					ArrayList<String> filtered = new ArrayList<String>();
+					for(int i = 0; i < children.length; ++i)
+					{
+						System.out.println(": " + children[i]);
+						if( children[i].startsWith("root_") )
+						{
+							filtered.add(children[i]);
+						}
+					}
+					
+					//Put us back in an array
+					children = filtered.toArray( new String[filtered.size()] );
+					
+					//List other languages.
+					if(children.length > 0)
+					{
+						System.out.println("Other Languages Found:");
+						for(int i = 0; i < children.length; ++i)
+						{
+							System.out.println(children[i]);
+						}
+						
+						
+						showMsg("Look for messages.","DEBUG",JOptionPane.INFORMATION_MESSAGE);
+						//TODO:Ask about language?
+					}   				
+				}
+				
+				//!Don't Localize
+				System.out.println("Failed to open language bundle.");
+			}
+		}
+		
+		//
+		//BEGIN Updater
+		//
+		
+		//**************************************************************
+		//**************************************************************
+		//**************************************************************
+		
+		boolean updated = false;
+		
+		//Downloading Lists...
+		setSplashText( Localize("Lists1","Downloading Lists...") );
+		
+		//Retrieve the list of update lists
+		remoteToLocal("HashList.php?Base=dev&R=Y&File=lists/Lists.txt", "Lists.txt"); 
+		
+		//TODO
+		//1. If Lists.txt is empty, something went wrong and exit gracefully with notice
+		//2. Use TempFile to download, if problem use old.
+		
+		//0%
+		setProgressValue(NUM_OVERALLPB, 0, 1, 0);
+		
+		//Get the sub lists that have the different modules.
+		handleUpdateList("Lists.txt","HashList.php?Base=dev&File=",1, 0);
+		
+		//Do the updating
+		String[] SubLists = getLocalList("Lists.txt");
+		int subListNum = 0;
+		for( String list : SubLists )//Move through the sublists
+		{
+			String listname = null;
+			
+			{
+				String[] linea = list.split(";");
+				if(linea.length != 2)
+				{
+					//Invalid Line
+					UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + list,null);
+					return;
+				}
+				else
+				{
+					listname = linea[0];
+				}
+			}
+			
+			updated = handleUpdateList(listname,"dev/",SubLists.length, subListNum);
+			
+			subListNum++;
+			
+			//100% divided into NumberOfList Pieces, this is piece subListNum
+			setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum));
 
-        	if(updated) //If we did something... restart.
-    		{
-        		for(int i = 3; i > 0; --i)
-        		{
-        			setSplashText( Localize("Updated2","Module Updated.") + " (" + i + ")");
-        			
-        			sleep(1000);
-        		}
-    			restart("BC");
-    			return;
-    		}       	
-        }
-    	
-    	//100% Complete
-    	setProgressValue(NUM_OVERALLPB, 0, 1, 1);
+			if(updated) //If we did something... restart.
+			{
+				for(int i = 3; i > 0; --i)
+				{
+					setSplashText( Localize("Updated2","Module Updated.") + " (" + i + ")");
+					
+					sleep(1000);
+				}
+				restart("BC");
+				return;
+			}	   	
+		}
+		
+		//100% Complete
+		setProgressValue(NUM_OVERALLPB, 0, 1, 1);
 
-        //**************************************************************
-        //**************************************************************
-        //**************************************************************
-        
-        
-        //
-        //END Updater
-        //
-        
-    	
-    	//
-    	//Verify Localization Exists, Restart if problem. 
+		//**************************************************************
+		//**************************************************************
+		//**************************************************************
+		
+		
+		//
+		//END Updater
+		//
+		
+		
+		//
+		//Verify Localization Exists, Restart if problem. 
 		if(LTextRB == null)
 		{
 			UpdateError("No Localization is loaded. Cannot continue.",null);
 		}
-    	
-    	
-    	//
-    	//Commit Settings
-    	Settings.setProperty("updateError", "False");
-    	FileOutputStream setOS = null;
-        try
-        {      
-        	setOS = new FileOutputStream("Settings.properties");
-        	Settings.store( setOS , "Background Compute" );
-        }
-        catch(FileNotFoundException ex)
-        {
-        	String defErrMsg = "Problem saving settings.\n\nError: ";
-        	String details = "\n\n" + makeStackTrace(ex);
-        	showError( Localize("Error_Settings1",defErrMsg) + details);
-        }
-        catch(IOException ex)
-        {
-        	String defErrMsg = "Problem saving settings.\n\nError: ";
-        	String details = "\n\n" + makeStackTrace(ex);
-        	showError( Localize("Error_Settings1",defErrMsg) + details);
-        }
-        finally
-        {
-        	if( setOS != null )
-        	{
-        		try
-        		{
+		
+		
+		//
+		//Commit Settings
+		Settings.setProperty("updateError", "False");
+		FileOutputStream setOS = null;
+		try
+		{	  
+			setOS = new FileOutputStream("Settings.properties");
+			Settings.store( setOS , "Background Compute" );
+		}
+		catch(FileNotFoundException ex)
+		{
+			String defErrMsg = "Problem saving settings.\n\nError: ";
+			String details = "\n\n" + makeStackTrace(ex);
+			showError( Localize("Error_Settings1",defErrMsg) + details);
+		}
+		catch(IOException ex)
+		{
+			String defErrMsg = "Problem saving settings.\n\nError: ";
+			String details = "\n\n" + makeStackTrace(ex);
+			showError( Localize("Error_Settings1",defErrMsg) + details);
+		}
+		finally
+		{
+			if( setOS != null )
+			{
+				try
+				{
 					setOS.close();
 				}
-        		catch (IOException ex)
+				catch (IOException ex)
 				{
-                	String defErrMsg = "Problem saving settings.\n\nError: ";
-                	String details = "\n\n" + makeStackTrace(ex);
-        			showError( Localize("Error_Settings1",defErrMsg) + details);
+					String defErrMsg = "Problem saving settings.\n\nError: ";
+					String details = "\n\n" + makeStackTrace(ex);
+					showError( Localize("Error_Settings1",defErrMsg) + details);
 				}
-        		setOS = null;
-        	}
-        }
-    	
+				setOS = null;
+			}
+		}
+		
 		//Start the main application
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
 		
 		//SwingWorker dies. Splash Screen Dies
-    }
-    
-    
-    
-    /**
-     * Runs through an update list updating each item.
-     * 
-     * @param listname List file name
-     * @param prefix Download prefix
-     * @param numLists Number of update lists
-     * @param listNum This list Number
-     * @return
-     */
-    private boolean handleUpdateList(String listname, String prefix, int numLists, int listNum)
-    {
-    	//Vars
-    	boolean updated = false;
-    	int fileNum = 0;
-    	
-    	
-    	String[] Lines = getLocalList(listname);
-    	for( String line : Lines )//Move through the files
-    	{
-    		String name = null;
-    		String hash = null;
-    		
-    		{
-    			String[] linea = line.split(";");
-    			if(linea.length != 2)
-    			{
-    				//ERROR
-    				UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + line,null);
-        			//NEVER RETURNS.
-    			}
-    			else
-    			{
-    				name = linea[0];
-    				hash = linea[1];
-    			}
-    		}
-    		
-    		setSplashText( " " + LocaleFormat( "Checking1", name ) );
+	}
+	
+	
+	
+	/**
+	 * Runs through an update list updating each item.
+	 * 
+	 * @param listname List file name
+	 * @param prefix Download prefix
+	 * @param numLists Number of update lists
+	 * @param listNum This list Number
+	 * @return
+	 */
+	private boolean handleUpdateList(String listname, String prefix, int numLists, int listNum)
+	{
+		//Vars
+		boolean updated = false;
+		int fileNum = 0;
+		
+		
+		String[] Lines = getLocalList(listname);
+		for( String line : Lines )//Move through the files
+		{
+			String name = null;
+			String hash = null;
+			
+			{
+				String[] linea = line.split(";");
+				if(linea.length != 2)
+				{
+					//ERROR
+					UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + line,null);
+					//NEVER RETURNS.
+				}
+				else
+				{
+					name = linea[0];
+					hash = linea[1];
+				}
+			}
+			
+			setSplashText( " " + LocaleFormat( "Checking1", name ) );
 
-    		if( getLocalHash(name).compareTo( hash ) != 0 )
-    		{
-    			updated = true;
-    			setSplashText( " " + LocaleFormat( "Downloading1", name ) );
+			if( getLocalHash(name).compareTo( hash ) != 0 )
+			{
+				updated = true;
+				setSplashText( " " + LocaleFormat( "Downloading1", name ) );
 
-    			if( !remoteToLocal(prefix + name,"Download.tmp") )
-    			{
-    				UpdateError( LocaleFormat( "Error_Download1", name ), null );
-    			}
-    			File src = new File("Download.tmp");
-    		
-    			//Verify it
-        		if( getLocalHash("Download.tmp").compareTo( hash ) != 0 )
-        		{
-        			//Data ERROR
-        			UpdateError( LocaleFormat( "Error_Download2", new String[]{name,getLocalHash(name),hash} ), null );
-        		}
-    			
-    			name = name.replace('/',File.separatorChar); //Make the slash char for this OS
-    		
-    			int index = name.lastIndexOf(File.separatorChar);
-    			if(index != -1) new File(name.substring(0,index)).mkdirs();
-    			
-    			File dest = new File(name);
-    			if( !dest.exists() || dest.delete() )
-    			{
-	    			if( src.renameTo( dest ) )
-	    			{
-	    				setSplashText( LocaleFormat( "Updated1", name ) );
-	    			}
-	    			else
-	    			{
-	    				UpdateError( LocaleFormat( "Error_Rename1", name ), null );
-	    			}
-    			}
-    			else
-    			{
-    				UpdateError( LocaleFormat( "Error_Delete1", name ), null );
-    			}
-    		}
-    	
-    		
-    		fileNum++;
-    		
-    		//(100/numLists * listNum) is the big section for each list
-    		//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
-    		setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
+				if( !remoteToLocal(prefix + name,"Download.tmp") )
+				{
+					UpdateError( LocaleFormat( "Error_Download1", name ), null );
+				}
+				File src = new File("Download.tmp");
+			
+				//Verify it
+				if( getLocalHash("Download.tmp").compareTo( hash ) != 0 )
+				{
+					//Data ERROR
+					UpdateError( LocaleFormat( "Error_Download2", new String[]{name,getLocalHash(name),hash} ), null );
+				}
+				
+				name = name.replace('/',File.separatorChar); //Make the slash char for this OS
+			
+				int index = name.lastIndexOf(File.separatorChar);
+				if(index != -1) new File(name.substring(0,index)).mkdirs();
+				
+				File dest = new File(name);
+				if( !dest.exists() || dest.delete() )
+				{
+					if( src.renameTo( dest ) )
+					{
+						setSplashText( LocaleFormat( "Updated1", name ) );
+					}
+					else
+					{
+						UpdateError( LocaleFormat( "Error_Rename1", name ), null );
+					}
+				}
+				else
+				{
+					UpdateError( LocaleFormat( "Error_Delete1", name ), null );
+				}
+			}
+		
+			
+			fileNum++;
+			
+			//(100/numLists * listNum) is the big section for each list
+			//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
+			setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
 
-    	}
-    	
-    	return updated;
-    }
-    
-    
-    
-    
-    /**
-     * Text to be shown on splash dialog
-     * 
-     * @param text Text to be displayed on splash.
-     */
-    private final void setSplashText(String text)
-    {
-    	publish( new Object[]{text} );
-    }
-    
-    
-    
-    
-    /**
-     * Sets the Progress Bar Value
-     * 
-     * @param Bar Bar number, Use the constants prefixed with NUM_
-     * @param Min Minimum value for bar
-     * @param Max Maximum value for bar
-     * @param Val The value for the bar
-     */
-    private final void setProgressValue(Integer Bar, Integer Min, Integer Max, Integer Val)
-    {
-    	publish( new Object[]{Bar,Min,Max,Val} );
-    }
-    
-    
-    
-    
-    /**
-     * Sets the Progress Bar to an indeterminate state
-     * 
-     * @param Bar Bar number, Use the constants prefixed with NUM_
-     */
-    private final void setProgressUnknown(Integer Bar)
-    {
-    	publish( new Object[]{Bar,Integer.valueOf(0),Integer.valueOf(-1),Integer.valueOf(0)} );
-    }
-    
-    
-    
-    
-    /**
-     * Updates the splash dialog
-     * 
-     * @param chunks A List of queued items to update in order.
-     */
-    @Override
-    protected void process(List<Object[]> chunks)
-    {
-    	//Handle each item in order
-        for (Object row[] : chunks)
-        {
-        	//Create Splash Directive
-        	if(row.length == 0)
-            {
-        		//Is splash in existance?
-            	if(frame == null)
-            	{
-            		//Create
-            		createAndShowGUI();
-            	}	
-            }
-        	//Text Update
-        	else if(row.length == 1)
-            {
-            	if(row[0] instanceof String)
-            	{
-            		Text.setText((String) row[0]);
-            	}
-            }
-        	//Progress Bar Update
-            else if(row.length == 4)
-            {
-            	//Bar, Min, Max, Val (Max is -1 for Indeterminate)
-            	if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
-            	{
-            		//PB
-            		if( ((Integer)row[0]).equals(NUM_PB) )
-            		{
-            			if(PB != null)
-            	    	{
-	            			if((Integer)row[2] == -1)
-	    	            	{
-	                			//Unknown
-	                    		PB.setIndeterminate(true);
-	    	            	}
-	                		else
-	                		{
-	                			//Specific Size
-	                			processProgressValue(PB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
-	                		}
-            	    	}
-            		}
-            		//OverallPB
-            		else if( ((Integer)row[0]).equals(NUM_OVERALLPB) )
-            		{
-            			if(OverallPB != null)
-            	    	{
-	            			if((Integer)row[2] == -1)
-	    	            	{
-	                			//Unknown
-	                    		OverallPB.setIndeterminate(true);
-	    	            	}
-	                		else
-	                		{
-	                			//Specific Size
-	                			processProgressValue(OverallPB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
-	                		}
-            	    	}
-            		}
-            	}          	
-            }
-        }
-    }
-    
-    private final void  processProgressValue(JProgressBar Com, int Min, int Max, int Val)
-    {
-    	Com.setMinimum(Min);
-    	Com.setMaximum(Max);
-    	Com.setValue(Val);
-    	Com.setIndeterminate(false);
-    }
-    
-    /**
-     * Creates and displays the splash window.
-     */
-    private void createAndShowGUI()
-    {
-    	//Create and set up the window.
-        frame = new JWindow();
-        frame.setSize(600,100);
+		}
+		
+		return updated;
+	}
+	
+	
+	
+	
+	/**
+	 * Text to be shown on splash dialog
+	 * 
+	 * @param text Text to be displayed on splash.
+	 */
+	private final void setSplashText(String text)
+	{
+		publish( new Object[]{text} );
+	}
+	
+	
+	
+	
+	/**
+	 * Sets the Progress Bar Value
+	 * 
+	 * @param Bar Bar number, Use the constants prefixed with NUM_
+	 * @param Min Minimum value for bar
+	 * @param Max Maximum value for bar
+	 * @param Val The value for the bar
+	 */
+	private final void setProgressValue(Integer Bar, Integer Min, Integer Max, Integer Val)
+	{
+		publish( new Object[]{Bar,Min,Max,Val} );
+	}
+	
+	
+	
+	
+	/**
+	 * Sets the Progress Bar to an indeterminate state
+	 * 
+	 * @param Bar Bar number, Use the constants prefixed with NUM_
+	 */
+	private final void setProgressUnknown(Integer Bar)
+	{
+		publish( new Object[]{Bar,Integer.valueOf(0),Integer.valueOf(-1),Integer.valueOf(0)} );
+	}
+	
+	
+	
+	
+	/**
+	 * Updates the splash dialog
+	 * 
+	 * @param chunks A List of queued items to update in order.
+	 */
+	@Override
+	protected void process(List<Object[]> chunks)
+	{
+		//Handle each item in order
+		for (Object row[] : chunks)
+		{
+			//Create Splash Directive
+			if(row.length == 0)
+			{
+				//Is splash in existance?
+				if(frame == null)
+				{
+					//Create
+					createAndShowGUI();
+				}	
+			}
+			//Text Update
+			else if(row.length == 1)
+			{
+				if(row[0] instanceof String)
+				{
+					Text.setText((String) row[0]);
+				}
+			}
+			//Progress Bar Update
+			else if(row.length == 4)
+			{
+				//Bar, Min, Max, Val (Max is -1 for Indeterminate)
+				if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
+				{
+					//PB
+					if( ((Integer)row[0]).equals(NUM_PB) )
+					{
+						if(PB != null)
+						{
+							if((Integer)row[2] == -1)
+							{
+								//Unknown
+								PB.setIndeterminate(true);
+							}
+							else
+							{
+								//Specific Size
+								processProgressValue(PB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
+							}
+						}
+					}
+					//OverallPB
+					else if( ((Integer)row[0]).equals(NUM_OVERALLPB) )
+					{
+						if(OverallPB != null)
+						{
+							if((Integer)row[2] == -1)
+							{
+								//Unknown
+								OverallPB.setIndeterminate(true);
+							}
+							else
+							{
+								//Specific Size
+								processProgressValue(OverallPB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
+							}
+						}
+					}
+				}		  	
+			}
+		}
+	}
+	
+	private final void  processProgressValue(JProgressBar Com, int Min, int Max, int Val)
+	{
+		Com.setMinimum(Min);
+		Com.setMaximum(Max);
+		Com.setValue(Val);
+		Com.setIndeterminate(false);
+	}
+	
+	/**
+	 * Creates and displays the splash window.
+	 */
+	private void createAndShowGUI()
+	{
+		//Create and set up the window.
+		frame = new JWindow();
+		frame.setSize(600,100);
 
-        //The main pane
-    	JPanel mainPane = new JPanel();
-    	mainPane.setLayout(new BorderLayout());
-    	
-    	//Images are transparent, setup the background
-    	mainPane.setBackground(Color.BLACK);
-    	
-    	//Add the background Image
-        JLabel Logo = new JLabel(new ImageIcon("images" + File.separator + "Logo.png","Updater"));
-        mainPane.add(Logo,BorderLayout.WEST);
-        
-        //New pane for title and progress
-        JPanel titlePane = new JPanel();
-        titlePane.setLayout(new BorderLayout());
-        titlePane.setBackground(Color.BLACK);
-        
-        //Title Image
-        JLabel Title = new JLabel(new ImageIcon("images" + File.separator + "Title.png","Updater"));
-        titlePane.add(Title,BorderLayout.NORTH);
-        
+		//The main pane
+		JPanel mainPane = new JPanel();
+		mainPane.setLayout(new BorderLayout());
+		
+		//Images are transparent, setup the background
+		mainPane.setBackground(Color.BLACK);
+		
+		//Add the background Image
+		JLabel Logo = new JLabel(new ImageIcon("images" + File.separator + "Logo.png","Updater"));
+		mainPane.add(Logo,BorderLayout.WEST);
+		
+		//New pane for title and progress
+		JPanel titlePane = new JPanel();
+		titlePane.setLayout(new BorderLayout());
+		titlePane.setBackground(Color.BLACK);
+		
+		//Title Image
+		JLabel Title = new JLabel(new ImageIcon("images" + File.separator + "Title.png","Updater"));
+		titlePane.add(Title,BorderLayout.NORTH);
+		
 		//Create the Progress Stuff
 		JPanel South = new JPanel();
 		South.setLayout(new BorderLayout());
@@ -655,13 +655,13 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		//Progress Text
 		//Don't Localize
-    	Text = new JLabel(" Loading Config...");
-    	Text.setForeground(Color.WHITE);
-    	
-    	//Progress Bar, Duh
-    	PB = new JProgressBar();
-    	OverallPB = new JProgressBar();
-    	
+		Text = new JLabel(" Loading Config...");
+		Text.setForeground(Color.WHITE);
+		
+		//Progress Bar, Duh
+		PB = new JProgressBar();
+		OverallPB = new JProgressBar();
+		
 		//when the task of (initially) unknown length begins:
 		PB.setIndeterminate(true);
 		
@@ -671,16 +671,16 @@ public final class BC extends SwingWorker<Object,Object[]>
 		South.add(OverallPB,BorderLayout.SOUTH);
 		
 		titlePane.add(South,BorderLayout.SOUTH);
-    	
-    	mainPane.add(titlePane,BorderLayout.CENTER);
-    	
-    	//Main pane for window
-    	frame.setContentPane(mainPane);
+		
+		mainPane.add(titlePane,BorderLayout.CENTER);
+		
+		//Main pane for window
+		frame.setContentPane(mainPane);
 
-        
-        //frame.pack();
-        
-        //Center frame
+		
+		//frame.pack();
+		
+		//Center frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension size = frame.getSize();
 		screenSize.height = screenSize.height/2;
@@ -690,44 +690,44 @@ public final class BC extends SwingWorker<Object,Object[]>
 		int y = screenSize.height - size.height;
 		int x = screenSize.width - size.width;
 		frame.setLocation(x, y);
-        
+		
 		//Display the window.
-        frame.setVisible(true);
-    }
+		frame.setVisible(true);
+	}
 
-    /**
-     * Make sure the splash is gone when terminating.
-     */
-    @Override
-    protected void done()
-    {
-    	if(frame != null)
-    	{
-    		//Destroy
-    		frame.dispose();
-    		frame = null;    	
-    	}
-    }
-    
-    //
+	/**
+	 * Make sure the splash is gone when terminating.
+	 */
+	@Override
+	protected void done()
+	{
+		if(frame != null)
+		{
+			//Destroy
+			frame.dispose();
+			frame = null;		
+		}
+	}
+	
+	//
 	//END Swing Worker Meat & Potato's
 	//
-    
-    
-    
-    
+	
+	
+	
+	
    
-    //
-    //Gravy
-    //
-    
-    /**
-     * Localizes text based on a template.
-     * 
-     * @param template Localization Template
-     * @return Localized text
-     */
-    static private String Localize(String template, String defaultText)
+	//
+	//Gravy
+	//
+	
+	/**
+	 * Localizes text based on a template.
+	 * 
+	 * @param template Localization Template
+	 * @return Localized text
+	 */
+	static private String Localize(String template, String defaultText)
 	{
 		
 		if(LTextRB!=null)
@@ -748,26 +748,26 @@ public final class BC extends SwingWorker<Object,Object[]>
 			return "#" + defaultText;
 		}
 	}
-    
-    /**
-     * Localizes text based on a template with the pre-localized argument provided.
-     * 
-     * @param template Localization Template
-     * @param Arg Argument to insert into the localization.
-     * @return Localized text
-     */
-    static private String LocaleFormat(String template, String Arg)
-    {
-    	return LocaleFormat(template, new String[]{Arg} );
-    }
-    
-    /**
-     * Localizes text based on a template with the pre-localized arguments provided.
-     * 
-     * @param template Localization Template
-     * @param Args Arguments to insert into the localization.
-     * @return Localized text
-     */
+	
+	/**
+	 * Localizes text based on a template with the pre-localized argument provided.
+	 * 
+	 * @param template Localization Template
+	 * @param Arg Argument to insert into the localization.
+	 * @return Localized text
+	 */
+	static private String LocaleFormat(String template, String Arg)
+	{
+		return LocaleFormat(template, new String[]{Arg} );
+	}
+	
+	/**
+	 * Localizes text based on a template with the pre-localized arguments provided.
+	 * 
+	 * @param template Localization Template
+	 * @param Args Arguments to insert into the localization.
+	 * @return Localized text
+	 */
 	static private String LocaleFormat(String template, String[] Args)
 	{
 		
@@ -810,68 +810,68 @@ public final class BC extends SwingWorker<Object,Object[]>
 			return " **No Locale Availible** ";
 		}
 	}
-    
-    //Gets size of file on Remote Server (if availible) relative to SERVER_PATH
-    static private int getRemoteSize(String file)
-    {
-    	try
-    	{
-    		//Create URL
-    		URL path = new URL(Settings.getProperty("server_path") + file);
-    		
-    		//Connect
-    		URLConnection UC = path.openConnection();
-    		UC.connect();
-    		//Get Size
-    		return UC.getContentLength();
-    	}
-    	catch(MalformedURLException ex)
-    	{
-    		//Malformed Path, SERVER_PATH wrong?
-    		return -1;
-    	}
-    	catch(IOException ex)
+	
+	//Gets size of file on Remote Server (if availible) relative to SERVER_PATH
+	static private int getRemoteSize(String file)
+	{
+		try
+		{
+			//Create URL
+			URL path = new URL(Settings.getProperty("server_path") + file);
+			
+			//Connect
+			URLConnection UC = path.openConnection();
+			UC.connect();
+			//Get Size
+			return UC.getContentLength();
+		}
+		catch(MalformedURLException ex)
+		{
+			//Malformed Path, SERVER_PATH wrong?
+			return -1;
+		}
+		catch(IOException ex)
   		{
   			return -1; //God only knows what went wrong.
   		}
-    }
-    
-    static private String[] getLocalList(String file)
-    {
-    	ArrayList<String> data = new ArrayList<String>();
+	}
+	
+	static private String[] getLocalList(String file)
+	{
+		ArrayList<String> data = new ArrayList<String>();
 		try
-    	{
-    		//Prepare the buffers for reading
-    		BufferedReader in = new BufferedReader(	new FileReader( new File(file) ) );
-    		//Read it...
+		{
+			//Prepare the buffers for reading
+			BufferedReader in = new BufferedReader(	new FileReader( new File(file) ) );
+			//Read it...
  
-    		String inputLine;
-    		while ((inputLine = in.readLine()) != null)
-    		{
-    			data.add(inputLine);
-    		}
+			String inputLine;
+			while ((inputLine = in.readLine()) != null)
+			{
+				data.add(inputLine);
+			}
 
 			in.close();
-    	}
-    	catch(IOException ex)
-    	{
-    			//File doesn't exist or is unavailible.
-    			//Return empty list
-    	}		
-    	return data.toArray(new String[]{});
-    }
-    
-    /**
-     * Computes the Hex MD5 Hash of a file on the local file system.
-     * @param file Path to file on local file system.
-     * @return Hash string
-     */
-    static private String getLocalHash(String file)
-    {
-    	//Byte array because JAVA returns Binary
-    	byte[] res;
+		}
+		catch(IOException ex)
+		{
+				//File doesn't exist or is unavailible.
+				//Return empty list
+		}		
+		return data.toArray(new String[]{});
+	}
+	
+	/**
+	 * Computes the Hex MD5 Hash of a file on the local file system.
+	 * @param file Path to file on local file system.
+	 * @return Hash string
+	 */
+	static private String getLocalHash(String file)
+	{
+		//Byte array because JAVA returns Binary
+		byte[] res;
   		
-    	FileInputStream fis = null;
+		FileInputStream fis = null;
   		try
   		{
   			//Get Binary Hash
@@ -880,14 +880,14 @@ public final class BC extends SwingWorker<Object,Object[]>
   			File f = new File(file);
   			
   			int len;
-    		byte[] msg = new byte[len = (int)f.length()]; 
-    		fis = new FileInputStream(f); 
-    		if (fis.read(msg) != len) return ""; //Failed to get data
-    		   		
-    	
-    		md5.update(msg);
-    		
-    		res = md5.digest();
+			byte[] msg = new byte[len = (int)f.length()]; 
+			fis = new FileInputStream(f); 
+			if (fis.read(msg) != len) return ""; //Failed to get data
+			   		
+		
+			md5.update(msg);
+			
+			res = md5.digest();
   		}
   		catch(NoSuchAlgorithmException ex)
   		{
@@ -913,35 +913,35 @@ public final class BC extends SwingWorker<Object,Object[]>
 				catch(IOException ex)
 				{
 					String defErrMsg = "Problem occurred closing file stream.";
-                	String details = "\n\n" + makeStackTrace(ex);
-        			showError( Localize("Error_FileStream1",defErrMsg) + details);
+					String details = "\n\n" + makeStackTrace(ex);
+					showError( Localize("Error_FileStream1",defErrMsg) + details);
 				
 				}
 			}
   		}
   		
   		return toHexF(res);//Convert Bin to Hex
-    }
-    
-    //Do a file transfer.
-    private boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
-    {
-    	int PBVal = 0;
-    	BufferedInputStream bis = null;
-    	BufferedOutputStream fos = null;
-    	int RemoteSize = getRemoteSize(sFile);
-    	
-    	//Set Progress Bar State to Empty
-    	setProgressValue(NUM_PB, 0, 1, 0);
-    	    	
-    	try
-    	{ 
-    		//Create URL.
+	}
+	
+	//Do a file transfer.
+	private boolean remoteToLocal(String sFile, String dFile)//, JProgressBar PB)
+	{
+		int PBVal = 0;
+		BufferedInputStream bis = null;
+		BufferedOutputStream fos = null;
+		int RemoteSize = getRemoteSize(sFile);
+		
+		//Set Progress Bar State to Empty
+		setProgressValue(NUM_PB, 0, 1, 0);
+				
+		try
+		{ 
+			//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
 			bis = new BufferedInputStream(url.openStream(), 1024);
 
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
-    		
+			
 			int index = dFile.lastIndexOf(File.separatorChar);
 			if(index != -1)
 			{
@@ -969,15 +969,15 @@ public final class BC extends SwingWorker<Object,Object[]>
 			
 		}
 		catch(MalformedURLException ex)
-    	{
+		{
 			UpdateError( Localize( "Error_Download3" , "Server URL malformed. The server may be incorrect.") , ex);
 			return false;
-    	}
+		}
 		catch(IOException ex)
 		{
 			UpdateError( Localize( "Error_Download4" , "Problem occurred while trying to download.") , ex);
 			return false;
-        }
+		}
 		finally
 		{
 			if(fos != null)
@@ -989,8 +989,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 				catch(IOException ex)
 				{
 					String defErrMsg = "Problem occurred while trying to download.";
-                	String details = "\n\n" + makeStackTrace(ex);
-        			showError( Localize("Error_Download4",defErrMsg) + details);
+					String details = "\n\n" + makeStackTrace(ex);
+					showError( Localize("Error_Download4",defErrMsg) + details);
 				
 				}
 			}
@@ -1004,105 +1004,105 @@ public final class BC extends SwingWorker<Object,Object[]>
 				catch(IOException ex)
 				{
 					String defErrMsg = "Problem occurred while trying to download.";
-                	String details = "\n\n" + makeStackTrace(ex);
-        			showError( Localize("Error_Download4",defErrMsg) + details);
+					String details = "\n\n" + makeStackTrace(ex);
+					showError( Localize("Error_Download4",defErrMsg) + details);
 				
 				}
 			}
 		}
-        
-        //Reset
-        setProgressUnknown(NUM_PB);
+		
+		//Reset
+		setProgressUnknown(NUM_PB);
 		return true;
-    }
-    
-    
-    
-    
-    /**
-     * Displays Error Message
-     * 
-     * @param msg Message
-     */
-    static private final void showError(String msg)
+	}
+	
+	
+	
+	
+	/**
+	 * Displays Error Message
+	 * 
+	 * @param msg Message
+	 */
+	static private final void showError(String msg)
 	{
-    	showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
+		showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
 
-    
-    
-    
-    /**
-     * Displays Message
-     * 
-     * @param msg Message
-     * @param title Title to display
-     * @param icon JOptionPane icon
-     */
-    static private final void showMsg(String msg, String title, int icon)
+	
+	
+	
+	/**
+	 * Displays Message
+	 * 
+	 * @param msg Message
+	 * @param title Title to display
+	 * @param icon JOptionPane icon
+	 */
+	static private final void showMsg(String msg, String title, int icon)
 	{
 		JOptionPane.showMessageDialog(null,msg,title,icon);
 	}
-    
-    
-    
-    
-    /**
-     * Never Returns Successfully. Tries restarting and if doesn't help displays error and bails.
-     * 
-     * @param msg Message in error if already restarted once.
-     */
-    private void UpdateError(String msg, Exception ex)
-    {
-    	if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
-    	{
-    		setSplashText( Localize("Error_Update1","Error while updating. ") );
-	    	
-    		try
-    		{
-            	Settings.setProperty("updateError", "True");
-            	Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
-            	
-            	for(int i = 5; i > 0; --i)
-        		{
-        			setSplashText(  Localize("Error_Update1","Error while updating.") + " (" + i + ")");
-        			
-        			sleep(1000);
-        		}
-		    	
-		    	restart("BC");
-            }
-            catch(Exception e)
-            {
-            	String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
-            	String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
-            	showError(Localize("Error_UpdateSave1",defErrMsg) + details);
-            }
-    	}
-    	else
-    	{
-    		String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
-        	String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");      	
-        	showError(Localize("Error_Update2",defErrMsg) + details);
-    	}
-    	 
-    	//Nuke The Thread.
-    	throw new ThreadDeath();
-    }
-    
-    
-    
-    
-    //
-    //NEW VM
-    
-    static void restart(String ClassName)
-    {
-    	restart(ClassName, "");
-    }
-    
-     //Restart Program (Thanks to the makers of JAP)
-    static void restart(String ClassName,String App)
+	
+	
+	
+	
+	/**
+	 * Never Returns Successfully. Tries restarting and if doesn't help displays error and bails.
+	 * 
+	 * @param msg Message in error if already restarted once.
+	 */
+	private void UpdateError(String msg, Exception ex)
+	{
+		if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
+		{
+			setSplashText( Localize("Error_Update1","Error while updating. ") );
+			
+			try
+			{
+				Settings.setProperty("updateError", "True");
+				Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+				
+				for(int i = 5; i > 0; --i)
+				{
+					setSplashText(  Localize("Error_Update1","Error while updating.") + " (" + i + ")");
+					
+					sleep(1000);
+				}
+				
+				restart("BC");
+			}
+			catch(Exception e)
+			{
+				String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
+				String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
+				showError(Localize("Error_UpdateSave1",defErrMsg) + details);
+			}
+		}
+		else
+		{
+			String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
+			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");	  	
+			showError(Localize("Error_Update2",defErrMsg) + details);
+		}
+		 
+		//Nuke The Thread.
+		throw new ThreadDeath();
+	}
+	
+	
+	
+	
+	//
+	//NEW VM
+	
+	static void restart(String ClassName)
+	{
+		restart(ClassName, "");
+	}
+	
+	 //Restart Program (Thanks to the makers of JAP)
+	static void restart(String ClassName,String App)
 	{
 		String classPath = "";
 		if(CLASS_PATH.indexOf(';') > 0)
@@ -1134,9 +1134,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 
 
 
-	    try
+		try
 		{
-		    Runtime.getRuntime().exec(strRestartCommand);
+			Runtime.getRuntime().exec(strRestartCommand);
 			//System.out.println("Restart command: " + strRestartCommand);
 		}
 		catch (Exception ex)
@@ -1177,20 +1177,20 @@ public final class BC extends SwingWorker<Object,Object[]>
 	 */
 	public static String makeStackTrace(Throwable aThrowable)
 	{
-	    //add the class name and any message passed to constructor
-	    final StringBuilder result = new StringBuilder( "Stack Trace: " );
-	    result.append(aThrowable.toString());
-	    
-	    result.append(NEW_LINE);
+		//add the class name and any message passed to constructor
+		final StringBuilder result = new StringBuilder( "Stack Trace: " );
+		result.append(aThrowable.toString());
+		
+		result.append(NEW_LINE);
 
-	    //add each element of the stack trace
-	    for (StackTraceElement element : aThrowable.getStackTrace() ){
-	      result.append( element );
-	      result.append( NEW_LINE );
-	    }
-	    return result.toString();
+		//add each element of the stack trace
+		for (StackTraceElement element : aThrowable.getStackTrace() ){
+		  result.append( element );
+		  result.append( NEW_LINE );
+		}
+		return result.toString();
 	}
-    
+	
 	private static void sleep(long ms)
 	{
 		try
@@ -1250,7 +1250,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		int i;
 
 		if (b==null) return null;//return null on invalid
-                    
+
 		for (i=0; i<len; i++)
 		{
 			s.append(toHex(b[i]));
@@ -1258,7 +1258,7 @@ public final class BC extends SwingWorker<Object,Object[]>
  
 		return s.toString();
 	}
-        
+		
 	/**
 	 * @category HEX
 	 */
@@ -1270,7 +1270,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		if ( i < (byte)16 )
 			return "0"+Integer.toString(i, 16);
 		else
-			return     Integer.toString(i, 16);
+			return Integer.toString(i, 16);
 	}
 	
 	//END HEX

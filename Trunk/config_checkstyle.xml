@@ -111,7 +111,8 @@
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        <module name="TabCharacter"/>
+        <!-- <module name="TabCharacter"/> Viva La \t -->
+        <module name="org.hopto.defcon1.TabOnlyForIndent.TabOnlyForIndent"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
 
