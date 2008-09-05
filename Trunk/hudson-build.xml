@@ -64,7 +64,7 @@
 
 	<target name="checkstyle" depends="compile"
 	 description="Checks that we are using consistant well formed style.">
-		<checkstyle config="config_checkstyle.xml" failOnViolation="false">
+		<checkstyle config="config_checkstyle_debug.xml" failOnViolation="false">
 			<fileset dir="src" includes="**/*.java"/>
 			<formatter type="xml" toFile="checkstyle-result.xml"/>
 		</checkstyle>
