@@ -9,10 +9,10 @@ public final class BC
 	/**
 	 * Just calls the package...
 	 *
-	 * @param Args Arguments from command line
+	 * @param args Arguments from command line
 	 */
-	public static void main(String[] Args)
+	public static void main( String[] args )
 	{
-		net.sf.backcomp.utils.BC.main(Args);
+		net.sf.backcomp.utils.BC.main(args);
 	}
 }
