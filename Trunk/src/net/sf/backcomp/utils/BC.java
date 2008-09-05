@@ -95,8 +95,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	//Constants
 	
-	static final String    CLASS_PATH = getClassPath().trim(); //Class Path for restart
+	/**
+	 * Classpath of runtime.
+	 */
+	static final String    CLASS_PATH = getClassPath().trim();
+	
+	/**
+	 * The systems line seperator.
+	 */
 	static final String    NEW_LINE = System.getProperty("line.separator");
+	
 	private static final Integer  NUM_PB = 1;
 	private static final Integer  NUM_OVERALLPB = 2;
 	private static final int SPLASH_HEIGHT = 100;
@@ -883,7 +891,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	{
 		
 		if(LTextRB!=null)
-		{	
+		{
 			Locale CurrentLocale = null;
 			if( Settings.getProperty("locale") != null )
 			{
@@ -968,7 +976,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 				//File doesn't exist or is unavailible.
 				//Return empty list
-		}		
+		}
 		return data.toArray(new String[]{});
 	}
 	
@@ -991,8 +999,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 			File f = new File(file);
 			
 			int len;
-			byte[] msg = new byte[len = (int)f.length()]; 
-			fis = new FileInputStream(f); 
+			byte[] msg = new byte[len = (int)f.length()];
+			fis = new FileInputStream(f);
 			if (fis.read(msg) != len) return ""; //Failed to get data
 			
 			
@@ -1064,9 +1072,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			File file = new File(dFile);
 			
-			fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
+			fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024);
 			
-			byte[] buffer = new byte[1024]; 
+			byte[] buffer = new byte[1024];
 			
 			int count;
 			while ( ( count = bis.read(buffer) ) != -1)
@@ -1253,7 +1261,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 		catch (Exception ex)
 		{
 			javaExe = "java -cp"; // Linux/UNIX
-			strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
+			strRestartCommand =
+				pathToJava
+				+ javaExe + " \"" + classPath + "\" " + ClassName;
+				// + m_commandLineArgs;
 			
 			//System.out.println("JAP restart command: " + strRestartCommand);
 			try
@@ -1262,7 +1273,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 			}
 			catch (Exception a_e)
 			{
-				showError( Localize("Error_Restart1","Error while trying to restart Background Compute.\n\nError: ") + ex);
+				showError(
+					Localize(
+						"Error_Restart1",
+						"Error while trying to restart Background Compute.\n\nError: "
+					)
+					+ ex
+				);
 			}
 		}
 	}
@@ -1272,9 +1289,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 	{
 		try
 		{
-			return System.getProperty("java.class.path");
+			return System.getProperty( "java.class.path" );
 		}
-		catch (SecurityException a_e)
+		catch ( SecurityException a_e )
 		{
 			return "";
 		}
@@ -1295,20 +1312,29 @@ public final class BC extends SwingWorker<Object, Object[]>
 		result.append( NEW_LINE );
 		
 		//add each element of the stack trace
-		for ( StackTraceElement element : aThrowable.getStackTrace() ){
-		  result.append( element );
-		  result.append( NEW_LINE );
+		for ( StackTraceElement element : aThrowable.getStackTrace() )
+		{
+			result.append( element );
+			result.append( NEW_LINE );
 		}
 		return result.toString();
 	}
 	
+	/**
+	 * Sleeps for specified period. May return sooner if thread is interrupted.
+	 * 
+	 * @param ms Milliseconds to sleep
+	 */
 	private static void sleep( long ms )
 	{
 		try
 		{
 			Thread.sleep( ms );
 		}
-		catch( Exception ex ) {}
+		catch( InterruptedException ex )//
+		{
+			return;
+		}
 	}
 	
 	
@@ -1346,23 +1372,24 @@ public final class BC extends SwingWorker<Object, Object[]>
  * HIGH RISK ACTIVITIES.
  *
  * What won't those crazy lawyers think up next? */
- 
-	/**
-	 * @category HEX
-	 */
-	static private String toHexF( byte[] b ) { return toHexF( b, b.length ); }
+	//private final static int HEX_BASE = 16;
 	
 	/**
 	 * @category HEX
 	 */
-	static private String toHexF( byte[] b, int len )
+	private static  String toHexF( byte[] b ) { return toHexF( b, b.length ); }
+	
+	/**
+	 * @category HEX
+	 */
+	private static String toHexF( byte[] b, int len )
 	{
-		StringBuffer s = new StringBuffer( "" );
+		final StringBuffer s = new StringBuffer( "" );
 		int i;
 		
 		if ( b == null )
 		{
-			return null;//return null on invalid
+			return null; //return null on invalid
 		}
 		
 		for ( i = 0; i < len; i++ )
@@ -1376,22 +1403,23 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * @category HEX
 	 */
-	static private String toHex(byte b)
+	private static String toHex( byte b )
 	{
-		final int BASE = 16;
-		final int _24 = 24;
+		String s = Integer.toHexString(b);
+		return ( s.length() == 2 ) ? s : ( "0" + s );
+		/*final int _24 = 24;
 		//final Integer I = Integer.valueOf( ( ( (int)b ) << _24 ) >>> _24 );
 		//final int i = I.intValue();
 		final int i = ( ( (int)b ) << _24 ) >>> _24;
 		
-		if ( i < (byte)BASE )
+		if ( i < (byte) HEX_BASE )
 		{
-			return "0"+Integer.toString( i, BASE );
+			return "0" + Integer.toString( i, HEX_BASE );
 		}
 		else
 		{
-			return Integer.toString( i, BASE );
-		}
+			return Integer.toString( i, HEX_BASE );
+		}*/
 	}
 	
 	//END HEX
