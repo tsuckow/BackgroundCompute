@@ -360,14 +360,14 @@ public final class BC extends SwingWorker<Object,Object[]>
 		Settings.setProperty("updateError", "False");
 		FileOutputStream setOS = null;
 		try
-		{	  
+		{
 			setOS = new FileOutputStream("Settings.properties");
 			Settings.store( setOS , "Background Compute" );
 		}
 		catch(FileNotFoundException ex)
 		{
-			String defErrMsg = "Problem saving settings.\n\nError: ";
-			String details = "\n\n" + makeStackTrace(ex);
+			final String defErrMsg = "Problem saving settings.\n\nError: ";
+			final String details = "\n\n" + makeStackTrace(ex);
 			showError( Localize("Error_Settings1",defErrMsg) + details);
 		}
 		catch(IOException ex)

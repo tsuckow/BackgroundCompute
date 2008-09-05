@@ -27,7 +27,7 @@
 
     <module name="Regexp">
       <property name="id" value="trailing"/>
-      <property name="format" value="[ \t]+$"/>
+      <property name="format" value="[^ \t]*[ \t]+$"/>
       <property name="illegalPattern" value="true"/>
       <property name="message" value="trailing whitespace"/>
     </module>
@@ -66,11 +66,11 @@
     </module>
 
     <module name="LeftCurly">
-      <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF"/>
+      <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF,LITERAL_TRY"/>
       <property name="option" value="nl"/>
     </module>
     <module name="LeftCurly">
-      <property name="tokens" value="LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE"/>
+      <property name="tokens" value="LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_WHILE"/>
       <property name="option" value="nlow"/>
     </module>
 
@@ -110,7 +110,11 @@
     <module name="ParameterNumber">
       <property name="id" value="paramNum"/>
     </module>
-    <module name="ParenPad"/>
+	<module name="ParenPad">
+		<property name="tokens" value="CTOR_CALL, METHOD_CALL,
+		 SUPER_CTOR_CALL"/>
+		<property name="option" value="space"/>
+	</module>
     <module name="TypecastParenPad"/>
     <module name="RedundantImport"/>
     <module name="RedundantModifier"/>
