@@ -28,6 +28,7 @@
 		<module name="GenericIllegalRegexp">
 			<property name="id" value="trailing"/>
 			<property name="format" value="\S\s+$"/>
+			<property name="ignoreComments" value="true"/>
 			<property name="message" value="trailing whitespace"/>
 		</module>
 

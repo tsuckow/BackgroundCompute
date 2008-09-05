@@ -1,25 +1,25 @@
 /**
  * @(#)BPC.java
- *
+ * 
  * Background Compute ( Manages Distributed Projects )
  * Copyright (C) 2008 Thomas Suckow (Deathbob)
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
  * support@defcon1.hopto.org
- *
- *
+ * 
+ * 
  */
 package net.sf.backcomp.utils;
 
@@ -67,8 +67,7 @@ import javax.swing.UIManager;
 
 /**
  * The Loader for Background Compute.
- *
- *
+ * 
  * @author Deathbob
  * @version 0.2.1 2008/08/17
  *
@@ -171,7 +170,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	private void doWork()
 	{
 		//Display the Splash Screen
-		publish( new Object[] {} ); 
+		publish( new Object[] {} );
 		
 		//
 		//Load Settings
@@ -401,7 +400,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		
 		//
-		//Verify Localization Exists, Restart if problem. 
+		//Verify Localization Exists, Restart if problem.
 		if ( LTextRB == null )
 		{
 			UpdateError( "No Localization is loaded. Cannot continue.", null );
@@ -460,7 +459,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	/**
 	 * Runs through an update list updating each item.
-	 *
+	 * 
 	 * @param listname List file name
 	 * @param prefix Download prefix
 	 * @param numLists Number of update lists
@@ -608,7 +607,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	/**
 	 * Sets the Progress Bar Value
-	 * 
+	 *
 	 * @param Bar Bar number, Use the constants prefixed with NUM_
 	 * @param Min Minimum value for bar
 	 * @param Max Maximum value for bar
@@ -624,7 +623,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	/**
 	 * Sets the Progress Bar to an indeterminate state
-	 * 
+	 *
 	 * @param Bar Bar number, Use the constants prefixed with NUM_
 	 */
 	private final void setProgressUnknown(Integer Bar)
@@ -817,7 +816,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			//Destroy
 			frame.dispose();
-			frame = null;		
+			frame = null;
 		}
 	}
 	
@@ -843,7 +842,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	{
 		
 		if(LTextRB!=null)
-		{	
+		{
 			try
 			{
 				return LTextRB.getString( template );
@@ -1194,7 +1193,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		else
 		{
 			String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
-			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");	  	
+			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
 			showError(Localize("Error_Update2",defErrMsg) + details);
 		}
 		
