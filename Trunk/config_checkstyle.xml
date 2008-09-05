@@ -66,13 +66,15 @@
     </module>
 
     <module name="LeftCurly">
-      <property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF,LITERAL_TRY"/>
+      <!--<property name="tokens" value="CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_IF,LITERAL_ELSE"/>-->
       <property name="option" value="nl"/>
     </module>
+    <!--
     <module name="LeftCurly">
-      <property name="tokens" value="LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_WHILE"/>
+      <property name="tokens" value="LITERAL_DO,LITERAL_FOR,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_WHILE"/>
       <property name="option" value="nlow"/>
     </module>
+    -->
 
     <module name="LineLength">
       <property name="ignorePattern" value="^ *\* *[^ ]+$"/>

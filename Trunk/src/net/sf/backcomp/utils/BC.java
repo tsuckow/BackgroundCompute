@@ -378,7 +378,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		}
 		finally
 		{
-			if( setOS != null )
+			if ( setOS != null )
 			{
 				try
 				{
@@ -386,9 +386,12 @@ public final class BC extends SwingWorker<Object,Object[]>
 				}
 				catch (IOException ex)
 				{
-					String defErrMsg = "Problem saving settings.\n\nError: ";
-					String details = "\n\n" + makeStackTrace(ex);
-					showError( Localize("Error_Settings1",defErrMsg) + details);
+					final String defErrMsg =
+					 "Problem saving settings.\n\nError: ";
+					final String details = "\n\n" + makeStackTrace( ex);
+					showError(
+					 Localize( "Error_Settings1", defErrMsg) +
+					 details);
 				}
 				setOS = null;
 			}
@@ -404,14 +407,18 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	/**
 	 * Runs through an update list updating each item.
-	 * 
+	 *
 	 * @param listname List file name
 	 * @param prefix Download prefix
 	 * @param numLists Number of update lists
 	 * @param listNum This list Number
-	 * @return
+	 * @return Whether files were updated
 	 */
-	private boolean handleUpdateList(String listname, String prefix, int numLists, int listNum)
+	private boolean handleUpdateList(
+	 String listname,
+	 String prefix,
+	 int numLists,
+	 int listNum)
 	{
 		//Vars
 		boolean updated = false;
@@ -429,7 +436,11 @@ public final class BC extends SwingWorker<Object,Object[]>
 				if(linea.length != 2)
 				{
 					//ERROR
-					UpdateError( Localize("Error_HashListLine1", "Encountered an invalid line in the Hash List: ") + line,null);
+					UpdateError(
+					 Localize(
+					  "Error_HashListLine1",
+					  "Encountered an invalid line in the Hash List: ") +
+					 line,null);
 					//NEVER RETURNS.
 				}
 				else
