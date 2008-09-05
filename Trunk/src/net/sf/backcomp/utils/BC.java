@@ -1264,7 +1264,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	 */
 	static private String toHex(byte b)
 	{
-		Integer I = Integer.valueOf((((int)b) << 24) >>> 24);
+    	Integer I = Integer.valueOf((((int)b) << 24) >>> 24);
 		int i = I.intValue();
  
 		if ( i < (byte)16 )
