@@ -48,6 +48,7 @@ import java.util.List;
  */
 public final class BC extends SwingWorker<Object,Object[]>
 {
+	
 	private BC(){}//Only this class can create an instance.
 	
 	//Private Init's
@@ -66,24 +67,25 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	//Constants
 	
-	static final String 		CLASS_PATH = getClassPath().trim(); //Class Path for restart
-	static final  String		NEW_LINE = System.getProperty("line.separator");
-	private final Integer		NUM_PB = 1;
-	private final Integer		NUM_OVERALLPB = 2;
-	
+	static final String    CLASS_PATH = getClassPath().trim(); //Class Path for restart
+	static final String    NEW_LINE = System.getProperty("line.separator");
+	private static final Integer  NUM_PB = 1;
+	private static final Integer  NUM_OVERALLPB = 2;
+	private static final int SPLASH_HEIGHT = 100;
+	private static final int SPLASH_WIDTH = 600;
 	//Private Variables
 	
-	private JLabel		Text = null;			//Splash Text Line [Only use in process()!]
-	private JProgressBar	PB = null;				//Splash Progress Bar [Only use in process()!]
-	private JProgressBar	OverallPB = null;		//Overall Progress Bar [Only use in process()!]
-	private JWindow		frame = null;			//The splash frame
+	private JLabel        Text;       //Splash Text Line [Only use in process()!]
+	private JProgressBar  PB;         //Splash Progress Bar [Only use in process()!]
+	private JProgressBar  OverallPB;  //Overall Progress Bar [Only use in process()!]
+	private JWindow       frame;      //The splash frame
 	
 	
 	//Package Variables
 	
 	final static Properties DefaultSettings = defaultSettings();//Make defaults settings object
 	final static Properties Settings = new Properties( DefaultSettings );//Load settings object with defaults
-	static ResourceBundle LTextRB = null;
+	static ResourceBundle LTextRB;
 	
 	//Functions
 	
@@ -175,7 +177,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 						//!Don't Localize
 						String defErrMsg = "Problem occurred while trying to close settings file handle.";
 						String details = "\n\n" + makeStackTrace(ex);
-						showError( defErrMsg + details);				
+						showError( defErrMsg + details);
 					}
 				}
 			}
@@ -202,10 +204,10 @@ public final class BC extends SwingWorker<Object,Object[]>
 				{
 					//!Don't Localize
 					showError("Problem loading localization.\n\n" + makeStackTrace(ex));
-				}  		
+				}
 			}
 			catch(MissingResourceException e)
-			{  
+			{
 				//!Don't Localize
 				System.out.println("No locaLizations found.");
 			}
@@ -216,7 +218,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 				
 				
 				File dir = new File(".");
-	
+				
 				// It is also possible to filter the list of returned files.
 				/*FilenameFilter filter = new FilenameFilter(){
 					public boolean accept(File dir, String name)
@@ -257,7 +259,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 						
 						showMsg("Look for messages.","DEBUG",JOptionPane.INFORMATION_MESSAGE);
 						//TODO:Ask about language?
-					}   				
+					}
 				}
 				
 				//!Don't Localize
@@ -318,7 +320,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			
 			//100% divided into NumberOfList Pieces, this is piece subListNum
 			setProgressValue(NUM_OVERALLPB, 0, 100, (100/SubLists.length * subListNum));
-
+			
 			if(updated) //If we did something... restart.
 			{
 				for(int i = 3; i > 0; --i)
@@ -329,12 +331,12 @@ public final class BC extends SwingWorker<Object,Object[]>
 				}
 				restart("BC");
 				return;
-			}	   	
+			}
 		}
 		
 		//100% Complete
 		setProgressValue(NUM_OVERALLPB, 0, 1, 1);
-
+		
 		//**************************************************************
 		//**************************************************************
 		//**************************************************************
@@ -438,12 +440,12 @@ public final class BC extends SwingWorker<Object,Object[]>
 			}
 			
 			setSplashText( " " + LocaleFormat( "Checking1", name ) );
-
+			
 			if( getLocalHash(name).compareTo( hash ) != 0 )
 			{
 				updated = true;
 				setSplashText( " " + LocaleFormat( "Downloading1", name ) );
-
+				
 				if( !remoteToLocal(prefix + name,"Download.tmp") )
 				{
 					UpdateError( LocaleFormat( "Error_Download1", name ), null );
@@ -458,7 +460,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 				}
 				
 				name = name.replace('/',File.separatorChar); //Make the slash char for this OS
-			
+				
 				int index = name.lastIndexOf(File.separatorChar);
 				if(index != -1) new File(name.substring(0,index)).mkdirs();
 				
@@ -486,7 +488,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			//(100/numLists * listNum) is the big section for each list
 			//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
 			setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
-
+			
 		}
 		
 		return updated;
@@ -548,67 +550,65 @@ public final class BC extends SwingWorker<Object,Object[]>
 		//Handle each item in order
 		for (Object row[] : chunks)
 		{
-			//Create Splash Directive
-			if(row.length == 0)
+			switch(row.length)
 			{
-				//Is splash in existance?
-				if(frame == null)
-				{
-					//Create
-					createAndShowGUI();
-				}	
-			}
-			//Text Update
-			else if(row.length == 1)
-			{
-				if(row[0] instanceof String)
-				{
-					Text.setText((String) row[0]);
-				}
-			}
-			//Progress Bar Update
-			else if(row.length == 4)
-			{
-				//Bar, Min, Max, Val (Max is -1 for Indeterminate)
-				if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
-				{
-					//PB
-					if( ((Integer)row[0]).equals(NUM_PB) )
+				case 0: //Create Splash Directive
+					if(frame == null) //Is splash in existance?
 					{
-						if(PB != null)
+						//Create
+						createAndShowGUI();
+					}
+					break;
+				
+				case 1: //Text Update
+					if(row[0] instanceof String)
+					{
+						Text.setText((String) row[0]);
+					}
+					break;
+				
+				case 4: //Progress Bar Update
+					//Bar, Min, Max, Val (Max is -1 for Indeterminate)
+					if(row[0] instanceof Integer && row[1] instanceof Integer && row[2] instanceof Integer && row[3] instanceof Integer)
+					{
+						//PB
+						if( ((Integer)row[0]).equals(NUM_PB) )
 						{
-							if((Integer)row[2] == -1)
+							if(PB != null)
 							{
-								//Unknown
-								PB.setIndeterminate(true);
+								if((Integer)row[2] == -1)
+								{
+									//Unknown
+									PB.setIndeterminate(true);
+								}
+								else
+								{
+									//Specific Size
+									processProgressValue(PB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
+								}
 							}
-							else
+						}
+						//OverallPB
+						else if( ((Integer)row[0]).equals(NUM_OVERALLPB) )
+						{
+							if(OverallPB != null)
 							{
-								//Specific Size
-								processProgressValue(PB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
+								if((Integer)row[2] == -1)
+								{
+									//Unknown
+									OverallPB.setIndeterminate(true);
+								}
+								else
+								{
+									//Specific Size
+									processProgressValue(OverallPB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
+								}
 							}
 						}
 					}
-					//OverallPB
-					else if( ((Integer)row[0]).equals(NUM_OVERALLPB) )
-					{
-						if(OverallPB != null)
-						{
-							if((Integer)row[2] == -1)
-							{
-								//Unknown
-								OverallPB.setIndeterminate(true);
-							}
-							else
-							{
-								//Specific Size
-								processProgressValue(OverallPB, (Integer)row[1], (Integer)row[2], (Integer)row[3]);
-							}
-						}
-					}
-				}		  	
-			}
-		}
+					break;
+			}//End Switch
+		}//End For
 	}
 	
 	private final void  processProgressValue(JProgressBar Com, int Min, int Max, int Val)
@@ -626,8 +626,8 @@ public final class BC extends SwingWorker<Object,Object[]>
 	{
 		//Create and set up the window.
 		frame = new JWindow();
-		frame.setSize(600,100);
-
+		frame.setSize(SPLASH_WIDTH,SPLASH_HEIGHT);
+		
 		//The main pane
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new BorderLayout());
@@ -676,7 +676,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		//Main pane for window
 		frame.setContentPane(mainPane);
-
+		
 		
 		//frame.pack();
 		
@@ -694,7 +694,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		//Display the window.
 		frame.setVisible(true);
 	}
-
+	
 	/**
 	 * Make sure the splash is gone when terminating.
 	 */
@@ -716,7 +716,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	
 	
 	
-   
+	
 	//
 	//Gravy
 	//
@@ -831,9 +831,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 			return -1;
 		}
 		catch(IOException ex)
-  		{
-  			return -1; //God only knows what went wrong.
-  		}
+		{
+			return -1; //God only knows what went wrong.
+		}
 	}
 	
 	static private String[] getLocalList(String file)
@@ -844,13 +844,13 @@ public final class BC extends SwingWorker<Object,Object[]>
 			//Prepare the buffers for reading
 			BufferedReader in = new BufferedReader(	new FileReader( new File(file) ) );
 			//Read it...
- 
+			
 			String inputLine;
 			while ((inputLine = in.readLine()) != null)
 			{
 				data.add(inputLine);
 			}
-
+			
 			in.close();
 		}
 		catch(IOException ex)
@@ -870,41 +870,41 @@ public final class BC extends SwingWorker<Object,Object[]>
 	{
 		//Byte array because JAVA returns Binary
 		byte[] res;
-  		
+		
 		FileInputStream fis = null;
-  		try
-  		{
-  			//Get Binary Hash
-  			MessageDigest md5 = MessageDigest.getInstance("MD5");
-  		
-  			File f = new File(file);
-  			
-  			int len;
+		try
+		{
+			//Get Binary Hash
+			final MessageDigest md5 = MessageDigest.getInstance("MD5");
+			
+			File f = new File(file);
+			
+			int len;
 			byte[] msg = new byte[len = (int)f.length()]; 
 			fis = new FileInputStream(f); 
 			if (fis.read(msg) != len) return ""; //Failed to get data
-			   		
-		
+			
+			
 			md5.update(msg);
 			
 			res = md5.digest();
-  		}
-  		catch(NoSuchAlgorithmException ex)
-  		{
-  			showError( Localize("Error_MD51","MD5 Algorithm missing") );
-  			throw new ThreadDeath();
-  		}
-  		catch(FileNotFoundException ex)
-  		{
-  			return ""; //File not found...
-  		}
-  		catch(IOException ex)
-  		{
-  			return ""; //God only knows what went wrong.
-  		}
-  		finally
-  		{
-  			if(fis != null)
+		}
+		catch(NoSuchAlgorithmException ex)
+		{
+			showError( Localize("Error_MD51","MD5 Algorithm missing") );
+			throw new ThreadDeath();
+		}
+		catch(FileNotFoundException ex)
+		{
+			return ""; //File not found...
+		}
+		catch(IOException ex)
+		{
+			return ""; //God only knows what went wrong.
+		}
+		finally
+		{
+			if(fis != null)
 			{
 				try
 				{
@@ -918,9 +918,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 				
 				}
 			}
-  		}
-  		
-  		return toHexF(res);//Convert Bin to Hex
+		}
+		
+		return toHexF(res);//Convert Bin to Hex
 	}
 	
 	//Do a file transfer.
@@ -933,13 +933,13 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		//Set Progress Bar State to Empty
 		setProgressValue(NUM_PB, 0, 1, 0);
-				
+		
 		try
-		{ 
+		{
 			//Create URL.
 			URL url = new URL(Settings.getProperty("server_path") + sFile);
 			bis = new BufferedInputStream(url.openStream(), 1024);
-
+			
 			dFile = dFile.replace('/',File.separatorChar); //Make the char for this OS
 			
 			int index = dFile.lastIndexOf(File.separatorChar);
@@ -954,18 +954,18 @@ public final class BC extends SwingWorker<Object,Object[]>
 			File file = new File(dFile);
 			
 			fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024); 
-
+			
 			byte[] buffer = new byte[1024]; 
-
+			
 			int count;
 			while ( ( count = bis.read(buffer) ) != -1)
-			{ 
+			{
 				fos.write(buffer,0,count);
 				PBVal += count;
 				
 				//Set progress bar to amount downloaded
 				setProgressValue(NUM_PB, 0, RemoteSize, PBVal);
-			} 
+			}
 			
 		}
 		catch(MalformedURLException ex)
@@ -1028,7 +1028,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	{
 		showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
-
+	
 	
 	
 	
@@ -1085,7 +1085,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");	  	
 			showError(Localize("Error_Update2",defErrMsg) + details);
 		}
-		 
+		
 		//Nuke The Thread.
 		throw new ThreadDeath();
 	}
@@ -1101,7 +1101,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		restart(ClassName, "");
 	}
 	
-	 //Restart Program (Thanks to the makers of JAP)
+	//Restart Program (Thanks to the makers of JAP)
 	static void restart(String ClassName,String App)
 	{
 		String classPath = "";
@@ -1112,16 +1112,16 @@ public final class BC extends SwingWorker<Object,Object[]>
 		
 		// restart command
 		String strRestartCommand = "";
-
+		
 		//what is used: sun.java or JView?
 		String strJavaVendor = System.getProperty("java.vendor");
 		//System.out.println("Java vendor: " + strJavaVendor);
-
+		
 		String javaExe = null;
 		String pathToJava = null;
 		if (strJavaVendor.toLowerCase().indexOf("microsoft") != -1)
 		{
-
+			
 			pathToJava = System.getProperty("com.ms.sysdir") + File.separator;
 			javaExe = "jview /cp";
 		}
@@ -1131,9 +1131,9 @@ public final class BC extends SwingWorker<Object,Object[]>
 			javaExe = "javaw -cp"; // for windows
 		}
 		strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
-
-
-
+		
+		
+		
 		try
 		{
 			Runtime.getRuntime().exec(strRestartCommand);
@@ -1143,7 +1143,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		{
 			javaExe = "java -cp"; // Linux/UNIX
 			strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
-
+			
 			//System.out.println("JAP restart command: " + strRestartCommand);
 			try
 			{
@@ -1182,7 +1182,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		result.append(aThrowable.toString());
 		
 		result.append(NEW_LINE);
-
+		
 		//add each element of the stack trace
 		for (StackTraceElement element : aThrowable.getStackTrace() ){
 		  result.append( element );
@@ -1240,7 +1240,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 	 * @category HEX
 	 */
 	static private String toHexF(byte[] b) { return toHexF(b, b.length); }
- 
+	
 	/**
 	 * @category HEX
 	 */
@@ -1248,29 +1248,31 @@ public final class BC extends SwingWorker<Object,Object[]>
 	{
 		StringBuffer s = new StringBuffer("");
 		int i;
-
+		
 		if (b==null) return null;//return null on invalid
-
+		
 		for (i=0; i<len; i++)
 		{
 			s.append(toHex(b[i]));
 		}
- 
+		
 		return s.toString();
 	}
-		
+	
 	/**
 	 * @category HEX
 	 */
 	static private String toHex(byte b)
 	{
-    	Integer I = Integer.valueOf((((int)b) << 24) >>> 24);
-		int i = I.intValue();
- 
-		if ( i < (byte)16 )
-			return "0"+Integer.toString(i, 16);
+		final int BASE = 16;
+		final int _24 = 24;
+		Integer I = Integer.valueOf((((int)b) << _24) >>> _24);
+		final int i = I.intValue();
+		
+		if ( i < (byte)BASE )
+			return "0"+Integer.toString(i, BASE);
 		else
-			return Integer.toString(i, 16);
+			return Integer.toString(i, BASE);
 	}
 	
 	//END HEX

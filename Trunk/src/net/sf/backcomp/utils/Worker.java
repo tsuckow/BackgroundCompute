@@ -23,7 +23,7 @@ import net.sf.backcomp.plugins.PluginLoader;
  */
 
 class Worker extends Thread
-{	
+{
 	private static boolean stop = false;
 	
     public void run()
