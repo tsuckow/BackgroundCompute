@@ -1405,7 +1405,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private static String toHex( byte b )
 	{
-		String s = Integer.toHexString(b);
+		final int i = b & 0xFF;
+		final String s = Integer.toHexString(i);
 		return ( s.length() == 2 ) ? s : ( "0" + s );
 		/*final int _24 = 24;
 		//final Integer I = Integer.valueOf( ( ( (int)b ) << _24 ) >>> _24 );
