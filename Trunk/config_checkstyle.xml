@@ -27,7 +27,7 @@
 
     <module name="Regexp">
       <property name="id" value="trailing"/>
-      <property name="format" value="[^ \t]*[ \t]+$"/>
+      <property name="format" value="[^ \t]+[ \t]+$"/>
       <property name="illegalPattern" value="true"/>
       <property name="message" value="trailing whitespace"/>
     </module>
@@ -113,8 +113,6 @@
       <property name="id" value="paramNum"/>
     </module>
 	<module name="ParenPad">
-		<property name="tokens" value="CTOR_CALL, METHOD_CALL,
-		 SUPER_CTOR_CALL"/>
 		<property name="option" value="space"/>
 	</module>
     <module name="TypecastParenPad"/>

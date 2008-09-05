@@ -387,11 +387,11 @@ public final class BC extends SwingWorker<Object,Object[]>
 				catch (IOException ex)
 				{
 					final String defErrMsg =
-					 "Problem saving settings.\n\nError: ";
+						"Problem saving settings.\n\nError: ";
 					final String details = "\n\n" + makeStackTrace( ex);
 					showError(
-					 Localize( "Error_Settings1", defErrMsg) +
-					 details);
+						Localize( "Error_Settings1", defErrMsg)
+						+ details);
 				}
 				setOS = null;
 			}
@@ -415,18 +415,18 @@ public final class BC extends SwingWorker<Object,Object[]>
 	 * @return Whether files were updated
 	 */
 	private boolean handleUpdateList(
-	 String listname,
-	 String prefix,
-	 int numLists,
-	 int listNum)
+		String listname,
+		String prefix,
+		int numLists,
+		int listNum)
 	{
 		//Vars
 		boolean updated = false;
 		int fileNum = 0;
 		
 		
-		String[] Lines = getLocalList(listname);
-		for( String line : Lines )//Move through the files
+		final String[] lines = getLocalList( listname);
+		for ( String line : lines )//Move through the files
 		{
 			String name = null;
 			String hash = null;
@@ -498,7 +498,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 			
 			//(100/numLists * listNum) is the big section for each list
 			//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
-			setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/Lines.length * fileNum));
+			setProgressValue(NUM_OVERALLPB, 0, 100, (100/numLists * listNum + (100/numLists)/lines.length * fileNum));
 			
 		}
 		
