@@ -13,6 +13,6 @@ public final class BC
 	 */
 	public static void main( String[] args )
 	{
-		net.sf.backcomp.utils.BC.main( args);
+		net.sf.backcomp.utils.BC.main( args );
 	}
 }

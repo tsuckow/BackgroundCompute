@@ -425,7 +425,7 @@ public final class BC extends SwingWorker<Object,Object[]>
 		int fileNum = 0;
 		
 		
-		final String[] lines = getLocalList( listname);
+		final String[] lines = getLocalList( listname );
 		for ( String line : lines )//Move through the files
 		{
 			String name = null;
@@ -1186,29 +1186,29 @@ public final class BC extends SwingWorker<Object,Object[]>
 	 * @param aThrowable Throwable object to generate stack trace from
 	 * @return "Stack Trace: <code>stacktrace</code>"
 	 */
-	public static String makeStackTrace(Throwable aThrowable)
+	public static String makeStackTrace( Throwable aThrowable )
 	{
 		//add the class name and any message passed to constructor
 		final StringBuilder result = new StringBuilder( "Stack Trace: " );
-		result.append(aThrowable.toString());
+		result.append( aThrowable.toString() );
 		
-		result.append(NEW_LINE);
+		result.append( NEW_LINE );
 		
 		//add each element of the stack trace
-		for (StackTraceElement element : aThrowable.getStackTrace() ){
+		for ( StackTraceElement element : aThrowable.getStackTrace() ){
 		  result.append( element );
 		  result.append( NEW_LINE );
 		}
 		return result.toString();
 	}
 	
-	private static void sleep(long ms)
+	private static void sleep( long ms )
 	{
 		try
 		{
-			Thread.sleep(ms);
+			Thread.sleep( ms );
 		}
-		catch(Exception ex){}
+		catch( Exception ex ) {}
 	}
 	
 	
@@ -1250,21 +1250,24 @@ public final class BC extends SwingWorker<Object,Object[]>
 	/**
 	 * @category HEX
 	 */
-	static private String toHexF(byte[] b) { return toHexF(b, b.length); }
+	static private String toHexF( byte[] b ) { return toHexF( b, b.length ); }
 	
 	/**
 	 * @category HEX
 	 */
-	static private String toHexF(byte[] b, int len)
+	static private String toHexF( byte[] b, int len )
 	{
-		StringBuffer s = new StringBuffer("");
+		StringBuffer s = new StringBuffer( "" );
 		int i;
 		
-		if (b==null) return null;//return null on invalid
-		
-		for (i=0; i<len; i++)
+		if ( b == null )
 		{
-			s.append(toHex(b[i]));
+			return null;//return null on invalid
+		}
+		
+		for ( i = 0; i < len; i++ )
+		{
+			s.append( toHex( b[i] ) );
 		}
 		
 		return s.toString();
@@ -1277,13 +1280,18 @@ public final class BC extends SwingWorker<Object,Object[]>
 	{
 		final int BASE = 16;
 		final int _24 = 24;
-		Integer I = Integer.valueOf((((int)b) << _24) >>> _24);
-		final int i = I.intValue();
+		//final Integer I = Integer.valueOf( ( ( (int)b ) << _24 ) >>> _24 );
+		//final int i = I.intValue();
+		final int i = ( ( (int)b ) << _24 ) >>> _24;
 		
 		if ( i < (byte)BASE )
-			return "0"+Integer.toString(i, BASE);
+		{
+			return "0"+Integer.toString( i, BASE );
+		}
 		else
-			return Integer.toString(i, BASE);
+		{
+			return Integer.toString( i, BASE );
+		}
 	}
 	
 	//END HEX
