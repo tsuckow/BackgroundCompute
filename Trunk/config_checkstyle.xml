@@ -18,7 +18,7 @@
   </module>
 
   <module name="Translation">
-    <property name="severity" value="${translation.severity}"/>
+    <property name="severity" value="warning"/>
   </module>
 
   <module name="TreeWalker">
@@ -38,14 +38,17 @@
     <module name="EmptyForIteratorPad"/>
     <module name="EqualsHashCode"/>
     <module name="FileLength" />
-    <module name="Header">
+    <!-- <module name="Header">
       <property name="headerFile" value="${checkstyle.header.file}"/>
     </module>
-
+	-->
+	
     <!-- module name="IllegalCatch"/ -->
+    <!--
     <module name="ImportControl">
       <property name="file" value="${checkstyle.importcontrol.file}"/>
     </module>
+    -->
     <module name="IllegalImport"/>
     <module name="IllegalInstantiation"/>
     <module name="IllegalThrows"/>
