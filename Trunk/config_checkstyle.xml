@@ -27,7 +27,7 @@
 
     <module name="Regexp">
       <property name="id" value="trailing"/>
-      <property name="format" value="[^ \t]+[ \t]+$"/>
+      <property name="format" value="^[^ \t]+[ \t]+$"/>
       <property name="illegalPattern" value="true"/>
       <property name="message" value="trailing whitespace"/>
     </module>
