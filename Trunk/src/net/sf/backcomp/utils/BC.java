@@ -19,7 +19,7 @@
  *
  * support@defcon1.hopto.org
  *
- * 
+ *
  */
 package net.sf.backcomp.utils;
 
@@ -67,8 +67,8 @@ import javax.swing.UIManager;
 
 /**
  * The Loader for Background Compute.
- * 
- * 
+ *
+ *
  * @author Deathbob
  * @version 0.2.1 2008/08/17
  *

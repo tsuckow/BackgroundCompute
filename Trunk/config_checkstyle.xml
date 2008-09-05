@@ -25,10 +25,9 @@
 
 		<property name="tabWidth" value="4" />
 
-		<module name="Regexp">
+		<module name="GenericIllegalRegexp">
 			<property name="id" value="trailing"/>
-			<property name="format" value="^.*[^ \t][ \t]+$"/>
-			<property name="illegalPattern" value="true"/>
+			<property name="format" value="\S\s+$"/>
 			<property name="message" value="trailing whitespace"/>
 		</module>
 
