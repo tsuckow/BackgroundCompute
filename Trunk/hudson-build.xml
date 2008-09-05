@@ -1,4 +1,4 @@
-<project name="Background Compute" default="checkstyle" basedir=".">
+<project name="Background Compute" default="javadoc_deploy_style" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
