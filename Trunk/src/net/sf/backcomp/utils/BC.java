@@ -22,34 +22,61 @@
  * 
  */
 package net.sf.backcomp.utils;
- 
-import javax.swing.*;
 
-import java.awt.*;
 
-import java.util.*;
-import java.text.*;//String Formatting
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
-import java.io.*;//File
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;//File
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 
-import java.net.*; //URL
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
 
-import java.security.*; //For MD5
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
+import java.text.MessageFormat;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JWindow;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 
 /**
- * The Loader for Background Compute
+ * The Loader for Background Compute.
  * 
  * 
  * @author Deathbob
  * @version 0.2.1 2008/08/17
  *
  */
-public final class BC extends SwingWorker<Object,Object[]>
+public final class BC extends SwingWorker<Object, Object[]>
 {
 	
-	private BC(){}//Only this class can create an instance.
+	private BC() {}//Only this class can create an instance.
 	
 	//Private Init's
 	
