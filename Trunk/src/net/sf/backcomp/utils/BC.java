@@ -32,7 +32,7 @@ import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;//File
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -85,10 +85,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 	{
 		Properties set = new Properties();
 		
-		set.setProperty("cpu_limit", "80");
-		set.setProperty("locale", "en");
-		set.setProperty("server_path", "http://defcon1.hopto.org/updates/bc/");
-		set.setProperty("updateError", "False");
+		set.setProperty( "cpu_limit", "80" );
+		set.setProperty( "locale", "en");
+		set.setProperty(
+			"server_path",
+			"http://defcon1.hopto.org/updates/bc/"
+		);
+		set.setProperty( "updateError", "False" );
 		
 		return set;
 	}
@@ -103,14 +106,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * The systems line seperator.
 	 */
-	static final String    NEW_LINE = System.getProperty("line.separator");
+	static final String    NEW_LINE = System.getProperty( "line.separator" );
 	
 	private static final Integer  NUM_PB = 1;
 	private static final Integer  NUM_OVERALLPB = 2;
-	private static final int SPLASH_HEIGHT = 100;
-	private static final int SPLASH_WIDTH = 600;
-	private static final int HUNDRED_PERCENT = 100;
-	private static final int ONE_SECOND = 1000;
+	private static final int      SPLASH_HEIGHT = 100;
+	private static final int      SPLASH_WIDTH = 600;
+	private static final int      HUNDRED_PERCENT = 100;
+	private static final int      ONE_SECOND = 1000;
 	
 	//Private Variables
 	
@@ -128,15 +131,21 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	//Functions
 	
-	public static void main(String[] args)
+	public static void main( String[] args )
 	{
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}catch(Exception e){} //If can't set native look and feel, oh well.
+			UIManager.setLookAndFeel(
+				UIManager.getSystemLookAndFeelClassName()
+			);
+		}
+		catch ( Exception e )
+		{
+			//Hmm, Don't Care
+		}
 		
 		//Start the self enclosed SwingWorker.
-		(new BC()).execute();
+		( new BC() ).execute();
 		
 	}
 	
@@ -158,10 +167,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			doWork();
 		}
-		catch(Exception ex)
+		catch( Exception ex )
 		{
 			//!Don't Localize
-			showError("Caught exception at top of Background Thread.\n\nLast Chance.\n\n" + ex.toString() + "\n\n" + makeStackTrace(ex));
+			showError(
+				"Caught exception at top of Background Thread.\n\nLast Chance.\n\n"
+				+ ex.toString() + "\n\n" + makeStackTrace(ex)
+			);
 		}
 		
 		
@@ -187,36 +199,37 @@ public final class BC extends SwingWorker<Object, Object[]>
 			FileInputStream SetIS = null;
 			try
 			{
-				SetIS = new FileInputStream("Settings.properties");
+				SetIS = new FileInputStream( "Settings.properties" );
 				Settings.load( SetIS );
 			}
-			catch(FileNotFoundException ex)
+			catch( FileNotFoundException ex )
 			{
 				//Didn't find settings file
 				//Defaults
 				//!Don't Localize
-				System.out.println("No Settings File");
+				System.out.println( "No Settings File" );
 			}
-			catch(IOException ex)
+			catch( IOException ex )
 			{
 				//Defaults
 				//!Don't Localize
-				System.out.println("IO Error loading file");
+				System.out.println( "IO Error loading file" );
 			}
 			finally
 			{
-				if(SetIS != null)
+				if( SetIS != null )
 				{
 					try
 					{
 						SetIS.close();
 					}
-					catch(IOException ex)
+					catch( IOException ex )
 					{
 						//!Don't Localize
-						String defErrMsg = "Problem occurred while trying to close settings file handle.";
-						String details = "\n\n" + makeStackTrace(ex);
-						showError( defErrMsg + details);
+						String defErrMsg =
+							"Problem occurred while trying to close settings file handle.";
+						String details = "\n\n" + makeStackTrace( ex );
+						showError( defErrMsg + details );
 					}
 				}
 			}
@@ -227,57 +240,61 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Load Localization
 		
 		{
-			Locale UserLocale = new Locale( Settings.getProperty("locale") );
+			Locale UserLocale = new Locale( Settings.getProperty( "locale" ) );
 			try
 			{
-				ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+				ClassLoader CL =
+					net.sf.backcomp.utils.BC.class.getClassLoader();
 				
 				URLClassLoader UCL = null;
 				
 				try
 				{
-					UCL = new URLClassLoader(new URL[]{new File("." + File.separator).toURI().toURL()},CL);
-					LTextRB = ResourceBundle.getBundle("Root", UserLocale,UCL);
+					UCL =
+						new URLClassLoader(
+							new URL[]
+							{
+								new File( "." + File.separator ).toURI().toURL()
+							},
+							CL
+						);
+					LTextRB =
+						ResourceBundle.getBundle( "Root", UserLocale, UCL );
 				}
-				catch(MalformedURLException ex)
+				catch ( MalformedURLException ex )
 				{
 					//!Don't Localize
-					showError("Problem loading localization.\n\n" + makeStackTrace(ex));
+					showError(
+						"Problem loading localization.\n\n"
+						+ makeStackTrace( ex )
+					);
 				}
 			}
-			catch(MissingResourceException e)
+			catch ( MissingResourceException e )
 			{
 				//!Don't Localize
-				System.out.println("No locaLizations found.");
+				System.out.println( "No locaLizations found." );
 			}
 			
-			if(LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
+			if ( LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
 			{
 				//Propose using different language
 				
 				
-				File dir = new File(".");
-				
-				// It is also possible to filter the list of returned files.
-				/*FilenameFilter filter = new FilenameFilter(){
-					public boolean accept(File dir, String name)
-					{
-						return name.startsWith("root_");
-					}
-				};*/
+				File dir = new File( "." );
 				
 				//Get all files
-				String[] children = dir.list(/*filter*/);
+				String[] children = dir.list();
 				
 				//If we found some (I hope so!)
-				if(children.length > 0)
+				if( children.length > 0 )
 				{
 					//Look for language bundles starting with root_
 					ArrayList<String> filtered = new ArrayList<String>();
 					for ( int i = 0; i < children.length; ++i )
 					{
 						System.out.println( ": " + children[i] );
-						if ( children[i].startsWith("root_") )
+						if ( children[i].startsWith( "Root_" ) )
 						{
 							filtered.add( children[i] );
 						}
@@ -289,7 +306,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					//List other languages.
 					if ( children.length > 0 )
 					{
-						System.out.println("Other Languages Found:");
+						System.out.println( "Other Languages Found:" );
 						for ( int i = 0; i < children.length; ++i )
 						{
 							System.out.println( children[i] );
@@ -299,7 +316,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 						showMsg(
 							"Look for messages.",
 							"DEBUG",
-							JOptionPane.INFORMATION_MESSAGE );
+							JOptionPane.INFORMATION_MESSAGE
+						);
 						//TODO:Ask about language?
 					}
 				}
@@ -325,7 +343,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Retrieve the list of update lists
 		remoteToLocal(
 			"HashList.php?Base=dev&R=Y&File=lists/Lists.txt",
-			"Lists.txt" );
+			"Lists.txt"
+		);
 		
 		//TODO
 		//1. If Lists.txt is empty, something went wrong and exit gracefully
@@ -352,8 +371,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 					UpdateError(
 						Localize(
 							"Error_HashListLine1",
-							"Encountered an invalid line in the Hash List: ")
-						+ list, null);
+							"Encountered an invalid line in the Hash List: "
+						)
+						+ list,
+						null
+					);
 					return;
 				}
 				else
@@ -366,16 +388,18 @@ public final class BC extends SwingWorker<Object, Object[]>
 				listname,
 				"dev/",
 				subLists.length,
-				subListNum);
+				subListNum
+			);
 			
 			subListNum++;
 			
 			//100% divided into NumberOfList Pieces, this is piece subListNum
 			setProgressValue(
-					NUM_OVERALLPB,
-					0,
-					HUNDRED_PERCENT,
-					( HUNDRED_PERCENT / subLists.length * subListNum ) );
+				NUM_OVERALLPB,
+				0,
+				HUNDRED_PERCENT,
+				( HUNDRED_PERCENT / subLists.length * subListNum )
+			);
 			
 			if ( updated ) //If we did something... restart.
 			{
@@ -384,8 +408,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 					setSplashText(
 						Localize(
 							"Updated2",
-							"Module Updated.")
-						+ " (" + i + ")" );
+							"Module Updated."
+						) + " (" + i + ")"
+					);
 					
 					sleep( ONE_SECOND );
 				}
@@ -451,7 +476,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 					final String details = "\n\n" + makeStackTrace( ex );
 					showError(
 						Localize( "Error_Settings1", defErrMsg )
-						+ details);
+						+ details
+					);
 				}
 				setOS = null;
 			}
@@ -497,10 +523,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					//ERROR
 					UpdateError(
-					 Localize(
-					  "Error_HashListLine1",
-					  "Encountered an invalid line in the Hash List: " ) +
-					 line, null );
+						Localize(
+							"Error_HashListLine1",
+							"Encountered an invalid line in the Hash List: "
+						) + line,
+						null
+					);
 					//NEVER RETURNS.
 				}
 				else
@@ -527,10 +555,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 						null
 					);
 				}
-				File src = new File("Download.tmp");
+				File src = new File( "Download.tmp" );
 			
 				//Verify it
-				if ( getLocalHash("Download.tmp").compareTo( hash ) != 0 )
+				if ( getLocalHash( "Download.tmp" ).compareTo( hash ) != 0 )
 				{
 					//Data ERROR
 					UpdateError(
@@ -550,10 +578,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 				//Make the slash char for this OS
 				name = name.replace( '/', File.separatorChar );
 				
-				int index = name.lastIndexOf(File.separatorChar);
-				if(index != -1) new File(name.substring(0,index)).mkdirs();
+				int index = name.lastIndexOf( File.separatorChar );
+				if(index != -1) new File( name.substring( 0, index ) ).mkdirs();
 				
-				File dest = new File(name);
+				File dest = new File( name );
 				if( !dest.exists() || dest.delete() )
 				{
 					if( src.renameTo( dest ) )
@@ -607,7 +635,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private final void setSplashText(String text)
 	{
-		publish( new Object[]{text} );
+		publish( new Object[] {text} );
 	}
 	
 	
@@ -623,7 +651,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private final void setProgressValue(Integer Bar, Integer Min, Integer Max, Integer Val)
 	{
-		publish( new Object[]{Bar, Min, Max, Val} );
+		publish( new Object[] {Bar, Min, Max, Val} );
 	}
 	
 	
@@ -639,10 +667,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 		publish(
 			new Object[]
 			{
-				Bar,//Which Progress Bar
-				Integer.valueOf(0),//Minimum 0
-				Integer.valueOf(-1),//Unknown
-				Integer.valueOf(0)//Current 0
+				Bar, //Which Progress Bar
+				Integer.valueOf(0), //Minimum 0
+				Integer.valueOf(-1), //Unknown
+				Integer.valueOf(0) //Current 0
 			}
 		);
 	}
@@ -661,7 +689,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Handle each item in order
 		for (Object row[] : chunks)
 		{
-			switch(row.length)
+			switch ( row.length )
 			{
 				case 0: //Create Splash Directive
 					if ( frame == null ) //Is splash in existence?
@@ -1371,8 +1399,11 @@ public final class BC extends SwingWorker<Object, Object[]>
  * SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
  * HIGH RISK ACTIVITIES.
  *
- * What won't those crazy lawyers think up next? */
-	//private final static int HEX_BASE = 16;
+ * What won't those crazy lawyers think up next?
+ * 
+ * Modified by: Deatbob
+ * 
+ * */
 	
 	/**
 	 * @category HEX
@@ -1408,19 +1439,6 @@ public final class BC extends SwingWorker<Object, Object[]>
 		final int i = b & 0xFF;
 		final String s = Integer.toHexString(i);
 		return ( s.length() == 2 ) ? s : ( "0" + s );
-		/*final int _24 = 24;
-		//final Integer I = Integer.valueOf( ( ( (int)b ) << _24 ) >>> _24 );
-		//final int i = I.intValue();
-		final int i = ( ( (int)b ) << _24 ) >>> _24;
-		
-		if ( i < (byte) HEX_BASE )
-		{
-			return "0" + Integer.toString( i, HEX_BASE );
-		}
-		else
-		{
-			return Integer.toString( i, HEX_BASE );
-		}*/
 	}
 	
 	//END HEX
