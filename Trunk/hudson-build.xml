@@ -4,6 +4,7 @@
 		<echo message="${env.BUILD_TAG}"/>
 	</target>
 	<target name="init" depends="printinfo">
+		<property name="tst-dir" location="src/net/sf/backcomp/tests" />
 		<property name="sourceDir" value="src" />
 		<property name="outputDir" value="classes" />
 		<property name="requiredDir" value="Required" />
@@ -17,6 +18,10 @@
 				<pathelement location="lib/Defcon1Checks.jar"/>
 			</classpath>
 		</taskdef>
+		<path id="classpath.test">
+			<pathelement location="lib/junit.jar" />
+			<pathelement location="${tst-dir}" />
+		</path>
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
@@ -71,13 +76,30 @@
 	</target>
 	
 	<!-- ====================================================== -->
+	<!-- Verify we haven't broken anything. (We may only want to heck the updater in the future before deploy) -->
+	<!-- ====================================================== -->
+	<target name="junit" depends="compile">
+		<junit>
+			<classpath refid="classpath.test" />
+			<formatter type="xml" />
+			<batchtest>
+				<fileset dir="src/net/sf/backcomp/tests">
+					<include name="**/Test*.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<!-- ====================================================== -->
 	<!-- Deploy to developement updater -->
 	<!-- ====================================================== -->
-	<target name="deploy" depends="compile">
+	<target name="deploy" depends="compile,junit">
 		<delete dir="${deployDir}" />
 		<mkdir dir="${deployDir}" />
 		<copy todir="${deployDir}">
-			<fileset dir="${outputDir}"/>
+			<fileset dir="${outputDir}">
+				<exclude name="**/net/sf/backcomp/tests/" />
+			</fileset>
 			<fileset dir="${requiredDir}"/>
 		</copy>
 	</target>
