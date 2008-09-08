@@ -81,7 +81,7 @@
 	<target name="junit" depends="compile">
 		<junit>
 			<classpath refid="classpath.test" />
-			<formatter type="xml" />
+			<formatter type="xml" toFile="junit-result.xml" />
 			<batchtest>
 				<fileset dir="src/net/sf/backcomp/tests">
 					<include name="**/Test*.class" />
