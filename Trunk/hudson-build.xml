@@ -18,6 +18,7 @@
 				<pathelement location="lib/Defcon1Checks.jar"/>
 			</classpath>
 		</taskdef>
+		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="classpath.base"/>
 		<path id="classpath.base">
 			<pathelement location="lib/junit-4.5.jar" />
 		</path>
@@ -84,10 +85,12 @@
 	<!-- Verify we haven't broken anything. (We may only want to heck the updater in the future before deploy) -->
 	<!-- ====================================================== -->
 	<target name="junit" depends="compile">
+		<property name="report.dir"  value="test-reports"/>
+		<mkdir dir="${report.dir}"/>
 		<junit>
 			<classpath refid="classpath.test" />
-			<formatter type="brief" usefile="false" />
-			<batchtest>
+			<formatter type="xml" />
+			<batchtest todir="${report.dir}">
 				<fileset dir="src/net/sf/backcomp/tests">
 					<include name="**/Test*.class" />
 				</fileset>
