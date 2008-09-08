@@ -18,9 +18,12 @@
 				<pathelement location="lib/Defcon1Checks.jar"/>
 			</classpath>
 		</taskdef>
-		<path id="classpath.test">
+		<path id="classpath.base">
 			<pathelement location="lib/junit.jar" />
+		</path>
+		<path id="classpath.test">
 			<pathelement location="${tst-dir}" />
+			<path refid="classpath.base" />
 		</path>
 	</target>
 	<target name="clean" depends="init">
@@ -31,7 +34,9 @@
 		<mkdir dir="${outputDir}" />
 	</target>
 	<target name="compile" depends="prepare">
-		<javac debug="true" srcdir="${sourceDir}" destdir="${outputDir}" />
+		<javac debug="true" srcdir="${sourceDir}" destdir="${outputDir}">
+			<classpath refid="classpath.base"/>
+		</javac>
 	</target>
 	
 	<!-- ====================================================== -->
