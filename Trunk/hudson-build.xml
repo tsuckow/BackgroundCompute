@@ -19,7 +19,7 @@
 			</classpath>
 		</taskdef>
 		<path id="classpath.base">
-			<pathelement location="lib/junit.jar" />
+			<pathelement location="lib/junit-4.5.jar" />
 		</path>
 		<path id="classpath.test">
 			<pathelement location="${tst-dir}" />
