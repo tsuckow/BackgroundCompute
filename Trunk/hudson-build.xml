@@ -85,7 +85,7 @@
 	</target>
 	
 	<!-- ====================================================== -->
-	<!-- Verify we haven't broken anything. (We may only want to heck the updater in the future before deploy) -->
+	<!-- Verify we haven't broken anything. (We may only want to check the updater in the future before deploy) -->
 	<!-- ====================================================== -->
 	<target name="junit" depends="compile">
 		<property name="report.dir"  value="test-reports"/>
@@ -94,7 +94,7 @@
 			<classpath refid="classpath.test" />
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
-				<fileset dir="${outputDir}/net/sf/backcomp/tests">
+				<fileset dir="${outputDir}">
 					<include name="**/Test*.class" />
 				</fileset>
 			</batchtest>
