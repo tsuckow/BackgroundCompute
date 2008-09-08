@@ -24,7 +24,7 @@
 			<pathelement location="lib/ant-junit.jar" />
 		</path>
 		<path id="classpath.test">
-			<pathelement location="${tst-dir}" />
+			<pathelement location="${outputDir}" />
 			<path refid="classpath.base" />
 		</path>
 		
