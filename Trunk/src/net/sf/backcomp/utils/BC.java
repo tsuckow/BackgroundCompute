@@ -1089,7 +1089,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			}
 		}
 		
-		return toHexF( res );//Convert Bin to Hex
+		return toHex( res );//Convert Bin to Hex
 	}
 	
 	//Do a file transfer.
@@ -1430,12 +1430,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * @category HEX
 	 */
-	private static  String toHexF( byte[] b ) { return toHexF( b, b.length ); }
+	private static String toHex( byte[] b ) { return toHex( b, b.length ); }
 	
 	/**
 	 * @category HEX
 	 */
-	private static String toHexF( byte[] b, int len )
+	private static String toHex( byte[] b, int len )
 	{
 		final StringBuffer s = new StringBuffer( "" );
 		int i;

@@ -109,7 +109,7 @@
 		<mkdir dir="${deployDir}" />
 		<copy todir="${deployDir}">
 			<fileset dir="${outputDir}">
-				<exclude name="**/net/sf/backcomp/tests/" />
+				<exclude name="**/tests/" />
 			</fileset>
 			<fileset dir="${requiredDir}"/>
 		</copy>
