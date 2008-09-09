@@ -1,136 +1,48 @@
 package net.sf.backcomp.utils.tests;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import net.sf.backcomp.tests.MethodUtils;
 
 import junit.framework.TestCase;
 
 public class TestHex extends TestCase
 {
+	private final Method toHex_byte =
+		MethodUtils.getPMethod(
+			net.sf.backcomp.utils.BC.class,
+			"toHex",
+			byte.class
+		);
+	
+	private final Method toHex_bytes =
+		MethodUtils.getPMethod(
+			net.sf.backcomp.utils.BC.class,
+			"toHex",
+			byte[].class
+		);
+	
+	private final Method toHex_bytes_int =
+		MethodUtils.getPMethod(
+			net.sf.backcomp.utils.BC.class,
+			"toHex",
+			byte[].class,
+			int.class
+		);
+	
 	private String toHex(byte b)
 	{
-		Method toHex;
-		
-		try
-		{
-			toHex = net.sf.backcomp.utils.BC.class.getDeclaredMethod("toHex", new Class[] {byte.class});
-		}
-		catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-		toHex.setAccessible(true);
-		
-		try
-		{
-			return (String) toHex.invoke(null, b );
-		}
-		catch (IllegalArgumentException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+		return (String) MethodUtils.invokeMethod(toHex_byte, null, b);
 	}
 	
 	private String toHex(byte[] b)
 	{
-		Method toHex;
-		
-		try
-		{
-			toHex = net.sf.backcomp.utils.BC.class.getDeclaredMethod("toHex", new Class[] {byte[].class});
-		}
-		catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-		toHex.setAccessible(true);
-		
-		try
-		{
-			return (String) toHex.invoke(null, b );
-		}
-		catch (IllegalArgumentException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+		return (String) MethodUtils.invokeMethod(toHex_bytes, null, b);
 	}
 	
 	private String toHex(byte[] b, int len)
 	{
-		Method toHex;
-		
-		try
-		{
-			toHex = net.sf.backcomp.utils.BC.class.getDeclaredMethod("toHex", new Class[] {byte[].class, int.class});
-		}
-		catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-		toHex.setAccessible(true);
-		
-		try
-		{
-			return (String) toHex.invoke(null, b, len );
-		}
-		catch (IllegalArgumentException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+		return (String) MethodUtils.invokeMethod(toHex_bytes_int, null, b, len);
 	}
 	
 	public void testHexByteFF()
@@ -160,13 +72,25 @@ public class TestHex extends TestCase
 	
 	public void testHexBytesFFFF()
 	{
-		assertEquals( toHex( new byte[] {(byte) 0xFF, (byte) 0xFF}, 2 ) , "ffff");
+		byte[] b =
+			new byte[]
+			{
+				(byte) 0xFF,
+				(byte) 0xFF
+			};
+		assertEquals( toHex( b, 2 ) , "ffff");
 	}
 	
 	public void test2HexBytes147A()
 	{
 		byte[] b = 
-			new byte[] {(byte) 0x14, (byte) 0x7A, (byte) 0x00, (byte) 0x00};
+			new byte[]
+			{
+				(byte) 0x14,
+				(byte) 0x7A,
+				(byte) 0x00,
+				(byte) 0x00
+			};
 		assertEquals( toHex( b, 2 ) , "147a");
 	}
 	
