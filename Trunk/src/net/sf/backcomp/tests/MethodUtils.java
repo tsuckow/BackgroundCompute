@@ -13,6 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import junit.framework.Assert;
 
+/**
+ * Utilities to help with Method Reflection in JUnit Tests
+ * 
+ * @author Deathbob
+ *
+ */
 public class MethodUtils
 {
 	/**
@@ -30,13 +36,13 @@ public class MethodUtils
 		Class<?>... argTypes
 	)
 	{
-		Method m = getMethod(targetClass,	methodName, argTypes);
+		final Method m = getMethod( targetClass, methodName, argTypes );
 		
 		try
 		{
-			m.setAccessible(true);
+			m.setAccessible( true );
 		}
-		catch (SecurityException e)
+		catch ( SecurityException e )
 		{
 			e.printStackTrace();
 			Assert.fail(
@@ -65,11 +71,11 @@ public class MethodUtils
 		try
 		{
 			return net.sf.backcomp.utils.BC.class.getDeclaredMethod(
-				"toHex",
+				methodName,
 				argTypes
 			);
 		}
-		catch (SecurityException e)
+		catch ( SecurityException e )
 		{
 			e.printStackTrace();
 			Assert.fail(
@@ -77,7 +83,7 @@ public class MethodUtils
 			);
 			return null;
 		}
-		catch (NoSuchMethodException e)
+		catch ( NoSuchMethodException e )
 		{
 			e.printStackTrace();
 			Assert.fail(
@@ -103,9 +109,9 @@ public class MethodUtils
 	{
 		try
 		{
-			return method.invoke(instance, args );
+			return method.invoke( instance, args );
 		}
-		catch (IllegalArgumentException e)
+		catch ( IllegalArgumentException e )
 		{
 			e.printStackTrace();
 			Assert.fail(
@@ -113,7 +119,7 @@ public class MethodUtils
 			);
 			return null;
 		}
-		catch (IllegalAccessException e)
+		catch ( IllegalAccessException e )
 		{
 			e.printStackTrace();
 			Assert.fail(
@@ -121,7 +127,7 @@ public class MethodUtils
 			);
 			return null;
 		}
-		catch (InvocationTargetException e)
+		catch ( InvocationTargetException e )
 		{
 			e.printStackTrace();
 			Assert.fail(

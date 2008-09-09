@@ -1193,7 +1193,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param msg Message
 	 */
-	static private final void showError(String msg)
+	static private final void showError( String msg )
 	{
 		showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
 	}
@@ -1208,9 +1208,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param title Title to display
 	 * @param icon JOptionPane icon
 	 */
-	static private final void showMsg(String msg, String title, int icon)
+	static private final void showMsg( String msg, String title, int icon )
 	{
-		JOptionPane.showMessageDialog(null,msg,title,icon);
+		JOptionPane.showMessageDialog( null, msg, title, icon );
 	}
 	
 	
@@ -1221,27 +1221,27 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param msg Message in error if already restarted once.
 	 */
-	private void UpdateError(String msg, Exception ex)
+	private void UpdateError( String msg, Exception ex )
 	{
-		if(Settings.getProperty("updateError").equalsIgnoreCase("False"))
+		if( Settings.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
-			setSplashText( Localize("Error_Update1","Error while updating. ") );
+			setSplashText( Localize( "Error_Update1", "Error while updating. " ) );
 			
 			try
 			{
-				Settings.setProperty("updateError", "True");
-				Settings.store( new FileOutputStream("Settings.properties") , "Background Compute" );
+				Settings.setProperty( "updateError", "True" );
+				Settings.store( new FileOutputStream( "Settings.properties" ) , "Background Compute" );
 				
 				for(int i = 5; i > 0; --i)
 				{
-					setSplashText(  Localize("Error_Update1","Error while updating.") + " (" + i + ")");
+					setSplashText(  Localize( "Error_Update1", "Error while updating." ) + " (" + i + ")" );
 					
-					sleep(1000);
+					sleep( 1000 );
 				}
 				
-				restart("BC");
+				restart( "BC" );
 			}
-			catch(Exception e)
+			catch( Exception e )
 			{
 				String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
 				String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
@@ -1265,13 +1265,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 	//
 	//NEW VM
 	
-	static void restart(String ClassName)
+	static void restart( String ClassName )
 	{
-		restart(ClassName, "");
+		restart( ClassName, "" );
 	}
 	
 	//Restart Program (Thanks to the makers of JAP)
-	static void restart(String ClassName,String App)
+	static void restart( String ClassName, String App )
 	{
 		String classPath = "";
 		if(CLASS_PATH.indexOf(';') > 0)

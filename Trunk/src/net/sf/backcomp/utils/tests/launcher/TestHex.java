@@ -1,4 +1,4 @@
-package net.sf.backcomp.utils.tests;
+package net.sf.backcomp.utils.tests.launcher;
 
 import java.lang.reflect.Method;
 
@@ -47,27 +47,27 @@ public class TestHex extends TestCase
 	
 	public void testHexByteFF()
 	{
-		assertEquals( toHex( (byte) 0xFF ) , "ff");
+		assertEquals( "ff", toHex( (byte) 0xFF ) );
 	}
 	
 	public void testHexByte0B()
 	{
-		assertEquals( toHex( (byte) 0x0B ) , "0b");
+		assertEquals( "0b", toHex( (byte) 0x0B ) );
 	}
 	
 	public void testHexByte13()
 	{
-		assertEquals( toHex( (byte) 0x13 ) , "13");
+		assertEquals( "13", toHex( (byte) 0x13 ) );
 	}
 	
 	public void testHexBytes147A()
 	{
-		assertEquals( toHex( new byte[] {(byte) 0x14, (byte) 0x7A} ) , "147a");
+		assertEquals( "147a", toHex( new byte[] {(byte) 0x14, (byte) 0x7A} ) );
 	}
 	
 	public void testHexBytesB852()
 	{
-		assertEquals( toHex( new byte[] {(byte) 0xB8, (byte) 0x52} ) , "b852");
+		assertEquals( "b852", toHex( new byte[] {(byte) 0xB8, (byte) 0x52} ) );
 	}
 	
 	public void testHexBytesFFFF()
@@ -78,7 +78,7 @@ public class TestHex extends TestCase
 				(byte) 0xFF,
 				(byte) 0xFF
 			};
-		assertEquals( toHex( b, 2 ) , "ffff");
+		assertEquals( "ffff", toHex( b, 2 ) );
 	}
 	
 	public void test2HexBytes147A()
@@ -91,7 +91,7 @@ public class TestHex extends TestCase
 				(byte) 0x00,
 				(byte) 0x00
 			};
-		assertEquals( toHex( b, 2 ) , "147a");
+		assertEquals( "147a", toHex( b, 2 ) );
 	}
 	
 	public void test3HexBytesB85200()
@@ -105,7 +105,7 @@ public class TestHex extends TestCase
 				(byte) 0x00,
 				(byte) 0x00
 			};
-		assertEquals( toHex( b, 3 ) , "b85200");
+		assertEquals( "b85200", toHex( b, 3 ) );
 	}
 	
 	public void test4HexBytesFFFF0000()
@@ -118,6 +118,6 @@ public class TestHex extends TestCase
 				(byte) 0x00,
 				(byte) 0x00
 			};
-		assertEquals( toHex( b, 4 ) , "ffff0000");
+		assertEquals( "ffff0000", toHex( b, 4 ) );
 	}
 }
