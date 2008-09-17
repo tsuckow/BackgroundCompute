@@ -293,8 +293,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		catch ( IOException ex )
 		{
-			String defErrMsg = "Problem saving settings.\n\nError: ";
-			String details = "\n\n" + makeStackTrace( ex );
+			final String defErrMsg = "Problem saving settings.\n\nError: ";
+			final String details = "\n\n" + makeStackTrace( ex );
 			showError( Localize( "Error_Settings1", defErrMsg ) + details );
 		}
 		finally
@@ -422,34 +422,40 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private void loadLocalization()
 	{
-		Locale UserLocale = new Locale( SETTINGS.getProperty( "locale" ) );
+		final Locale userLocale = new Locale(
+			SETTINGS.getProperty( "locale" )
+		);
 		try
 		{
-			ClassLoader CL =
+			final ClassLoader myClassLoader =
 				net.sf.backcomp.utils.BC.class.getClassLoader();
 			
-			URLClassLoader UCL = null;
+			URLClassLoader myURLClassLoader = null;
 			
 			try
 			{
-				UCL =
+				myURLClassLoader =
 					new URLClassLoader(
 						new URL[]
 						{
-							new File( "." + File.separator ).toURI().toURL()
+							new File( "." + File.separator ).toURI().toURL(),
 						},
-						CL
+						myClassLoader
 					);
 				sLanguageBundle =
-					ResourceBundle.getBundle( "Root", UserLocale, UCL );
+					ResourceBundle.getBundle(
+						"Root",
+						userLocale,
+						myURLClassLoader
+					);
 			}
 			catch ( MalformedURLException ex )
 			{
 				//!Don't Localize
 				showError(
-					"Problem loading localization.\n\n"
-					+ makeStackTrace( ex )
-				);
+						"Problem loading localization.\n\n"
+						+ makeStackTrace( ex )
+					);
 			}
 		}
 		catch ( MissingResourceException e )
@@ -459,8 +465,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		
 		if (
-			sLanguageBundle != null &&
-			!UserLocale.equals( sLanguageBundle.getLocale() )
+				sLanguageBundle != null
+				&& !userLocale.equals( sLanguageBundle.getLocale() )
 		)
 		{
 			//Propose using different language
