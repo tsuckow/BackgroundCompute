@@ -75,15 +75,21 @@ import javax.swing.UIManager;
 public final class BC extends SwingWorker<Object, Object[]>
 {
 	
-	
-
-	private BC() {}//Only this class can create an instance.
+	/**
+	 * Only we can create ourself.
+	 */
+	private BC() {}
 	
 	//Private Init's
 	
+	/**
+	 * Prepares default settings into a properties object
+	 * 
+	 * @return Default settings
+	 */
 	private static Properties defaultSettings()
 	{
-		Properties set = new Properties();
+		final Properties set = new Properties();
 		
 		set.setProperty( "cpu_limit", "80" );
 		set.setProperty( "locale", "en" );
@@ -96,8 +102,6 @@ public final class BC extends SwingWorker<Object, Object[]>
 		return set;
 	}
 	
-	//Constants
-	
 	/**
 	 * Classpath of runtime.
 	 */
@@ -108,29 +112,75 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	static final String    NEW_LINE = System.getProperty( "line.separator" );
 	
-	
+	/**
+	 * Width of splash window.
+	 */
 	private static final int      SPLASH_HEIGHT = 100;
+	
+	/**
+	 * Height of splash window.
+	 */
 	private static final int      SPLASH_WIDTH = 600;
+	
+	/**
+	 * 100%
+	 */
 	private static final int      HUNDRED_PERCENT = 100;
+	
+	/**
+	 * One second in milliseconds.
+	 */
 	private static final int      ONE_SECOND = 1000;
 	
-	//Private Variables
+	/**
+	 * Text box for splash screen.
+	 */
+	private JLabel Text;
 	
-	private JLabel          Text;       //Splash Text Line
-	private JWindow         frame;      //The splash frame
+	/**
+	 * Frame for slash screen.
+	 */
+	private JWindow frame;
 	
+	/**
+	 * Current item progress bar ID.
+	 */
 	private static final Integer  NUM_ITEMPB = 0;
+	
+	/**
+	 * Overall progress bar ID.
+	 */
 	private static final Integer  NUM_OVERALLPB = 1;
+	
+	/**
+	 * Progress bar object array.
+	 */
 	private JProgressBar[]  PB = new JProgressBar[2];
 	
 	//Package Variables
 	
-	final static Properties DefaultSettings = defaultSettings(); //Make defaults settings object
-	final static Properties Settings = new Properties( DefaultSettings ); //Load settings object with defaults
+	/**
+	 * The Default Settings
+	 */
+	final static Properties DefaultSettings = defaultSettings();
+	
+	/**
+	 * Current Settings
+	 */
+	final static Properties Settings = new Properties( DefaultSettings );
+	
+	/**
+	 * Language Localization Bundle
+	 */
 	static ResourceBundle LTextRB;
 	
 	//Functions
 	
+	/**
+	 * Entry Point
+	 * 
+	 * @param args Command Line Arguments
+	 */
 	public static void main( String[] args )
 	{
 		try
@@ -580,7 +630,22 @@ public final class BC extends SwingWorker<Object, Object[]>
 				
 				int index = name.lastIndexOf( File.separatorChar );
 				if( index != -1 )
-					new File( name.substring( 0, index ) ).mkdirs();
+				{
+					File folder = new File( name.substring( 0, index ) );
+					if( !folder.exists() )
+					{
+						if( !folder.mkdirs() )
+						{
+							UpdateError(
+								LocaleFormat(
+									"Error_MKDir1",
+									name.substring(0,index)
+								),
+								null
+							);
+						}
+					}
+				}
 				
 				File dest = new File( name );
 				if ( !dest.exists() || dest.delete() )
