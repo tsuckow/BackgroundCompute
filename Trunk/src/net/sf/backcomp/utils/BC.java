@@ -133,6 +133,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	private static final int      ONE_SECOND = 1000;
 	
 	/**
+	 * Seconds to wait before restarting after updating.
+	 */
+	private static final int UPDATE_RESTART_DELAY = 3;
+	
+	/**
 	 * Text box for splash screen.
 	 */
 	private JLabel mSplashText;
@@ -224,9 +229,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			//!Don't Localize
 			showError(
-				"Caught exception at top of Background Thread." +
-				"\n\nLast Chance.\n\n" +
-				ex.toString() + "\n\n" + makeStackTrace( ex )
+				"Caught exception at top of Background Thread."
+				+ "\n\nLast Chance.\n\n"
+				+ ex.toString() + "\n\n" + makeStackTrace( ex )
 			);
 		}
 		
@@ -239,7 +244,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	
 	/**
-	 * Handles the splash screen and all tasks performed involving it, including updating the application.
+	 * Handles the splash screen and all tasks performed involving it,
+	 * including updating the application.
 	 */
 	private void doWork()
 	{
@@ -258,109 +264,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 		loadLocalization();
 		
 		//
-		//BEGIN Updater
-		//
+		//Do Update
 		
-		//**************************************************************
-		//**************************************************************
-		//**************************************************************
-		
-		boolean updated = false;
-		
-		//Downloading Lists...
-		setSplashText( Localize( "Lists1", "Downloading Lists..." ) );
-		
-		//Retrieve the list of update lists
-		remoteToLocal(
-			"HashList.php?Base=dev&R=Y&File=lists/Lists.txt",
-			"Lists.txt"
-		);
-		
-		//TODO
-		//1. If Lists.txt is empty, something went wrong and exit gracefully
-		//2. Use TempFile to download, if problem use old.
-		
-		//0%
-		setProgressValue( NUM_OVERALLPB, 0, 1, 0 );
-		
-		//Get the sub lists that have the different modules.
-		handleUpdateList( "Lists.txt", "HashList.php?Base=dev&File=", 1, 0 );
-		
-		//Do the updating
-		String[] subLists = getLocalList( "Lists.txt" );
-		int subListNum = 0;
-		for ( String list : subLists )//Move through the sublists
-		{
-			String listname = null;
-			
-			{
-				String[] linea = list.split( ";" );
-				if ( linea.length != 2 )
-				{
-					//Invalid Line
-					UpdateError(
-						Localize(
-							"Error_HashListLine1",
-							"Encountered an invalid line in the Hash List: "
-						)
-						+ list,
-						null
-					);
-					return;
-				}
-				else
-				{
-					listname = linea[0];
-				}
-			}
-			
-			updated = handleUpdateList(
-				listname,
-				"dev/",
-				subLists.length,
-				subListNum
-			);
-			
-			subListNum++;
-			
-			//100% divided into NumberOfList Pieces, this is piece subListNum
-			setProgressValue(
-				NUM_OVERALLPB,
-				0,
-				HUNDRED_PERCENT,
-				( HUNDRED_PERCENT / subLists.length * subListNum )
-			);
-			
-			if ( updated ) //If we did something... restart.
-			{
-				for ( int i = 3; i > 0; --i )
-				{
-					setSplashText(
-						Localize(
-							"Updated2",
-							"Module Updated."
-						) + " (" + i + ")"
-					);
-					
-					sleep( ONE_SECOND );
-				}
-				restart( "BC" );
-				return;
-			}
-		}
-		
-		//100% Complete
-		setProgressValue( NUM_OVERALLPB, 0, 1, 1 );
-		
-		//**************************************************************
-		//**************************************************************
-		//**************************************************************
-		
-		
-		//
-		//END Updater
-		//
-		
+		performUpdate();
 		
 		//
 		//Verify Localization Exists, Restart if problem.
@@ -417,6 +323,98 @@ public final class BC extends SwingWorker<Object, Object[]>
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
 		
 		//SwingWorker dies. Splash Screen Dies
+	}
+
+	/**
+	 * Does the meat and potatoes of updating
+	 */
+	private void performUpdate()
+	{
+		boolean updated = false;
+		
+		//Downloading Lists...
+		setSplashText( Localize( "Lists1", "Downloading Lists..." ) );
+		
+		//Retrieve the list of update lists
+		remoteToLocal(
+			"HashList.php?Base=dev&R=Y&File=lists/Lists.txt",
+			"Lists.txt"
+		);
+		
+		//TODO
+		//1. If Lists.txt is empty, something went wrong and exit gracefully
+		//2. Use TempFile to download, if problem use old.
+		
+		//0%
+		setProgressValue( NUM_OVERALLPB, 0, 1, 0 );
+		
+		//Get the sub lists that have the different modules.
+		handleUpdateList( "Lists.txt", "HashList.php?Base=dev&File=", 1, 0 );
+		
+		//Do the updating
+		final String[] subLists = getLocalList( "Lists.txt" );
+		int subListNum = 0;
+		for ( String list : subLists )//Move through the sublists
+		{
+			String listname = null;
+			
+			{
+				final String[] linea = list.split( ";" );
+				if ( linea.length != 2 )
+				{
+					//Invalid Line
+					UpdateError(
+						Localize(
+							"Error_HashListLine1",
+							"Encountered an invalid line in the Hash List: "
+						)
+						+ list,
+						null
+					);
+				}
+				else
+				{
+					listname = linea[0];
+				}
+			}
+			
+			updated = handleUpdateList(
+				listname,
+				"dev/",
+				subLists.length,
+				subListNum
+			);
+			
+			subListNum++;
+			
+			//100% divided into NumberOfList Pieces, this is piece subListNum
+			setProgressValue(
+				NUM_OVERALLPB,
+				0,
+				HUNDRED_PERCENT,
+				( HUNDRED_PERCENT / subLists.length * subListNum )
+			);
+			
+			if ( updated ) //If we did something... restart.
+			{
+				for ( int i = UPDATE_RESTART_DELAY; i > 0; --i )
+				{
+					setSplashText(
+						Localize(
+							"Updated2",
+							"Module Updated."
+						) + " (" + i + ")"
+					);
+					
+					sleep( ONE_SECOND );
+				}
+				restart( "BC" );
+				throw new ThreadDeath();
+			}
+		}
+		
+		//100% Complete
+		setProgressValue( NUM_OVERALLPB, 0, 1, 1 );
 	}
 
 	/**
