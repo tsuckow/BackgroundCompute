@@ -444,9 +444,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 					);
 				sLanguageBundle =
 					ResourceBundle.getBundle(
-						"Root",
-						userLocale,
-						myURLClassLoader
+							"Root",
+							userLocale,
+							myURLClassLoader
 					);
 			}
 			catch ( MalformedURLException ex )
@@ -455,7 +455,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				showError(
 						"Problem loading localization.\n\n"
 						+ makeStackTrace( ex )
-					);
+				);
 			}
 		}
 		catch ( MissingResourceException e )
@@ -471,8 +471,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			//Propose using different language
 			
-			
-			File dir = new File( "." );
+			final File dir = new File( "." );
 			
 			//Get all files
 			String[] children = dir.list();
@@ -481,7 +480,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			if ( children.length > 0 )
 			{
 				//Look for language bundles starting with root_
-				ArrayList<String> filtered = new ArrayList<String>();
+				final ArrayList<String> filtered = new ArrayList<String>();
 				for ( int i = 0; i < children.length; ++i )
 				{
 					if ( children[i].startsWith( "Root_" ) )
@@ -524,11 +523,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private void loadSettings()
 	{
-		FileInputStream SetIS = null;
+		FileInputStream settingsInputStream = null;
 		try
 		{
-			SetIS = new FileInputStream( "Settings.properties" );
-			SETTINGS.load( SetIS );
+			settingsInputStream = new FileInputStream( "Settings.properties" );
+			SETTINGS.load( settingsInputStream );
 		}
 		catch ( FileNotFoundException ex )
 		{
@@ -545,18 +544,19 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		finally
 		{
-			if ( SetIS != null )
+			if ( settingsInputStream != null )
 			{
 				try
 				{
-					SetIS.close();
+					settingsInputStream.close();
 				}
 				catch ( IOException ex )
 				{
 					//!Don't Localize
-					String defErrMsg =
-						"Problem occurred while trying to close settings file handle.";
-					String details = "\n\n" + makeStackTrace( ex );
+					final String defErrMsg =
+						"Problem occurred while trying to close"
+						+ "settings file handle.";
+					final String details = "\n\n" + makeStackTrace( ex );
 					showError( defErrMsg + details );
 				}
 			}
@@ -622,15 +622,15 @@ public final class BC extends SwingWorker<Object, Object[]>
 				if ( !remoteToLocal( prefix + name, "Download.tmp" ) )
 				{
 					UpdateError(
-						LocaleFormat(
-							"Error_Download1",
-							name
-						),
-						null
+							LocaleFormat(
+									"Error_Download1",
+									name
+							),
+							null
 					);
 				}
-				File src = new File( "Download.tmp" );
-			
+				final File src = new File( "Download.tmp" );
+				
 				//Verify it
 				if ( getLocalHash( "Download.tmp" ).compareTo( hash ) != 0 )
 				{
@@ -652,26 +652,26 @@ public final class BC extends SwingWorker<Object, Object[]>
 				//Make the slash char for this OS
 				name = name.replace( '/', File.separatorChar );
 				
-				int index = name.lastIndexOf( File.separatorChar );
-				if( index != -1 )
+				final int index = name.lastIndexOf( File.separatorChar );
+				if ( index != -1 )
 				{
-					File folder = new File( name.substring( 0, index ) );
-					if( !folder.exists() )
+					final File folder = new File( name.substring( 0, index ) );
+					if ( !folder.exists() )
 					{
-						if( !folder.mkdirs() )
+						if ( !folder.mkdirs() )
 						{
 							UpdateError(
-								LocaleFormat(
-									"Error_MKDir1",
-									name.substring(0,index)
-								),
-								null
+									LocaleFormat(
+											"Error_MKDir1",
+											name.substring( 0, index )
+									),
+									null
 							);
 						}
 					}
 				}
 				
-				File dest = new File( name );
+				final File dest = new File( name );
 				if ( !dest.exists() || dest.delete() )
 				{
 					if ( src.renameTo( dest ) )
@@ -698,16 +698,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			fileNum++;
 			
-			//(100/numLists * listNum) is the big section for each list
-			//(100/numLists)/Lines.length * fileNum) divides a big section into the number of files
 			setProgressValue(
 				NUM_OVERALLPB,
 				0,
 				HUNDRED_PERCENT,
-				(
-					HUNDRED_PERCENT / numLists * listNum
-					+ ( 100 / numLists ) / lines.length * fileNum
-				)
+				//is the big section for each list
+				HUNDRED_PERCENT / numLists * listNum
+				//divides a big section into the number of files
+				+ ( HUNDRED_PERCENT / numLists ) / lines.length * fileNum
 			);
 			
 		}
@@ -723,7 +721,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param text Text to be displayed on splash.
 	 */
-	private final void setSplashText( String text )
+	private void setSplashText( String text )
 	{
 		publish( new Object[] {text} );
 	}
@@ -739,7 +737,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param Max Maximum value for bar
 	 * @param Val The value for the bar
 	 */
-	private final void setProgressValue(
+	private void setProgressValue(
 		Integer Bar,
 		Integer Min,
 		Integer Max,
@@ -756,7 +754,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 *
 	 * @param Bar Bar number, Use the constants prefixed with NUM_
 	 */
-	private final void setProgressUnknown( Integer Bar )
+	private void setProgressUnknown( Integer Bar )
 	{
 		publish(
 			new Object[]
@@ -785,50 +783,51 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			switch ( row.length )
 			{
-				case 0: //Create Splash Directive
-					if ( mSplashFrame == null ) //Is splash in existence?
+			case 0: //Create Splash Directive
+				if ( mSplashFrame == null ) //Is splash in existence?
+				{
+					//Create
+					createAndShowGUI();
+				}
+				break;
+			
+			case 1: //Text Update
+				if ( row[0] instanceof String )
+				{
+					mSplashText.setText( (String) row[0] );
+				}
+				break;
+			
+			case 4: //Progress Bar Update
+				//Bar, Min, Max, Val (Max is -1 for Indeterminate)
+				if(
+					row[0] instanceof Integer
+					&& row[1] instanceof Integer
+					&& row[2] instanceof Integer
+					&& row[3] instanceof Integer
+				)
+				{
+					if ( mSplashProgressBars[(Integer) row[0]] != null )
 					{
-						//Create
-						createAndShowGUI();
-					}
-					break;
-				
-				case 1: //Text Update
-					if ( row[0] instanceof String )
-					{
-						mSplashText.setText( (String) row[0] );
-					}
-					break;
-				
-				case 4: //Progress Bar Update
-					//Bar, Min, Max, Val (Max is -1 for Indeterminate)
-					if(
-						row[0] instanceof Integer
-						&& row[1] instanceof Integer
-						&& row[2] instanceof Integer
-						&& row[3] instanceof Integer
-					)
-					{
-						if ( mSplashProgressBars[(Integer) row[0]] != null )
+						if ( ( (Integer) row[2] ) == -1)
 						{
-							if ( ( (Integer) row[2] ) == -1)
-							{
-								//Unknown
-								mSplashProgressBars[(Integer) row[0]].setIndeterminate( true );
-							}
-							else
-							{
-								//Specific Size
-								processProgressValue(
-									mSplashProgressBars[(Integer) row[0]],
-									(Integer) row[1],
-									(Integer) row[2],
-									(Integer) row[3]
-								);
-							}
+							//Unknown
+							mSplashProgressBars[(Integer) row[0]].setIndeterminate( true );
+						}
+						else
+						{
+							//Specific Size
+							processProgressValue(
+								mSplashProgressBars[(Integer) row[0]],
+								(Integer) row[1],
+								(Integer) row[2],
+								(Integer) row[3]
+							);
 						}
 					}
-					break;
+				}
+				break;
+			default:
 			}//End Switch
 		}//End For
 	}
