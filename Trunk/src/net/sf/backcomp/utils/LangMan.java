@@ -28,11 +28,11 @@ public final class LangMan
 	 */
 	public static String getString(String key, String alt)
 	{
-		if(BC.LTextRB != null)
+		if(BC.getLanguageBundle() != null)
 		{
 			try
 			{
-				return BC.LTextRB.getString(key);
+				return BC.getLanguageBundle().getString(key);
 			}
 			catch(Exception e)
 			{

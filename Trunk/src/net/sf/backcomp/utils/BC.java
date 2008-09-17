@@ -108,7 +108,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static final String    CLASS_PATH = getClassPath().trim();
 	
 	/**
-	 * The systems line seperator.
+	 * The systems line separator.
 	 */
 	static final String    NEW_LINE = System.getProperty( "line.separator" );
 	
@@ -135,12 +135,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * Text box for splash screen.
 	 */
-	private JLabel Text;
+	private JLabel mSplashText;
 	
 	/**
 	 * Frame for slash screen.
 	 */
-	private JWindow frame;
+	private JWindow mSplashFrame;
 	
 	/**
 	 * Current item progress bar ID.
@@ -155,29 +155,29 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * Progress bar object array.
 	 */
-	private JProgressBar[]  PB = new JProgressBar[2];
+	private JProgressBar[] mSplashProgressBars = new JProgressBar[2];
 	
 	//Package Variables
 	
 	/**
 	 * The Default Settings
 	 */
-	final static Properties DefaultSettings = defaultSettings();
+	static final Properties DEFAULT_SETTINGS = defaultSettings();
 	
 	/**
 	 * Current Settings
 	 */
-	final static Properties Settings = new Properties( DefaultSettings );
+	static final Properties SETTINGS = new Properties( DEFAULT_SETTINGS );
 	
 	/**
 	 * Language Localization Bundle
 	 */
-	static ResourceBundle LTextRB;
+	private static ResourceBundle sLanguageBundle;
 	
 	//Functions
 	
 	/**
-	 * Entry Point
+	 * Entry Point.
 	 * 
 	 * @param args Command Line Arguments
 	 */
@@ -191,6 +191,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		catch ( Exception e )
 		{
+			e = null;
 			//Hmm, Don't Care
 		}
 		
@@ -209,6 +210,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	/**
 	 * Task to perform off of the event thread.
+	 * 
+	 * @return nothing
 	 */
 	@Override
 	protected Object doInBackground()
@@ -221,8 +224,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			//!Don't Localize
 			showError(
-				"Caught exception at top of Background Thread.\n\nLast Chance.\n\n"
-				+ ex.toString() + "\n\n" + makeStackTrace( ex )
+				"Caught exception at top of Background Thread." +
+				"\n\nLast Chance.\n\n" +
+				ex.toString() + "\n\n" + makeStackTrace( ex )
 			);
 		}
 		
@@ -245,137 +249,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//
 		//Load Settings
 		
-		{
-			FileInputStream SetIS = null;
-			try
-			{
-				SetIS = new FileInputStream( "Settings.properties" );
-				Settings.load( SetIS );
-			}
-			catch ( FileNotFoundException ex )
-			{
-				//Didn't find settings file
-				//Defaults
-				//!Don't Localize
-				System.out.println( "No Settings File" );
-			}
-			catch ( IOException ex )
-			{
-				//Defaults
-				//!Don't Localize
-				System.out.println( "IO Error loading file" );
-			}
-			finally
-			{
-				if ( SetIS != null )
-				{
-					try
-					{
-						SetIS.close();
-					}
-					catch ( IOException ex )
-					{
-						//!Don't Localize
-						String defErrMsg =
-							"Problem occurred while trying to close settings file handle.";
-						String details = "\n\n" + makeStackTrace( ex );
-						showError( defErrMsg + details );
-					}
-				}
-			}
-		}
+		loadSettings();
 		
 		
 		//
 		//Load Localization
 		
-		{
-			Locale UserLocale = new Locale( Settings.getProperty( "locale" ) );
-			try
-			{
-				ClassLoader CL =
-					net.sf.backcomp.utils.BC.class.getClassLoader();
-				
-				URLClassLoader UCL = null;
-				
-				try
-				{
-					UCL =
-						new URLClassLoader(
-							new URL[]
-							{
-								new File( "." + File.separator ).toURI().toURL()
-							},
-							CL
-						);
-					LTextRB =
-						ResourceBundle.getBundle( "Root", UserLocale, UCL );
-				}
-				catch ( MalformedURLException ex )
-				{
-					//!Don't Localize
-					showError(
-						"Problem loading localization.\n\n"
-						+ makeStackTrace( ex )
-					);
-				}
-			}
-			catch ( MissingResourceException e )
-			{
-				//!Don't Localize
-				System.out.println( "No locaLizations found." );
-			}
-			
-			if ( LTextRB != null && !UserLocale.equals( LTextRB.getLocale() ) )
-			{
-				//Propose using different language
-				
-				
-				File dir = new File( "." );
-				
-				//Get all files
-				String[] children = dir.list();
-				
-				//If we found some (I hope so!)
-				if ( children.length > 0 )
-				{
-					//Look for language bundles starting with root_
-					ArrayList<String> filtered = new ArrayList<String>();
-					for ( int i = 0; i < children.length; ++i )
-					{
-						System.out.println( ": " + children[i] );
-						if ( children[i].startsWith( "Root_" ) )
-						{
-							filtered.add( children[i] );
-						}
-					}
-					
-					//Put us back in an array
-					children = filtered.toArray( new String[filtered.size()] );
-					
-					//List other languages.
-					if ( children.length > 0 )
-					{
-						System.out.println( "Other Languages Found:" );
-						for ( int i = 0; i < children.length; ++i )
-						{
-							System.out.println( children[i] );
-						}
-						
-						
-						showMsg(
-							"Look for messages.",
-							"DEBUG",
-							JOptionPane.INFORMATION_MESSAGE
-						);
-						//TODO:Ask about language?
-					}
-				}
-				
-				//!Don't Localize
-				System.out.println( "Failed to open language bundle." );
-			}
-		}
+		loadLocalization();
 		
 		//
 		//BEGIN Updater
@@ -484,7 +364,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		//
 		//Verify Localization Exists, Restart if problem.
-		if ( LTextRB == null )
+		if ( sLanguageBundle == null )
 		{
 			UpdateError( "No Localization is loaded. Cannot continue.", null );
 		}
@@ -492,12 +372,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		//
 		//Commit Settings
-		Settings.setProperty( "updateError", "False" );
+		SETTINGS.setProperty( "updateError", "False" );
 		FileOutputStream setOS = null;
 		try
 		{
 			setOS = new FileOutputStream( "Settings.properties" );
-			Settings.store( setOS , "Background Compute" );
+			SETTINGS.store( setOS , "Background Compute" );
 		}
 		catch ( FileNotFoundException ex )
 		{
@@ -537,6 +417,146 @@ public final class BC extends SwingWorker<Object, Object[]>
 		javax.swing.SwingUtilities.invokeLater( new Mainapp() );
 		
 		//SwingWorker dies. Splash Screen Dies
+	}
+
+	/**
+	 * Loads localization information if available.
+	 */
+	private void loadLocalization()
+	{
+		Locale UserLocale = new Locale( SETTINGS.getProperty( "locale" ) );
+		try
+		{
+			ClassLoader CL =
+				net.sf.backcomp.utils.BC.class.getClassLoader();
+			
+			URLClassLoader UCL = null;
+			
+			try
+			{
+				UCL =
+					new URLClassLoader(
+						new URL[]
+						{
+							new File( "." + File.separator ).toURI().toURL()
+						},
+						CL
+					);
+				sLanguageBundle =
+					ResourceBundle.getBundle( "Root", UserLocale, UCL );
+			}
+			catch ( MalformedURLException ex )
+			{
+				//!Don't Localize
+				showError(
+					"Problem loading localization.\n\n"
+					+ makeStackTrace( ex )
+				);
+			}
+		}
+		catch ( MissingResourceException e )
+		{
+			//!Don't Localize
+			System.out.println( "No locaLizations found." );
+		}
+		
+		if (
+			sLanguageBundle != null &&
+			!UserLocale.equals( sLanguageBundle.getLocale() )
+		)
+		{
+			//Propose using different language
+			
+			
+			File dir = new File( "." );
+			
+			//Get all files
+			String[] children = dir.list();
+			
+			//If we found some (I hope so!)
+			if ( children.length > 0 )
+			{
+				//Look for language bundles starting with root_
+				ArrayList<String> filtered = new ArrayList<String>();
+				for ( int i = 0; i < children.length; ++i )
+				{
+					if ( children[i].startsWith( "Root_" ) )
+					{
+						filtered.add( children[i] );
+					}
+				}
+				
+				//Put us back in an array
+				children = filtered.toArray( new String[filtered.size()] );
+				
+				//List other languages.
+				if ( children.length > 0 )
+				{
+					System.out.println( "Other Languages Found:" );
+					for ( int i = 0; i < children.length; ++i )
+					{
+						System.out.println( children[i] );
+					}
+					
+					
+					showMsg(
+						"Other Lanaguages.",
+						"DEBUG",
+						JOptionPane.INFORMATION_MESSAGE
+					);
+					//TODO:Ask about language?
+				}
+				else
+				{
+					//!Don't Localize
+					System.out.println( "No Languages." );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loads application settings.
+	 */
+	private void loadSettings()
+	{
+		FileInputStream SetIS = null;
+		try
+		{
+			SetIS = new FileInputStream( "Settings.properties" );
+			SETTINGS.load( SetIS );
+		}
+		catch ( FileNotFoundException ex )
+		{
+			//Didn't find settings file
+			//Defaults
+			//!Don't Localize
+			System.out.println( "No Settings File" );
+		}
+		catch ( IOException ex )
+		{
+			//Defaults
+			//!Don't Localize
+			System.out.println( "IO Error loading file" );
+		}
+		finally
+		{
+			if ( SetIS != null )
+			{
+				try
+				{
+					SetIS.close();
+				}
+				catch ( IOException ex )
+				{
+					//!Don't Localize
+					String defErrMsg =
+						"Problem occurred while trying to close settings file handle.";
+					String details = "\n\n" + makeStackTrace( ex );
+					showError( defErrMsg + details );
+				}
+			}
+		}
 	}
 	
 	
@@ -762,7 +782,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			switch ( row.length )
 			{
 				case 0: //Create Splash Directive
-					if ( frame == null ) //Is splash in existence?
+					if ( mSplashFrame == null ) //Is splash in existence?
 					{
 						//Create
 						createAndShowGUI();
@@ -772,7 +792,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				case 1: //Text Update
 					if ( row[0] instanceof String )
 					{
-						Text.setText( (String) row[0] );
+						mSplashText.setText( (String) row[0] );
 					}
 					break;
 				
@@ -785,18 +805,18 @@ public final class BC extends SwingWorker<Object, Object[]>
 						&& row[3] instanceof Integer
 					)
 					{
-						if ( PB[(Integer) row[0]] != null )
+						if ( mSplashProgressBars[(Integer) row[0]] != null )
 						{
 							if ( ( (Integer) row[2] ) == -1)
 							{
 								//Unknown
-								PB[(Integer) row[0]].setIndeterminate( true );
+								mSplashProgressBars[(Integer) row[0]].setIndeterminate( true );
 							}
 							else
 							{
 								//Specific Size
 								processProgressValue(
-									PB[(Integer) row[0]],
+									mSplashProgressBars[(Integer) row[0]],
 									(Integer) row[1],
 									(Integer) row[2],
 									(Integer) row[3]
@@ -831,8 +851,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	private void createAndShowGUI()
 	{
 		//Create and set up the window.
-		frame = new JWindow();
-		frame.setSize( SPLASH_WIDTH, SPLASH_HEIGHT );
+		mSplashFrame = new JWindow();
+		mSplashFrame.setSize( SPLASH_WIDTH, SPLASH_HEIGHT );
 		
 		//The main pane
 		JPanel mainPane = new JPanel();
@@ -873,44 +893,44 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		//Progress Text
 		//Don't Localize
-		Text = new JLabel( " Loading Config..." );
-		Text.setForeground( Color.WHITE );
+		mSplashText = new JLabel( " Loading Config..." );
+		mSplashText.setForeground( Color.WHITE );
 		
 		//Progress Bar, Duh
-		PB[NUM_ITEMPB] = new JProgressBar();
-		PB[NUM_OVERALLPB] = new JProgressBar();
+		mSplashProgressBars[NUM_ITEMPB] = new JProgressBar();
+		mSplashProgressBars[NUM_OVERALLPB] = new JProgressBar();
 		
 		//when the task of (initially) unknown length begins:
-		PB[NUM_ITEMPB].setIndeterminate( true );
+		mSplashProgressBars[NUM_ITEMPB].setIndeterminate( true );
 		
 		//Put it where it goes
-		South.add( Text,BorderLayout.NORTH );
-		South.add( PB[NUM_ITEMPB], BorderLayout.CENTER );
-		South.add( PB[NUM_OVERALLPB], BorderLayout.SOUTH );
+		South.add( mSplashText,BorderLayout.NORTH );
+		South.add( mSplashProgressBars[NUM_ITEMPB], BorderLayout.CENTER );
+		South.add( mSplashProgressBars[NUM_OVERALLPB], BorderLayout.SOUTH );
 		
 		titlePane.add( South, BorderLayout.SOUTH );
 		
 		mainPane.add( titlePane, BorderLayout.CENTER );
 		
 		//Main pane for window
-		frame.setContentPane( mainPane );
+		mSplashFrame.setContentPane( mainPane );
 		
 		
 		//frame.pack();
 		
 		//Center frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension size = frame.getSize();
+		Dimension size = mSplashFrame.getSize();
 		screenSize.height = screenSize.height/2;
 		screenSize.width = screenSize.width/2;
 		size.height = size.height/2;
 		size.width = size.width/2;
 		int y = screenSize.height - size.height;
 		int x = screenSize.width - size.width;
-		frame.setLocation( x, y );
+		mSplashFrame.setLocation( x, y );
 		
 		//Display the window.
-		frame.setVisible( true );
+		mSplashFrame.setVisible( true );
 	}
 	
 	/**
@@ -919,11 +939,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	@Override
 	protected void done()
 	{
-		if(frame != null)
+		if(mSplashFrame != null)
 		{
 			//Destroy
-			frame.dispose();
-			frame = null;
+			mSplashFrame.dispose();
+			mSplashFrame = null;
 		}
 	}
 	
@@ -948,11 +968,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static private String Localize(String template, String defaultText)
 	{
 		
-		if(LTextRB!=null)
+		if(sLanguageBundle!=null)
 		{
 			try
 			{
-				return LTextRB.getString( template );
+				return sLanguageBundle.getString( template );
 			}
 			catch(Exception e)
 			{
@@ -989,12 +1009,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static private String LocaleFormat(String template, String[] Args)
 	{
 		
-		if(LTextRB!=null)
+		if(sLanguageBundle!=null)
 		{
 			Locale CurrentLocale = null;
-			if( Settings.getProperty("locale") != null )
+			if( SETTINGS.getProperty("locale") != null )
 			{
-				CurrentLocale = new Locale( Settings.getProperty("locale") );
+				CurrentLocale = new Locale( SETTINGS.getProperty("locale") );
 			}
 			else
 			{
@@ -1005,7 +1025,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			try
 			{
-				stringTemplate = LTextRB.getString( template );
+				stringTemplate = sLanguageBundle.getString( template );
 			}
 			catch( NullPointerException ex )
 			{
@@ -1040,7 +1060,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		try
 		{
 			//Create URL
-			URL path = new URL( Settings.getProperty( "server_path" ) + file );
+			URL path = new URL( SETTINGS.getProperty( "server_path" ) + file );
 			
 			//Connect
 			URLConnection UC = path.openConnection();
@@ -1171,7 +1191,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		try
 		{
 			//Create URL.
-			URL url = new URL( Settings.getProperty( "server_path" ) + sFile );
+			URL url = new URL( SETTINGS.getProperty( "server_path" ) + sFile );
 			bis = new BufferedInputStream( url.openStream(), 1024 );
 			
 			dFile = dFile.replace( '/', File.separatorChar ); //Make for this OS
@@ -1288,14 +1308,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private void UpdateError( String msg, Exception ex )
 	{
-		if( Settings.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
+		if( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
 			setSplashText( Localize( "Error_Update1", "Error while updating. " ) );
 			
 			try
 			{
-				Settings.setProperty( "updateError", "True" );
-				Settings.store( new FileOutputStream( "Settings.properties" ) , "Background Compute" );
+				SETTINGS.setProperty( "updateError", "True" );
+				SETTINGS.store( new FileOutputStream( "Settings.properties" ) , "Background Compute" );
 				
 				for(int i = 5; i > 0; --i)
 				{
@@ -1450,6 +1470,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			return;
 		}
+	}
+	
+	/**
+	 * Retrieves the resource bundle for localizing to the current language.
+	 * 
+	 * @return Language Localization Bundle
+	 */
+	static ResourceBundle getLanguageBundle()
+	{
+		return sLanguageBundle;
 	}
 	
 	

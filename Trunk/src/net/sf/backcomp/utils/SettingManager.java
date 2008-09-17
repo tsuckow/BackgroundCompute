@@ -22,12 +22,12 @@ public class SettingManager
 	
 	public static String getSetting(String key)
 	{
-		return BC.Settings.getProperty(key);
+		return BC.SETTINGS.getProperty(key);
 	}
 	
 	public static String getDefaultSetting(String key)
 	{
-		return BC.DefaultSettings.getProperty(key);
+		return BC.DEFAULT_SETTINGS.getProperty(key);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class SettingManager
 		String prop = null;
 		try
 		{
-			prop = (String)BC.Settings.setProperty(key, value);
+			prop = (String)BC.SETTINGS.setProperty(key, value);
 		}
 		catch(ClassCastException ex)
 		{
@@ -60,7 +60,7 @@ public class SettingManager
 	 */
 	public static boolean isDefaultSetting(String key)
 	{
-		return !BC.Settings.containsKey(key);
+		return !BC.SETTINGS.containsKey(key);
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class SettingManager
 		String prop = null;
 		try
 		{
-			prop = (String)BC.Settings.remove(key);
+			prop = (String)BC.SETTINGS.remove(key);
 		}
 		catch(ClassCastException ex)
 		{
