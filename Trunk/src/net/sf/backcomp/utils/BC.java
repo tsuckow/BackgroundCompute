@@ -592,7 +592,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			String hash = null;
 			
 			{
-				String[] linea = line.split( ";" );
+				final String[] linea = line.split( ";" );
 				if ( linea.length != 2 )
 				{
 					//ERROR
@@ -622,11 +622,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 				if ( !remoteToLocal( prefix + name, "Download.tmp" ) )
 				{
 					UpdateError(
-							LocaleFormat(
-									"Error_Download1",
-									name
-							),
-							null
+						LocaleFormat(
+							"Error_Download1",
+							name
+						),
+						null
 					);
 				}
 				final File src = new File( "Download.tmp" );
@@ -661,11 +661,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 						if ( !folder.mkdirs() )
 						{
 							UpdateError(
-									LocaleFormat(
-											"Error_MKDir1",
-											name.substring( 0, index )
-									),
-									null
+								LocaleFormat(
+									"Error_MKDir1",
+									name.substring( 0, index )
+								),
+								null
 							);
 						}
 					}
@@ -800,19 +800,20 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			case 4: //Progress Bar Update
 				//Bar, Min, Max, Val (Max is -1 for Indeterminate)
-				if(
-					row[0] instanceof Integer
-					&& row[1] instanceof Integer
-					&& row[2] instanceof Integer
-					&& row[3] instanceof Integer
+				if (
+						row[0] instanceof Integer
+						&& row[1] instanceof Integer
+						&& row[2] instanceof Integer
+						&& row[3] instanceof Integer
 				)
 				{
 					if ( mSplashProgressBars[(Integer) row[0]] != null )
 					{
-						if ( ( (Integer) row[2] ) == -1)
+						if ( ( ( Integer ) row[2] ) == -1)
 						{
-							//Unknown
-							mSplashProgressBars[(Integer) row[0]].setIndeterminate( true );
+							//Unknown time
+							mSplashProgressBars[( Integer ) row[0]]
+								.setIndeterminate( true );
 						}
 						else
 						{
