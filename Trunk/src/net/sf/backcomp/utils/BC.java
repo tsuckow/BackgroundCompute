@@ -928,7 +928,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//frame.pack();
 		
 		//Center frame
-		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension screenSize =
+			Toolkit.getDefaultToolkit().getScreenSize();
 		final Dimension size = mSplashFrame.getSize();
 		screenSize.height = screenSize.height / 2;
 		screenSize.width = screenSize.width / 2;
@@ -948,7 +949,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	@Override
 	protected void done()
 	{
-		if( mSplashFrame != null )
+		if ( mSplashFrame != null )
 		{
 			//Destroy
 			mSplashFrame.dispose();
@@ -972,18 +973,19 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * Localizes text based on a template.
 	 * 
 	 * @param template Localization Template
+	 * @param defaultText Text to use if localized not available.
 	 * @return Localized text
 	 */
 	private static String localize( String template, String defaultText )
 	{
 		
-		if( sLanguageBundle != null )
+		if ( sLanguageBundle != null )
 		{
 			try
 			{
 				return sLanguageBundle.getString( template );
 			}
-			catch( Exception e )
+			catch ( Exception e )
 			{
 				//Template missing
 				return "~" + defaultText;
@@ -1313,46 +1315,78 @@ public final class BC extends SwingWorker<Object, Object[]>
 		JOptionPane.showMessageDialog( null, msg, title, icon );
 	}
 	
-	
-	
-	
 	/**
-	 * Never Returns Successfully. Tries restarting and if doesn't help displays error and bails.
+	 * Never Returns Successfully.
+	 * 
+	 * Tries restarting and if it doesn't help it displays an error and bails.
 	 * 
 	 * @param msg Message in error if already restarted once.
+	 * @param ex Exception that started it all.
 	 */
 	private void UpdateError( String msg, Exception ex )
 	{
 		if( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
-			setSplashText( localize( "Error_Update1", "Error while updating. " ) );
+			setSplashText(
+				localize(
+					"Error_Update1",
+					"Error while updating. "
+				)
+			);
 			
 			try
 			{
 				SETTINGS.setProperty( "updateError", "True" );
-				SETTINGS.store( new FileOutputStream( "Settings.properties" ) , "Background Compute" );
+				SETTINGS.store(
+					new FileOutputStream( "Settings.properties" ),
+					"Background Compute" 
+				);
 				
 				for(int i = 5; i > 0; --i)
 				{
-					setSplashText(  localize( "Error_Update1", "Error while updating." ) + " (" + i + ")" );
+					setSplashText(
+						localize(
+							"Error_Update1",
+							"Error while updating."
+						)
+						+ " (" + i + ")"
+					);
 					
-					sleep( 1000 );
+					sleep( ONE_SECOND );
 				}
 				
 				restart( "BC" );
 			}
 			catch( Exception e )
 			{
-				String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
-				String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
-				showError(localize("Error_UpdateSave1",defErrMsg) + details);
+				String defErrMsg =
+					"Error while updating. Unable to try again."
+					+ "\n\nRestart Background Compute, "
+					+ "If this does not resolve the problem contact"
+					+ "Technical Support.\n\nError: ";
+				String details = 
+					msg + ( ( ex!=null )?( "\n\n" + makeStackTrace( ex ) ):"" )
+					+ (
+						( e!=null )
+						?(
+							"\n\nUnable to save settings trace:\n"
+							+ makeStackTrace( e )
+						)
+						:"" );
+				showError(
+					localize( "Error_UpdateSave1", defErrMsg )
+					+ details 
+				);
 			}
 		}
 		else
 		{
-			String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
-			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
-			showError(localize("Error_Update2",defErrMsg) + details);
+			String defErrMsg =
+				"Error while updating. Retrys Failed."
+				+ "\n\nContact Technical Support.\n\nError: ";
+			String details =
+				msg + ( ( ex != null )?( "\n\n" + makeStackTrace( ex ) ):"" );
+			showError( localize( "Error_Update2", defErrMsg ) + details );
 		}
 		
 		//Nuke The Thread.
@@ -1365,48 +1399,67 @@ public final class BC extends SwingWorker<Object, Object[]>
 	//
 	//NEW VM
 	
+	/**
+	 * Runs a class in a new Virtual Machine that looks the same as this VM
+	 * 
+	 * @param ClassName Name of class to run
+	 */
 	static void restart( String ClassName )
 	{
 		restart( ClassName, "" );
 	}
 	
-	//Restart Program (Thanks to the makers of JAP)
+	/**
+	 * Restart Program (Thanks to the makers of JAP)
+	 * @param ClassName Name of class to run
+	 * @param App To tell the truth, I don't know
+	 */
 	static void restart( String ClassName, String App )
 	{
 		String classPath = "";
-		if(CLASS_PATH.indexOf(';') > 0)
-			classPath = CLASS_PATH.substring(0,CLASS_PATH.indexOf(';')) + App + CLASS_PATH.substring(CLASS_PATH.indexOf(';'));
+		if ( CLASS_PATH.indexOf(';') > 0 )
+		{
+			classPath =
+				CLASS_PATH.substring( 0, CLASS_PATH.indexOf(';') )
+				+ App
+				+ CLASS_PATH.substring( CLASS_PATH.indexOf(';') );
+		}
 		else
+		{
 			classPath = CLASS_PATH + App;
+		}
 		
 		// restart command
 		String strRestartCommand = "";
 		
 		//what is used: sun.java or JView?
-		String strJavaVendor = System.getProperty("java.vendor");
+		String strJavaVendor = System.getProperty( "java.vendor" );
 		//System.out.println("Java vendor: " + strJavaVendor);
 		
 		String javaExe = null;
 		String pathToJava = null;
-		if (strJavaVendor.toLowerCase().indexOf("microsoft") != -1)
+		if (strJavaVendor.toLowerCase().indexOf( "microsoft" ) != -1)
 		{
 			
-			pathToJava = System.getProperty("com.ms.sysdir") + File.separator;
+			pathToJava = System.getProperty( "com.ms.sysdir" ) + File.separator;
 			javaExe = "jview /cp";
 		}
 		else
 		{
-			pathToJava = System.getProperty("java.home") + File.separator + "bin" + File.separator;
+			pathToJava =
+				System.getProperty( "java.home" ) + File.separator
+				+ "bin" + File.separator;
 			javaExe = "javaw -cp"; // for windows
 		}
-		strRestartCommand = pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;// + m_commandLineArgs;
+		strRestartCommand =
+			pathToJava + javaExe + " \"" + classPath + "\" " + ClassName;
+			// + m_commandLineArgs;
 		
 		
 		
 		try
 		{
 			Runtime.getRuntime().exec(strRestartCommand);
-			//System.out.println("Restart command: " + strRestartCommand);
 		}
 		catch (Exception ex)
 		{
@@ -1416,17 +1469,17 @@ public final class BC extends SwingWorker<Object, Object[]>
 				+ javaExe + " \"" + classPath + "\" " + ClassName;
 				// + m_commandLineArgs;
 			
-			//System.out.println("JAP restart command: " + strRestartCommand);
 			try
 			{
-				Runtime.getRuntime().exec(strRestartCommand);
+				Runtime.getRuntime().exec( strRestartCommand );
 			}
-			catch (Exception a_e)
+			catch ( Exception a_e )
 			{
 				showError(
 					localize(
 						"Error_Restart1",
-						"Error while trying to restart Background Compute.\n\nError: "
+						"Error while trying to restart Background Compute."
+						+ "\n\nError: "
 					)
 					+ ex
 				);
@@ -1434,7 +1487,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 	}
 	
-	//Return Class Path for update (Thanks to the makers of JAP)
+	/**
+	 * Return Class Path for update (Thanks to the makers of JAP)
+	 * 
+	 * @return class path of the VM
+	 */
 	private static String getClassPath()
 	{
 		try
@@ -1448,7 +1505,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	}
 	
 	/**
-	 *Generates a stacktrace as a string
+	 * Generates a stack-trace as a string.
 	 *
 	 * @param aThrowable Throwable object to generate stack trace from
 	 * @return "Stack Trace: <code>stacktrace</code>"
@@ -1481,7 +1538,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			Thread.sleep( ms );
 		}
-		catch( InterruptedException ex )//
+		catch ( InterruptedException ex )//
 		{
 			return;
 		}
@@ -1514,11 +1571,11 @@ public final class BC extends SwingWorker<Object, Object[]>
  * without fee is hereby granted, provided that this copyright notice is kept 
  * intact. 
  * 
- * WIDGET WORKSHOP MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
- * THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+ * WIDGET WORKSHOP MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY
+ * OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
  * TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
- * PARTICULAR PURPOSE, OR NON-INFRINGEMENT. WIDGET WORKSHOP SHALL NOT BE LIABLE FOR
- * ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
+ * PARTICULAR PURPOSE, OR NON-INFRINGEMENT. WIDGET WORKSHOP SHALL NOT BE LIABLE
+ * FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
  * DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
  * 
  * THIS SOFTWARE IS NOT DESIGNED OR INTENDED FOR USE OR RESALE AS ON-LINE
@@ -1535,14 +1592,24 @@ public final class BC extends SwingWorker<Object, Object[]>
  * 
  * Modified by: Deatbob
  * 
- * */
+ */
 	
 	/**
+	 * Converts a byte to a two character string. 
+	 * 
+	 * @param b The bytes to be converted.
 	 * @category HEX
 	 */
-	private static String toHex( byte[] b ) { return toHex( b, b.length ); }
+	private static String toHex( byte[] b )
+	{
+		return toHex( b, b.length ); 
+	}
 	
 	/**
+	 * Converts a byte to a two character string. 
+	 * 
+	 * @param b The bytes to be converted.
+	 * @param len Number of bytes to be converted.
 	 * @category HEX
 	 */
 	private static String toHex( byte[] b, int len )
@@ -1564,12 +1631,15 @@ public final class BC extends SwingWorker<Object, Object[]>
 	}
 	
 	/**
+	 * Converts a byte to a two character string. 
+	 * 
+	 * @param b The byte to be converted.
 	 * @category HEX
 	 */
 	private static String toHex( byte b )
 	{
 		final int i = b & 0xFF;
-		final String s = Integer.toHexString(i);
+		final String s = Integer.toHexString( i );
 		return ( s.length() == 2 ) ? s : ( "0" + s );
 	}
 	
