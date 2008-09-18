@@ -809,10 +809,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					if ( mSplashProgressBars[(Integer) row[0]] != null )
 					{
-						if ( ( ( Integer ) row[2] ) == -1)
+						if ( ( (Integer) row[2] ) == -1 )
 						{
 							//Unknown time
-							mSplashProgressBars[( Integer ) row[0]]
+							mSplashProgressBars[(Integer) row[0]]
 								.setIndeterminate( true );
 						}
 						else
@@ -829,8 +829,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				break;
 			default:
-			}//End Switch
-		}//End For
+			} //End Switch
+		} //End For
 	}
 	
 	/**
@@ -841,7 +841,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param Max Maximum Value
 	 * @param Val Current Value
 	 */
-	private final void  processProgressValue(JProgressBar Com, int Min, int Max, int Val)
+	private void  processProgressValue(
+			JProgressBar Com,
+			int Min, 
+			int Max,
+			int Val
+	)
 	{
 		Com.setMinimum( Min );
 		Com.setMaximum( Max );
@@ -859,41 +864,41 @@ public final class BC extends SwingWorker<Object, Object[]>
 		mSplashFrame.setSize( SPLASH_WIDTH, SPLASH_HEIGHT );
 		
 		//The main pane
-		JPanel mainPane = new JPanel();
+		final JPanel mainPane = new JPanel();
 		mainPane.setLayout( new BorderLayout() );
 		
 		//Images are transparent, setup the background
 		mainPane.setBackground( Color.BLACK );
 		
 		//Add the background Image
-		JLabel Logo =
+		final JLabel logo =
 			new JLabel(
 				new ImageIcon(
 					"images" + File.separator + "Logo.png",
 					"Updater"
 				)
 			);
-		mainPane.add( Logo, BorderLayout.WEST );
+		mainPane.add( logo, BorderLayout.WEST );
 		
 		//New pane for title and progress
-		JPanel titlePane = new JPanel();
+		final JPanel titlePane = new JPanel();
 		titlePane.setLayout( new BorderLayout() );
 		titlePane.setBackground( Color.BLACK );
 		
 		//Title Image
-		JLabel Title =
+		final JLabel title =
 			new JLabel(
 				new ImageIcon(
 					"images" + File.separator + "Title.png",
 					"Updater"
 				)
 			);
-		titlePane.add( Title, BorderLayout.NORTH );
+		titlePane.add( title, BorderLayout.NORTH );
 		
 		//Create the Progress Stuff
-		JPanel South = new JPanel();
-		South.setLayout( new BorderLayout() );
-		South.setBackground( Color.BLACK );
+		final JPanel south = new JPanel();
+		south.setLayout( new BorderLayout() );
+		south.setBackground( Color.BLACK );
 		
 		//Progress Text
 		//Don't Localize
@@ -908,11 +913,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 		mSplashProgressBars[NUM_ITEMPB].setIndeterminate( true );
 		
 		//Put it where it goes
-		South.add( mSplashText,BorderLayout.NORTH );
-		South.add( mSplashProgressBars[NUM_ITEMPB], BorderLayout.CENTER );
-		South.add( mSplashProgressBars[NUM_OVERALLPB], BorderLayout.SOUTH );
+		south.add( mSplashText,BorderLayout.NORTH );
+		south.add( mSplashProgressBars[NUM_ITEMPB], BorderLayout.CENTER );
+		south.add( mSplashProgressBars[NUM_OVERALLPB], BorderLayout.SOUTH );
 		
-		titlePane.add( South, BorderLayout.SOUTH );
+		titlePane.add( south, BorderLayout.SOUTH );
 		
 		mainPane.add( titlePane, BorderLayout.CENTER );
 		
