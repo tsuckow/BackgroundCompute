@@ -289,13 +289,13 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			final String defErrMsg = "Problem saving settings.\n\nError: ";
 			final String details = "\n\n" + makeStackTrace( ex );
-			showError( Localize( "Error_Settings1", defErrMsg ) + details );
+			showError( localize( "Error_Settings1", defErrMsg ) + details );
 		}
 		catch ( IOException ex )
 		{
 			final String defErrMsg = "Problem saving settings.\n\nError: ";
 			final String details = "\n\n" + makeStackTrace( ex );
-			showError( Localize( "Error_Settings1", defErrMsg ) + details );
+			showError( localize( "Error_Settings1", defErrMsg ) + details );
 		}
 		finally
 		{
@@ -311,7 +311,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 						"Problem saving settings.\n\nError: ";
 					final String details = "\n\n" + makeStackTrace( ex );
 					showError(
-						Localize( "Error_Settings1", defErrMsg )
+						localize( "Error_Settings1", defErrMsg )
 						+ details
 					);
 				}
@@ -333,7 +333,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		boolean updated = false;
 		
 		//Downloading Lists...
-		setSplashText( Localize( "Lists1", "Downloading Lists..." ) );
+		setSplashText( localize( "Lists1", "Downloading Lists..." ) );
 		
 		//Retrieve the list of update lists
 		remoteToLocal(
@@ -364,7 +364,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					//Invalid Line
 					UpdateError(
-						Localize(
+						localize(
 							"Error_HashListLine1",
 							"Encountered an invalid line in the Hash List: "
 						)
@@ -400,7 +400,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				for ( int i = UPDATE_RESTART_DELAY; i > 0; --i )
 				{
 					setSplashText(
-						Localize(
+						localize(
 							"Updated2",
 							"Module Updated."
 						) + " (" + i + ")"
@@ -597,7 +597,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					//ERROR
 					UpdateError(
-						Localize(
+						localize(
 							"Error_HashListLine1",
 							"Encountered an invalid line in the Hash List: "
 						) + line,
@@ -612,17 +612,17 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 			}
 			
-			setSplashText( " " + LocaleFormat( "Checking1", name ) );
+			setSplashText( " " + localeFormat( "Checking1", name ) );
 			
 			if ( getLocalHash( name ).compareTo( hash ) != 0 )
 			{
 				updated = true;
-				setSplashText( " " + LocaleFormat( "Downloading1", name ) );
+				setSplashText( " " + localeFormat( "Downloading1", name ) );
 				
 				if ( !remoteToLocal( prefix + name, "Download.tmp" ) )
 				{
 					UpdateError(
-						LocaleFormat(
+						localeFormat(
 							"Error_Download1",
 							name
 						),
@@ -636,7 +636,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					//Data ERROR
 					UpdateError(
-						LocaleFormat(
+						localeFormat(
 							"Error_Download2",
 							new String[]
 							{
@@ -661,7 +661,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 						if ( !folder.mkdirs() )
 						{
 							UpdateError(
-								LocaleFormat(
+								localeFormat(
 									"Error_MKDir1",
 									name.substring( 0, index )
 								),
@@ -676,12 +676,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					if ( src.renameTo( dest ) )
 					{
-						setSplashText( LocaleFormat( "Updated1", name ) );
+						setSplashText( localeFormat( "Updated1", name ) );
 					}
 					else
 					{
 						UpdateError(
-							LocaleFormat(
+							localeFormat(
 								"Error_Rename1",
 								name
 							),
@@ -691,7 +691,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				else
 				{
-					UpdateError( LocaleFormat( "Error_Delete1", name ), null );
+					UpdateError( localeFormat( "Error_Delete1", name ), null );
 				}
 			}
 		
@@ -843,7 +843,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private void  processProgressValue(
 			JProgressBar Com,
-			int Min, 
+			int Min,
 			int Max,
 			int Val
 	)
@@ -913,7 +913,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		mSplashProgressBars[NUM_ITEMPB].setIndeterminate( true );
 		
 		//Put it where it goes
-		south.add( mSplashText,BorderLayout.NORTH );
+		south.add( mSplashText, BorderLayout.NORTH );
 		south.add( mSplashProgressBars[NUM_ITEMPB], BorderLayout.CENTER );
 		south.add( mSplashProgressBars[NUM_OVERALLPB], BorderLayout.SOUTH );
 		
@@ -928,14 +928,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//frame.pack();
 		
 		//Center frame
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension size = mSplashFrame.getSize();
-		screenSize.height = screenSize.height/2;
-		screenSize.width = screenSize.width/2;
-		size.height = size.height/2;
-		size.width = size.width/2;
-		int y = screenSize.height - size.height;
-		int x = screenSize.width - size.width;
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension size = mSplashFrame.getSize();
+		screenSize.height = screenSize.height / 2;
+		screenSize.width = screenSize.width / 2;
+		size.height = size.height / 2;
+		size.width = size.width / 2;
+		final int y = screenSize.height - size.height;
+		final int x = screenSize.width - size.width;
 		mSplashFrame.setLocation( x, y );
 		
 		//Display the window.
@@ -948,7 +948,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	@Override
 	protected void done()
 	{
-		if(mSplashFrame != null)
+		if( mSplashFrame != null )
 		{
 			//Destroy
 			mSplashFrame.dispose();
@@ -974,16 +974,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param template Localization Template
 	 * @return Localized text
 	 */
-	static private String Localize(String template, String defaultText)
+	private static String localize( String template, String defaultText )
 	{
 		
-		if(sLanguageBundle!=null)
+		if( sLanguageBundle != null )
 		{
 			try
 			{
 				return sLanguageBundle.getString( template );
 			}
-			catch(Exception e)
+			catch( Exception e )
 			{
 				//Template missing
 				return "~" + defaultText;
@@ -997,37 +997,39 @@ public final class BC extends SwingWorker<Object, Object[]>
 	}
 	
 	/**
-	 * Localizes text based on a template with the pre-localized argument provided.
+	 * Localizes text based on a template with the
+	 * pre-localized argument provided.
 	 * 
 	 * @param template Localization Template
 	 * @param Arg Argument to insert into the localization.
 	 * @return Localized text
 	 */
-	static private String LocaleFormat(String template, String Arg)
+	private static String localeFormat( String template, String Arg )
 	{
-		return LocaleFormat(template, new String[]{Arg} );
+		return localeFormat( template, new String[]{Arg} );
 	}
 	
 	/**
-	 * Localizes text based on a template with the pre-localized arguments provided.
+	 * Localizes text based on a template with the
+	 * pre-localized arguments provided.
 	 * 
 	 * @param template Localization Template
 	 * @param Args Arguments to insert into the localization.
 	 * @return Localized text
 	 */
-	static private String LocaleFormat(String template, String[] Args)
+	static private String localeFormat( String template, String[] Args )
 	{
 		
-		if(sLanguageBundle!=null)
+		if( sLanguageBundle != null )
 		{
-			Locale CurrentLocale = null;
-			if( SETTINGS.getProperty("locale") != null )
+			Locale currentLocale = null;
+			if( SETTINGS.getProperty( "locale" ) != null )
 			{
-				CurrentLocale = new Locale( SETTINGS.getProperty("locale") );
+				currentLocale = new Locale( SETTINGS.getProperty( "locale" ) );
 			}
 			else
 			{
-				CurrentLocale = new Locale( "en" );
+				currentLocale = new Locale( "en" );
 			}
 			
 			String stringTemplate = null;
@@ -1036,16 +1038,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 			{
 				stringTemplate = sLanguageBundle.getString( template );
 			}
-			catch( NullPointerException ex )
+			catch ( NullPointerException ex )
 			{
 				return " **Null Localization Template Name** ";
 			}
-			catch( MissingResourceException ex )
+			catch ( MissingResourceException ex )
 			{
 				return " **Localization Template '"
 					+ template + "' Does Not Exist** ";
 			}
-			catch( Exception ex )
+			catch ( Exception ex )
 			{
 				return " **Unknown Localization Problem** ";
 			}
@@ -1053,7 +1055,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			MessageFormat formatter =
 				new MessageFormat(
 					stringTemplate,
-					CurrentLocale
+					currentLocale
 				);
 			return formatter.format( Args );
 		}
@@ -1063,7 +1065,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 	}
 	
-	//Gets size of file on Remote Server (if availible) relative to SERVER_PATH
+	/**
+	 * Gets size of file on Remote Server (if availible) relative to SERVER_PATH
+	 * @param file Filename
+	 * @return size in bytes
+	 */
 	static private int getRemoteSize( String file )
 	{
 		try
@@ -1150,7 +1156,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		catch( NoSuchAlgorithmException ex )
 		{
-			showError( Localize( "Error_MD51", "MD5 Algorithm missing" ) );
+			showError( localize( "Error_MD51", "MD5 Algorithm missing" ) );
 			throw new ThreadDeath();
 		}
 		catch( FileNotFoundException ex )
@@ -1174,7 +1180,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					String defErrMsg = "Problem occurred closing file stream.";
 					String details = "\n\n" + makeStackTrace( ex );
 					showError(
-						Localize(
+						localize(
 							"Error_FileStream1",
 							defErrMsg
 						) + details
@@ -1210,7 +1216,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			{
 				if( ! new File(dFile.substring(0,index)).mkdirs() )
 				{
-					UpdateError( LocaleFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
+					UpdateError( localeFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
 				}
 			}
 			
@@ -1233,12 +1239,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		catch(MalformedURLException ex)
 		{
-			UpdateError( Localize( "Error_Download3" , "Server URL malformed. The server may be incorrect.") , ex);
+			UpdateError( localize( "Error_Download3" , "Server URL malformed. The server may be incorrect.") , ex);
 			return false;
 		}
 		catch(IOException ex)
 		{
-			UpdateError( Localize( "Error_Download4" , "Problem occurred while trying to download.") , ex);
+			UpdateError( localize( "Error_Download4" , "Problem occurred while trying to download.") , ex);
 			return false;
 		}
 		finally
@@ -1253,7 +1259,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					String defErrMsg = "Problem occurred while trying to download.";
 					String details = "\n\n" + makeStackTrace(ex);
-					showError( Localize("Error_Download4",defErrMsg) + details);
+					showError( localize("Error_Download4",defErrMsg) + details);
 				
 				}
 			}
@@ -1268,7 +1274,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					String defErrMsg = "Problem occurred while trying to download.";
 					String details = "\n\n" + makeStackTrace(ex);
-					showError( Localize("Error_Download4",defErrMsg) + details);
+					showError( localize("Error_Download4",defErrMsg) + details);
 				
 				}
 			}
@@ -1319,7 +1325,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	{
 		if( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
-			setSplashText( Localize( "Error_Update1", "Error while updating. " ) );
+			setSplashText( localize( "Error_Update1", "Error while updating. " ) );
 			
 			try
 			{
@@ -1328,7 +1334,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				
 				for(int i = 5; i > 0; --i)
 				{
-					setSplashText(  Localize( "Error_Update1", "Error while updating." ) + " (" + i + ")" );
+					setSplashText(  localize( "Error_Update1", "Error while updating." ) + " (" + i + ")" );
 					
 					sleep( 1000 );
 				}
@@ -1339,14 +1345,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 			{
 				String defErrMsg = "Error while updating. Unable to try again.\n\nRestart Background Compute, If this does not resolve the problem contact Technical Support.\n\nError: ";
 				String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"") + ((e!=null)?("\n\nUnable to save settings trace:\n" + makeStackTrace(e)):"");
-				showError(Localize("Error_UpdateSave1",defErrMsg) + details);
+				showError(localize("Error_UpdateSave1",defErrMsg) + details);
 			}
 		}
 		else
 		{
 			String defErrMsg = "Error while updating. Retrys Failed.\n\nContact Technical Support.\n\nError: ";
 			String details = msg + ((ex!=null)?("\n\n" + makeStackTrace(ex)):"");
-			showError(Localize("Error_Update2",defErrMsg) + details);
+			showError(localize("Error_Update2",defErrMsg) + details);
 		}
 		
 		//Nuke The Thread.
@@ -1418,7 +1424,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			catch (Exception a_e)
 			{
 				showError(
-					Localize(
+					localize(
 						"Error_Restart1",
 						"Error while trying to restart Background Compute.\n\nError: "
 					)
