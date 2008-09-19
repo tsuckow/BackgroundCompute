@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1029,7 +1030,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param Args Arguments to insert into the localization.
 	 * @return Localized text
 	 */
-	static private String localeFormat( String template, String[] Args )
+	private static String localeFormat( String template, String[] Args )
 	{
 		
 		if ( sLanguageBundle != null )
@@ -1082,18 +1083,19 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param file Filename
 	 * @return size in bytes
 	 */
-	static private int getRemoteSize( String file )
+	private static int getRemoteSize( String file )
 	{
 		try
 		{
 			//Create URL
-			final URL path = new URL( SETTINGS.getProperty( "server_path" ) + file );
+			final URL path =
+				new URL( SETTINGS.getProperty( "server_path" ) + file );
 			
 			//Connect
-			final URLConnection UC = path.openConnection();
-			UC.connect();
+			final URLConnection myURLConnection = path.openConnection();
+			myURLConnection.connect();
 			//Get Size
-			return UC.getContentLength();
+			return myURLConnection.getContentLength();
 		}
 		catch ( MalformedURLException ex )
 		{
@@ -1106,7 +1108,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 	}
 	
-	static private String[] getLocalList( String file )
+	/**
+	 * Gets a list from a file
+	 * @param file File to get list from
+	 * @return Each line from file in an array
+	 */
+	private static String[] getLocalList( String file )
 	{
 		final ArrayList<String> data = new ArrayList<String>();
 		try
@@ -1132,8 +1139,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		catch ( IOException ex )
 		{
-			//File doesn't exist or is unavailible.
+			//File doesn't exist or is unavailable.
 			//Return empty list
+			ex = null;
 		}
 		return data.toArray( new String[] {} );
 	}
@@ -1143,7 +1151,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param file Path to file on local file system.
 	 * @return Hash string
 	 */
-	static private String getLocalHash( String file )
+	private static String getLocalHash( String file )
 	{
 		//Byte array because JAVA returns Binary
 		byte[] res;
@@ -1156,17 +1164,18 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			final File f = new File( file );
 			
-			int len;
-			final byte[] msg = new byte[len = (int) f.length()];
-			fis = new FileInputStream( f );
-			if ( fis.read( msg ) != len ) return ""; //Failed to get data
+			InputStream is = new FileInputStream(f);
+			final byte[] buffer = new byte[8192];
+			int read = 0;
 			
-			
-			md5.update( msg );
+			while( ( read = is.read( buffer ) ) > 0 )
+			{
+				md5.update( buffer, 0, read );
+			}
 			
 			res = md5.digest();
 		}
-		catch( NoSuchAlgorithmException ex )
+		catch ( NoSuchAlgorithmException ex )
 		{
 			showError( localize( "Error_MD51", "MD5 Algorithm missing" ) );
 			throw new ThreadDeath();
@@ -1189,7 +1198,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				catch ( IOException ex )
 				{
-					final String defErrMsg = "Problem occurred closing file stream.";
+					final String defErrMsg =
+						"Problem occurred closing file stream.";
 					final String details = "\n\n" + makeStackTrace( ex );
 					showError(
 						localize(
@@ -1201,7 +1211,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			}
 		}
 		
-		return toHex( res );//Convert Bin to Hex
+		return toHex( res ); //Convert Bin to Hex
 	}
 	
 	/**
@@ -1212,10 +1222,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 */
 	private boolean remoteToLocal( String sFile, String dFile )
 	{
-		int PBVal = 0;
+		int progressBarValue = 0;
 		BufferedInputStream bis = null;
 		BufferedOutputStream fos = null;
-		int RemoteSize = getRemoteSize( sFile );
+		final int RemoteSize = getRemoteSize( sFile );
 		
 		//Set Progress Bar State to Empty
 		setProgressValue( NUM_ITEMPB, 0, 1, 0 );
@@ -1223,13 +1233,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 		try
 		{
 			//Create URL.
-			final URL url = new URL( SETTINGS.getProperty( "server_path" ) + sFile );
+			final URL url =
+				new URL( SETTINGS.getProperty( "server_path" ) + sFile );
 			bis = new BufferedInputStream( url.openStream(), ONE_KILO );
 			
 			dFile = dFile.replace( '/', File.separatorChar ); //Make for this OS
 			
 			final int index = dFile.lastIndexOf( File.separatorChar );
-			if( index != -1 )
+			if ( index != -1 )
 			{
 				if ( !new File( dFile.substring( 0, index ) ).mkdirs() )
 				{
@@ -1256,10 +1267,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 			while ( ( count = bis.read( buffer ) ) != -1 )
 			{
 				fos.write( buffer, 0, count );
-				PBVal += count;
+				progressBarValue += count;
 				
 				//Set progress bar to amount downloaded
-				setProgressValue( NUM_ITEMPB, 0, RemoteSize, PBVal );
+				setProgressValue( NUM_ITEMPB, 0, RemoteSize, progressBarValue );
 			}
 			
 		}
@@ -1297,7 +1308,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					final String defErrMsg =
 						"Problem occurred while trying to download.";
-					final String details = "\n\n" + makeStackTrace(ex);
+					final String details = "\n\n" + makeStackTrace( ex );
 					showError(
 						localize( "Error_Download4", defErrMsg )
 						+ details
@@ -1306,7 +1317,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 			}
 				
-			if( bis != null )
+			if ( bis != null )
 			{
 				try
 				{
