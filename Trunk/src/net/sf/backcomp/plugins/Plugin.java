@@ -7,9 +7,10 @@
  */
 package net.sf.backcomp.plugins;
 
-import net.sf.backcomp.debug.*;
-
 import javax.swing.*;
+
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -19,24 +20,32 @@ import java.util.*;
 
 /**
  * This is the abstract class for any v1 Plugin.
- * 
+ * <br>
  * This API is changing rapidly in pre-1.0 stages and may break Plugins. 
  *
  * @author Deathbob 
  * @version 0.3.0 2007/12/28
  */
-
-abstract public class Plugin
+public abstract class Plugin
 {
-	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = 1L;
 	//CONSTS
 	
 	/**
 	 * The run state the plugin is in.
 	 */
-	public static enum PluginState {Initilizing, Running, Stopping, Stopped, Paused, Removing};
+	public static enum PluginState
+	{
+		Initilizing, Running, Stopping, Stopped, Paused, Removing
+	};
 	
-	private static enum norunReason {Removal, Reload};
+	/**
+	 * Reason for not allowing the run of the plugin
+	 */
+	private static enum norunReason
+	{
+		Removal, Reload
+	};
 	
 	
 	//
@@ -47,8 +56,14 @@ abstract public class Plugin
 	//
 	
 	//Locks  //Create a REALLY SMALL but unique object.
-	private final Object lock_core = new Object(); //Locks whenever we want to change something relating to cores.
-	private final Object lock_coreManager = new Object(); //Locks whenever we do something with whether the core manger is running.
+	/**
+	 * Locks whenever we want to change something relating to cores.
+	 */
+	private Object lock_core = new Object();
+	/**
+	 * Locks whenever we do something with whether the core manger is running.
+	 */
+	private Object lock_coreManager = new Object();
 	
 	private volatile PluginState currentState = PluginState.Stopped;//FIXME: Race condition Exists, Low Priority (Fixed?)
 	

@@ -685,6 +685,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 				final File dest = new File( name );
 				if ( !dest.exists() || dest.delete() )
 				{
+					System.out.println(src.getPath());
+					System.out.println(dest.getPath());
 					if ( src.renameTo( dest ) )
 					{
 						setSplashText( localeFormat( "Updated1", name ) );
@@ -1156,7 +1158,6 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Byte array because JAVA returns Binary
 		byte[] res;
 		
-		FileInputStream fis = null;
 		try
 		{
 			//Get Binary Hash
@@ -1164,11 +1165,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			final File f = new File( file );
 			
-			InputStream is = new FileInputStream(f);
-			final byte[] buffer = new byte[8192];
+			final InputStream is = new FileInputStream( f );
+			final byte[] buffer = new byte[16 * ONE_KILO];
 			int read = 0;
 			
-			while( ( read = is.read( buffer ) ) > 0 )
+			while ( ( read = is.read( buffer ) ) > 0 )
 			{
 				md5.update( buffer, 0, read );
 			}
@@ -1188,28 +1189,6 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			return ""; //God only knows what went wrong.
 		}
-		finally
-		{
-			if ( fis != null )
-			{
-				try
-				{
-					fis.close();
-				}
-				catch ( IOException ex )
-				{
-					final String defErrMsg =
-						"Problem occurred closing file stream.";
-					final String details = "\n\n" + makeStackTrace( ex );
-					showError(
-						localize(
-							"Error_FileStream1",
-							defErrMsg
-						) + details
-					);
-				}
-			}
-		}
 		
 		return toHex( res ); //Convert Bin to Hex
 	}
@@ -1225,7 +1204,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		int progressBarValue = 0;
 		BufferedInputStream bis = null;
 		BufferedOutputStream fos = null;
-		final int RemoteSize = getRemoteSize( sFile );
+		final int remoteSize = getRemoteSize( sFile );
 		
 		//Set Progress Bar State to Empty
 		setProgressValue( NUM_ITEMPB, 0, 1, 0 );
@@ -1270,7 +1249,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				progressBarValue += count;
 				
 				//Set progress bar to amount downloaded
-				setProgressValue( NUM_ITEMPB, 0, RemoteSize, progressBarValue );
+				setProgressValue( NUM_ITEMPB, 0, remoteSize, progressBarValue );
 			}
 			
 		}
