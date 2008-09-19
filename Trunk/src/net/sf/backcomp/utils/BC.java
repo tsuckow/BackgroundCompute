@@ -74,7 +74,7 @@ import javax.swing.UIManager;
  */
 public final class BC extends SwingWorker<Object, Object[]>
 {
-	
+
 	/**
 	 * Only we can create ourself.
 	 */
@@ -130,7 +130,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * One second in milliseconds.
 	 */
-	private static final int      ONE_SECOND = 1000;
+	private static final int ONE_SECOND = 1000;
+	
+	/**
+	 * One computer kilo
+	 */
+	private static final int ONE_KILO = 1024;
 	
 	/**
 	 * Seconds to wait before restarting after updating.
@@ -272,7 +277,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Verify Localization Exists, Restart if problem.
 		if ( sLanguageBundle == null )
 		{
-			UpdateError( "No Localization is loaded. Cannot continue.", null );
+			updateError( "No Localization is loaded. Cannot continue.", null );
 		}
 		
 		
@@ -363,7 +368,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				if ( linea.length != 2 )
 				{
 					//Invalid Line
-					UpdateError(
+					updateError(
 						localize(
 							"Error_HashListLine1",
 							"Encountered an invalid line in the Hash List: "
@@ -596,7 +601,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				if ( linea.length != 2 )
 				{
 					//ERROR
-					UpdateError(
+					updateError(
 						localize(
 							"Error_HashListLine1",
 							"Encountered an invalid line in the Hash List: "
@@ -621,7 +626,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				
 				if ( !remoteToLocal( prefix + name, "Download.tmp" ) )
 				{
-					UpdateError(
+					updateError(
 						localeFormat(
 							"Error_Download1",
 							name
@@ -635,7 +640,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				if ( getLocalHash( "Download.tmp" ).compareTo( hash ) != 0 )
 				{
 					//Data ERROR
-					UpdateError(
+					updateError(
 						localeFormat(
 							"Error_Download2",
 							new String[]
@@ -660,7 +665,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					{
 						if ( !folder.mkdirs() )
 						{
-							UpdateError(
+							updateError(
 								localeFormat(
 									"Error_MKDir1",
 									name.substring( 0, index )
@@ -680,7 +685,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					}
 					else
 					{
-						UpdateError(
+						updateError(
 							localeFormat(
 								"Error_Rename1",
 								name
@@ -691,7 +696,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				else
 				{
-					UpdateError( localeFormat( "Error_Delete1", name ), null );
+					updateError( localeFormat( "Error_Delete1", name ), null );
 				}
 			}
 		
@@ -1209,7 +1214,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			//Create URL.
 			URL url = new URL( SETTINGS.getProperty( "server_path" ) + sFile );
-			bis = new BufferedInputStream( url.openStream(), 1024 );
+			bis = new BufferedInputStream( url.openStream(), ONE_KILO );
 			
 			dFile = dFile.replace( '/', File.separatorChar ); //Make for this OS
 			
@@ -1218,72 +1223,92 @@ public final class BC extends SwingWorker<Object, Object[]>
 			{
 				if( ! new File(dFile.substring(0,index)).mkdirs() )
 				{
-					UpdateError( localeFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
+					updateError( localeFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
 				}
 			}
 			
 			File file = new File(dFile);
 			
-			fos = new BufferedOutputStream(new FileOutputStream(file), 4*1024);
+			fos = new BufferedOutputStream( new FileOutputStream( file ), 4 * ONE_KILO );
 			
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[ONE_KILO];
 			
 			int count;
-			while ( ( count = bis.read(buffer) ) != -1)
+			while ( ( count = bis.read( buffer ) ) != -1 )
 			{
-				fos.write(buffer,0,count);
+				fos.write( buffer, 0, count );
 				PBVal += count;
 				
 				//Set progress bar to amount downloaded
-				setProgressValue(NUM_ITEMPB, 0, RemoteSize, PBVal);
+				setProgressValue( NUM_ITEMPB, 0, RemoteSize, PBVal );
 			}
 			
 		}
-		catch(MalformedURLException ex)
+		catch ( MalformedURLException ex )
 		{
-			UpdateError( localize( "Error_Download3" , "Server URL malformed. The server may be incorrect.") , ex);
+			updateError(
+				localize(
+					"Error_Download3",
+					"Server URL malformed. The server may be incorrect."
+				),
+				ex
+			);
 			return false;
 		}
-		catch(IOException ex)
+		catch ( IOException ex )
 		{
-			UpdateError( localize( "Error_Download4" , "Problem occurred while trying to download.") , ex);
+			updateError(
+				localize(
+					"Error_Download4",
+					"Problem occurred while trying to download."
+				),
+				ex
+			);
 			return false;
 		}
 		finally
 		{
-			if(fos != null)
+			if( fos != null )
 			{
 				try
 				{
 					fos.close();
 				}
-				catch(IOException ex)
+				catch ( IOException ex )
 				{
-					String defErrMsg = "Problem occurred while trying to download.";
-					String details = "\n\n" + makeStackTrace(ex);
-					showError( localize("Error_Download4",defErrMsg) + details);
+					final String defErrMsg =
+						"Problem occurred while trying to download.";
+					final String details = "\n\n" + makeStackTrace(ex);
+					showError(
+						localize( "Error_Download4", defErrMsg )
+						+ details
+					);
 				
 				}
 			}
 				
-			if(bis != null)
+			if( bis != null )
 			{
 				try
 				{
 					bis.close();
 				}
-				catch(IOException ex)
+				catch ( IOException ex )
 				{
-					String defErrMsg = "Problem occurred while trying to download.";
-					String details = "\n\n" + makeStackTrace(ex);
-					showError( localize("Error_Download4",defErrMsg) + details);
+					final String defErrMsg =
+						"Problem occurred while trying to download.";
+					final String details = "\n\n" + makeStackTrace( ex );
+					showError(
+						localize( "Error_Download4", defErrMsg )
+						+ details
+					);
 				
 				}
 			}
 		}
 		
 		//Reset
-		setProgressUnknown(NUM_ITEMPB);
+		setProgressUnknown( NUM_ITEMPB );
 		return true;
 	}
 	
@@ -1295,9 +1320,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param msg Message
 	 */
-	static private final void showError( String msg )
+	private static void showError( String msg )
 	{
-		showMsg(msg,"Error",JOptionPane.ERROR_MESSAGE);
+		showMsg( msg, "Error", JOptionPane.ERROR_MESSAGE );
 	}
 	
 	
@@ -1310,7 +1335,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param title Title to display
 	 * @param icon JOptionPane icon
 	 */
-	static private final void showMsg( String msg, String title, int icon )
+	private static void showMsg( String msg, String title, int icon )
 	{
 		JOptionPane.showMessageDialog( null, msg, title, icon );
 	}
@@ -1323,9 +1348,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param msg Message in error if already restarted once.
 	 * @param ex Exception that started it all.
 	 */
-	private void UpdateError( String msg, Exception ex )
+	private void updateError( String msg, Exception ex )
 	{
-		if( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
+		if ( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
 			setSplashText(
 				localize(
@@ -1339,10 +1364,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 				SETTINGS.setProperty( "updateError", "True" );
 				SETTINGS.store(
 					new FileOutputStream( "Settings.properties" ),
-					"Background Compute" 
+					"Background Compute"
 				);
 				
-				for(int i = 5; i > 0; --i)
+				for ( int i = 5; i > 0; --i )
 				{
 					setSplashText(
 						localize(
@@ -1357,35 +1382,45 @@ public final class BC extends SwingWorker<Object, Object[]>
 				
 				restart( "BC" );
 			}
-			catch( Exception e )
+			catch ( Exception e )
 			{
-				String defErrMsg =
+				final String defErrMsg =
 					"Error while updating. Unable to try again."
 					+ "\n\nRestart Background Compute, "
 					+ "If this does not resolve the problem contact"
 					+ "Technical Support.\n\nError: ";
-				String details = 
-					msg + ( ( ex!=null )?( "\n\n" + makeStackTrace( ex ) ):"" )
+				final String details = 
+					msg
 					+ (
-						( e!=null )
-						?(
+						( ex != null )
+						? ( "\n\n" + makeStackTrace( ex ) )
+						: ""
+					)
+					+ (
+						( e != null )
+						? (
 							"\n\nUnable to save settings trace:\n"
 							+ makeStackTrace( e )
 						)
-						:"" );
+						: "" );
 				showError(
 					localize( "Error_UpdateSave1", defErrMsg )
-					+ details 
+					+ details
 				);
 			}
 		}
 		else
 		{
-			String defErrMsg =
+			final String defErrMsg =
 				"Error while updating. Retrys Failed."
 				+ "\n\nContact Technical Support.\n\nError: ";
-			String details =
-				msg + ( ( ex != null )?( "\n\n" + makeStackTrace( ex ) ):"" );
+			final String details =
+				msg
+				+ (
+					( ex != null )
+					? ( "\n\n" + makeStackTrace( ex ) )
+					: ""
+				);
 			showError( localize( "Error_Update2", defErrMsg ) + details );
 		}
 		
@@ -1417,12 +1452,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static void restart( String ClassName, String App )
 	{
 		String classPath = "";
-		if ( CLASS_PATH.indexOf(';') > 0 )
+		if ( CLASS_PATH.indexOf( ';' ) > 0 )
 		{
 			classPath =
-				CLASS_PATH.substring( 0, CLASS_PATH.indexOf(';') )
+				CLASS_PATH.substring( 0, CLASS_PATH.indexOf( ';' ) )
 				+ App
-				+ CLASS_PATH.substring( CLASS_PATH.indexOf(';') );
+				+ CLASS_PATH.substring( CLASS_PATH.indexOf( ';' ) );
 		}
 		else
 		{
@@ -1433,12 +1468,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 		String strRestartCommand = "";
 		
 		//what is used: sun.java or JView?
-		String strJavaVendor = System.getProperty( "java.vendor" );
+		final String strJavaVendor = System.getProperty( "java.vendor" );
 		//System.out.println("Java vendor: " + strJavaVendor);
 		
 		String javaExe = null;
 		String pathToJava = null;
-		if (strJavaVendor.toLowerCase().indexOf( "microsoft" ) != -1)
+		if ( strJavaVendor.toLowerCase().indexOf( "microsoft" ) != -1 )
 		{
 			
 			pathToJava = System.getProperty( "com.ms.sysdir" ) + File.separator;
@@ -1459,9 +1494,9 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		try
 		{
-			Runtime.getRuntime().exec(strRestartCommand);
+			Runtime.getRuntime().exec( strRestartCommand );
 		}
-		catch (Exception ex)
+		catch ( Exception ex )
 		{
 			javaExe = "java -cp"; // Linux/UNIX
 			strRestartCommand =
@@ -1473,7 +1508,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			{
 				Runtime.getRuntime().exec( strRestartCommand );
 			}
-			catch ( Exception a_e )
+			catch ( Exception e )
 			{
 				showError(
 					localize(
@@ -1498,7 +1533,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			return System.getProperty( "java.class.path" );
 		}
-		catch ( SecurityException a_e )
+		catch ( SecurityException e )
 		{
 			return "";
 		}
@@ -1599,10 +1634,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param b The bytes to be converted.
 	 * @category HEX
+	 * 
+	 * @return Hex String
 	 */
 	private static String toHex( byte[] b )
 	{
-		return toHex( b, b.length ); 
+		return toHex( b, b.length );
 	}
 	
 	/**
@@ -1611,6 +1648,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * @param b The bytes to be converted.
 	 * @param len Number of bytes to be converted.
 	 * @category HEX
+	 * 
+	 * @return Hex String
 	 */
 	private static String toHex( byte[] b, int len )
 	{
@@ -1635,6 +1674,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 	 * 
 	 * @param b The byte to be converted.
 	 * @category HEX
+	 * 
+	 * @return Two character string
 	 */
 	private static String toHex( byte b )
 	{
