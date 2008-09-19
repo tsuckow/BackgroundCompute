@@ -683,10 +683,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				
 				final File dest = new File( name );
-				if ( !dest.exists() || dest.delete() )
+				if ( dest.exists() ? dest.delete() : true )
 				{
-					System.out.println(src.getPath());
-					System.out.println(dest.getPath());
 					if ( src.renameTo( dest ) )
 					{
 						setSplashText( localeFormat( "Updated1", name ) );
