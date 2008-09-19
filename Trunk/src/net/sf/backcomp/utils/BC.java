@@ -143,6 +143,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	private static final int UPDATE_RESTART_DELAY = 3;
 	
 	/**
+	 * Seconds to wait before restarting after an error.
+	 */
+	private static final int ERROR_RESTART_DELAY = 5;
+	
+	/**
 	 * Text box for splash screen.
 	 */
 	private JLabel mSplashText;
@@ -1027,10 +1032,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static private String localeFormat( String template, String[] Args )
 	{
 		
-		if( sLanguageBundle != null )
+		if ( sLanguageBundle != null )
 		{
 			Locale currentLocale = null;
-			if( SETTINGS.getProperty( "locale" ) != null )
+			if ( SETTINGS.getProperty( "locale" ) != null )
 			{
 				currentLocale = new Locale( SETTINGS.getProperty( "locale" ) );
 			}
@@ -1059,7 +1064,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				return " **Unknown Localization Problem** ";
 			}
 			
-			MessageFormat formatter =
+			final MessageFormat formatter =
 				new MessageFormat(
 					stringTemplate,
 					currentLocale
@@ -1073,7 +1078,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	}
 	
 	/**
-	 * Gets size of file on Remote Server (if availible) relative to SERVER_PATH
+	 * Gets size of file on Remote Server (if available) relative to SERVER_PATH
 	 * @param file Filename
 	 * @return size in bytes
 	 */
@@ -1082,20 +1087,20 @@ public final class BC extends SwingWorker<Object, Object[]>
 		try
 		{
 			//Create URL
-			URL path = new URL( SETTINGS.getProperty( "server_path" ) + file );
+			final URL path = new URL( SETTINGS.getProperty( "server_path" ) + file );
 			
 			//Connect
-			URLConnection UC = path.openConnection();
+			final URLConnection UC = path.openConnection();
 			UC.connect();
 			//Get Size
 			return UC.getContentLength();
 		}
-		catch(MalformedURLException ex)
+		catch ( MalformedURLException ex )
 		{
 			//Malformed Path, SERVER_PATH wrong?
 			return -1;
 		}
-		catch(IOException ex)
+		catch ( IOException ex )
 		{
 			return -1; //God only knows what went wrong.
 		}
@@ -1103,11 +1108,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 	
 	static private String[] getLocalList( String file )
 	{
-		ArrayList<String> data = new ArrayList<String>();
+		final ArrayList<String> data = new ArrayList<String>();
 		try
 		{
 			//Prepare the buffers for reading
-			BufferedReader in =
+			final BufferedReader in =
 				new BufferedReader(
 					new FileReader(
 						new File(
@@ -1125,7 +1130,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			in.close();
 		}
-		catch( IOException ex )
+		catch ( IOException ex )
 		{
 			//File doesn't exist or is unavailible.
 			//Return empty list
@@ -1149,10 +1154,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 			//Get Binary Hash
 			final MessageDigest md5 = MessageDigest.getInstance( "MD5" );
 			
-			File f = new File( file );
+			final File f = new File( file );
 			
 			int len;
-			byte[] msg = new byte[len = (int) f.length()];
+			final byte[] msg = new byte[len = (int) f.length()];
 			fis = new FileInputStream( f );
 			if ( fis.read( msg ) != len ) return ""; //Failed to get data
 			
@@ -1166,11 +1171,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 			showError( localize( "Error_MD51", "MD5 Algorithm missing" ) );
 			throw new ThreadDeath();
 		}
-		catch( FileNotFoundException ex )
+		catch ( FileNotFoundException ex )
 		{
 			return ""; //File not found...
 		}
-		catch( IOException ex )
+		catch ( IOException ex )
 		{
 			return ""; //God only knows what went wrong.
 		}
@@ -1182,10 +1187,10 @@ public final class BC extends SwingWorker<Object, Object[]>
 				{
 					fis.close();
 				}
-				catch( IOException ex )
+				catch ( IOException ex )
 				{
-					String defErrMsg = "Problem occurred closing file stream.";
-					String details = "\n\n" + makeStackTrace( ex );
+					final String defErrMsg = "Problem occurred closing file stream.";
+					final String details = "\n\n" + makeStackTrace( ex );
 					showError(
 						localize(
 							"Error_FileStream1",
@@ -1199,7 +1204,12 @@ public final class BC extends SwingWorker<Object, Object[]>
 		return toHex( res );//Convert Bin to Hex
 	}
 	
-	//Do a file transfer.
+	/**
+	 * Do a file transfer.
+	 * @param sFile Source file on server
+	 * @param dFile Destination file locally
+	 * @return Success or Failure
+	 */
 	private boolean remoteToLocal( String sFile, String dFile )
 	{
 		int PBVal = 0;
@@ -1213,25 +1223,34 @@ public final class BC extends SwingWorker<Object, Object[]>
 		try
 		{
 			//Create URL.
-			URL url = new URL( SETTINGS.getProperty( "server_path" ) + sFile );
+			final URL url = new URL( SETTINGS.getProperty( "server_path" ) + sFile );
 			bis = new BufferedInputStream( url.openStream(), ONE_KILO );
 			
 			dFile = dFile.replace( '/', File.separatorChar ); //Make for this OS
 			
-			int index = dFile.lastIndexOf( File.separatorChar );
+			final int index = dFile.lastIndexOf( File.separatorChar );
 			if( index != -1 )
 			{
-				if( ! new File(dFile.substring(0,index)).mkdirs() )
+				if ( !new File( dFile.substring( 0, index ) ).mkdirs() )
 				{
-					updateError( localeFormat( "Error_MKDir1", dFile.substring(0,index) ), null );
+					updateError(
+						localeFormat(
+							"Error_MKDir1",
+							dFile.substring( 0, index )
+						),
+						null
+					);
 				}
 			}
 			
-			File file = new File(dFile);
+			final File file = new File( dFile );
 			
-			fos = new BufferedOutputStream( new FileOutputStream( file ), 4 * ONE_KILO );
+			fos = new BufferedOutputStream(
+				new FileOutputStream( file ),
+				4 * ONE_KILO
+			);
 			
-			byte[] buffer = new byte[ONE_KILO];
+			final byte[] buffer = new byte[ONE_KILO];
 			
 			int count;
 			while ( ( count = bis.read( buffer ) ) != -1 )
@@ -1268,7 +1287,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		}
 		finally
 		{
-			if( fos != null )
+			if ( fos != null )
 			{
 				try
 				{
@@ -1367,7 +1386,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					"Background Compute"
 				);
 				
-				for ( int i = 5; i > 0; --i )
+				for ( int i = ERROR_RESTART_DELAY; i > 0; --i )
 				{
 					setSplashText(
 						localize(
@@ -1389,7 +1408,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					+ "\n\nRestart Background Compute, "
 					+ "If this does not resolve the problem contact"
 					+ "Technical Support.\n\nError: ";
-				final String details = 
+				final String details =
 					msg
 					+ (
 						( ex != null )
