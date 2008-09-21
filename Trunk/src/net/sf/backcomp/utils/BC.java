@@ -38,7 +38,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -640,7 +639,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 						null
 					);
 				}
-				final File src = new File( "Download.tmp" );
+				File src = new File( "Download.tmp" );
 				
 				//Verify it
 				if ( getLocalHash( "Download.tmp" ).compareTo( hash ) != 0 )
@@ -682,7 +681,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 					}
 				}
 				
-				final File dest = new File( name );
+				File dest = new File( name );
 				if ( !dest.exists() || dest.delete() )
 				{
 					if ( src.renameTo( dest ) )
@@ -1156,6 +1155,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 		//Byte array because JAVA returns Binary
 		byte[] res;
 		
+		FileInputStream is = null;
+		
 		try
 		{
 			//Get Binary Hash
@@ -1163,7 +1164,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			final File f = new File( file );
 			
-			final InputStream is = new FileInputStream( f );
+			is = new FileInputStream( f );
 			final byte[] buffer = new byte[16 * ONE_KILO];
 			int read = 0;
 			
@@ -1186,6 +1187,19 @@ public final class BC extends SwingWorker<Object, Object[]>
 		catch ( IOException ex )
 		{
 			return ""; //God only knows what went wrong.
+		}
+		finally
+		{
+			if ( is != null )
+			{
+				try {
+					is.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return toHex( res ); //Convert Bin to Hex
