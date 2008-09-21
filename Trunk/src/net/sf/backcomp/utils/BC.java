@@ -683,7 +683,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 				
 				final File dest = new File( name );
-				if ( dest.exists() ? dest.delete() : true )
+				if ( !dest.exists() || dest.delete() )
 				{
 					if ( src.renameTo( dest ) )
 					{
