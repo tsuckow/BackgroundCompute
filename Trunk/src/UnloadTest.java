@@ -36,7 +36,8 @@ public class UnloadTest implements Plugin
 	public void halt()
 	{
 		running = false;
-		link.setPluginState(PluginInterconnect.PluginState.Stopped);
+		if( link != null )
+			link.setPluginState(PluginInterconnect.PluginState.Stopped);
 	}
 
 	@Override

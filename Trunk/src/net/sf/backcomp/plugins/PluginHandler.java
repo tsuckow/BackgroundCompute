@@ -164,7 +164,7 @@ public class PluginHandler
 	
 	public void stop()
 	{
-		//FIXME: Initilized?
+		if( !isValid() ) return;
 		myPlugin.halt();
 		myPlugin = null;
 	}
@@ -177,7 +177,7 @@ public class PluginHandler
 	 */
 	public boolean isActive()
 	{
-		//FIXME: Initilized?
+		if( !isValid() ) return false;
 		PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
 		return
 			   ps == PluginInterconnect.PluginState.Running
@@ -250,6 +250,7 @@ public class PluginHandler
 	
 	public void startCore()
 	{
+		if( !isActive() ) myPlugin.start();
 		++cores;
 	}
 }
