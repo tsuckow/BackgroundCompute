@@ -240,7 +240,7 @@ public class PluginHandler
 	
 	public int getRunningCores()
 	{
-		return cores;
+		return isActive()?cores:0;
 	}
 	
 	public void stopCore()

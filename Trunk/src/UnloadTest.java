@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ public class UnloadTest implements Plugin
 	public void halt()
 	{
 		running = false;
+		link.setPluginState(PluginInterconnect.PluginState.Stopped);
 	}
 
 	@Override
@@ -89,7 +91,6 @@ public class UnloadTest implements Plugin
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {}
 			}
-			link.setPluginState(PluginInterconnect.PluginState.Stopped);
 		}
 		
 	}
@@ -101,16 +102,26 @@ public class UnloadTest implements Plugin
 			public UnloadTestStatus()
 			{
 				
-				JButton stop = new JButton("Swap A");
+				JButton stop = new JButton("Swap B");
 		        stop.addActionListener(new StopButton());
 		        this.add(stop);
 			}
 			
 			private class StopButton implements ActionListener
 			{
+				
 				public void actionPerformed(ActionEvent e)
 		        {
 		        	//Do Swap
+					File thisone = new File("plugins/UnloadTest/UnloadTest$UnloadTestStatus.class");
+					File otherone = new File("plugins/UnloadTest/UnloadTest$UnloadTestStatus.class.bak");
+					File newthisone = new File("plugins/UnloadTest/UnloadTest$UnloadTestStatus.class.tmp");
+					thisone.renameTo( newthisone );
+					otherone.renameTo( new File("plugins/UnloadTest/UnloadTest$UnloadTestStatus.class") );
+					newthisone.renameTo( new File("plugins/UnloadTest/UnloadTest$UnloadTestStatus.class.bak") );
+					link.setPluginState(PluginInterconnect.PluginState.NeedReload);
+					running = false;
+					link = null;
 		        }
 			}
 	}
