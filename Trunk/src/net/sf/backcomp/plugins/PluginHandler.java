@@ -1,16 +1,8 @@
 package net.sf.backcomp.plugins;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import javax.swing.JPanel;
 
-import net.sf.backcomp.debug.Debug;
-import net.sf.backcomp.debug.DebugLevel;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import net.sf.backcomp.Exceptions.NotImplementedException;
 
 /*
  * ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();

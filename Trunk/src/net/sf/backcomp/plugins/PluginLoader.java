@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 //FIXME: Who knows what this does.
 
 public final class PluginLoader
