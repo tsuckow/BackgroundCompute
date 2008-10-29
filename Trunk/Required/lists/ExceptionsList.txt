@@ -1,0 +1,3 @@
+net/sf/backcomp/Exceptions/NotImplementedException.class
+net/sf/backcomp/Exceptions/PluginNotPauseableError.class
+net/sf/backcomp/Exceptions/ThreadCpuTimeNotSupportedException.class
