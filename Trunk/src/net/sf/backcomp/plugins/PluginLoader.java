@@ -7,14 +7,11 @@
  */
 package net.sf.backcomp.plugins;
 
-import net.sf.backcomp.debug.*;
-
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 //FIXME: Who knows what this does.
 
@@ -25,7 +22,7 @@ public final class PluginLoader
 	/**
 	 * The cache of the plugins.
 	 */
-	private static HashMap<String,Plugin> PluginCache = new HashMap<String,Plugin>();
+	private static HashMap<String,PluginHandler> PluginCache = new HashMap<String,PluginHandler>();
 	//TODO: Cache need to expire and have ability to unload/refresh plugins. (Bool flag on load that will cause it to dump, GC, GC and load again? [This would require syncronizing.])
 	
 	/**
@@ -36,78 +33,36 @@ public final class PluginLoader
 	 * @return instance of Plugin given by name. 
 	 */
 	//TODO: exception handling needs work.
-	public static Plugin loadPlugin(String name)
+	public static PluginHandler loadPlugin(String name)
 	{
-		
 		if(name == null) return null;
 		
-		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+		//Get the one in the cache
+		PluginHandler plugin = PluginCache.get(name);
 		
-		URLClassLoader UCL = null;
-		
-		Plugin test = null;
-		
-		//Load from cache if available
-		test = PluginCache.get(name + "_Plugin");
-		
-		if(test != null)
+		//Found it
+		if(plugin != null)
 		{
-			//Checks if this class is reloading and needs cache clear.
-			if(test.needReload())
+			if( plugin.isValid() )
 			{
-				PluginCache.remove(name + "_Plugin");
-				test = null;//Remove our reference.
+				return plugin;
+			}
+			else
+			{
+				PluginCache.remove(name);
 				return null;
 			}
-			return test;
 		}
 		
-		try
+		//Didn't Find it.
+		plugin = new PluginHandler(name);
+		if( plugin.isValid() )
 		{
-			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + name + "/").toURI().toURL()},CL);
+			PluginCache.put(name, plugin);
+			return plugin;
 		}
-		catch(MalformedURLException ex)
-		{
-			Debug.message("Plugin Dir Path Malformed!",DebugLevel.Error);
+		else
 			return null;
-		}
-		try
-		{
-			
-			test = (Plugin)UCL.loadClass(name + "_Plugin").newInstance();
-			
-		}//TODO:IMprove the error messages
-		catch(ClassNotFoundException ex)
-		{
-			Debug.message("Class not found: " + "plugins/" + name + "/" + name + "_Plugin",DebugLevel.Error);
-			return null;
-		}
-		catch(InstantiationException ex)
-		{
-			Debug.message("Failed to load class",DebugLevel.Error);
-			return null;
-		}
-		catch(IllegalAccessException ex)
-		{
-			Debug.message("Illegal Access",DebugLevel.Error);
-			return null;
-		}
-		catch(NoClassDefFoundError ex)
-		{
-			Debug.message("Class File Corrupted",DebugLevel.Error);
-			return null;
-		}
-		
-		//Checks if this class is reloading
-		if(test.needReload())
-		{
-			test = null;//Remove our reference.
-			return null;
-		}
-		
-		PluginCache.put(name + "_Plugin", test);
-		return test;
 	}
 	
 	
@@ -118,21 +73,26 @@ public final class PluginLoader
 	 * 
 	 * @return array of Plugin names that are installed.
 	 */
-	public static String[] getLocalPlugins()
+	public static String[] getLoadedPlugins()
+	{
+		return PluginCache.keySet().toArray(new String[0]);
+	}
+	
+	/**
+	 * Attempts to mount every installed plugin.
+	 * 
+	 */
+	public static void findPlugins()
 	{
 		String Dir = "plugins/";
 		
-		File[] files = null;
 		FilenameFilter filter = new FilenameFilter(){
         	public boolean accept(File dir, String name)
         	{
         		File pdir = new File(dir,name);
             	if( pdir.isDirectory() )
             	{
-            		if(loadPlugin(name)!=null)
-            		{
-            			return true;
-            		}
+            		loadPlugin(name); //Try to mount and cache.
             	}
             	
             	return false;
@@ -140,16 +100,15 @@ public final class PluginLoader
     	};
     	
     	File src = new File(Dir);
-    	files = src.listFiles(filter);
-    	
-    	//
-    	//FIXME:Null pointer exception when no plugins. files = null.
-    	String[] plugins = new String[files.length];
-    	for(int i = 0; i < files.length; ++i)
-    	{
-    		plugins[i] = files[i].getName();
-    	}
-    	
-    	return plugins;
+    	src.listFiles(filter); //We discard the result since we dont need it
+	}
+	
+	public static void VMHalt()
+	{
+		for( String plug : getLoadedPlugins() )
+		{
+			PluginHandler ph = loadPlugin(plug);
+			if( ph != null ) ph.unLoad();
+		}
 	}
 }

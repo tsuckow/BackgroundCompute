@@ -33,7 +33,7 @@ public class PluginAdder
 		
 		JPanel p = new JPanel();
 		
-		String[] installedPlugins = PluginLoader.getLocalPlugins();
+		String[] installedPlugins = PluginLoader.getLoadedPlugins();
 		String[] pluginList = new String[installedPlugins.length];
 		for(int i = 0; i < installedPlugins.length; ++i)
 		{

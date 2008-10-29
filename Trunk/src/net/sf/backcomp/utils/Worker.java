@@ -11,11 +11,12 @@
 package net.sf.backcomp.utils;
 
 import net.sf.backcomp.plugins.Plugin;
+import net.sf.backcomp.plugins.PluginHandler;
 import net.sf.backcomp.plugins.PluginLoader;
 
 
 /**
- * This is the class for managing Plugins.
+ * This is the class for managing running Plugins.
  *  
  *
  * @author Deathbob 
@@ -42,36 +43,33 @@ class Worker extends Thread
 	    	int maxthreads = Runtime.getRuntime().availableProcessors();
 	    	if(coreTotal < maxthreads) System.out.println("Idle Cores: " + (maxthreads - coreTotal) + " Min: " + coreLevelMin + " Max: " + coreLevelMax);
 	    	
-	    	String[] Plugins = PluginLoader.getLocalPlugins();
+	    	String[] Plugins = PluginLoader.getLoadedPlugins();
 	    	for(int i = 0; i < Plugins.length; ++i)
 	    	{
-	    		Plugin plug = PluginLoader.loadPlugin(Plugins[i]);
-	    		if(plug != null && plug.getState() != Plugin.PluginState.Paused)
+	    		PluginHandler plug = PluginLoader.loadPlugin(Plugins[i]);
+	    		if(plug != null && !plug.isPaused())
 	    		{
 	    			long cores = plug.getRunningCores();
 	    			
 	    			if(!didsomething && (coreLevelMax != coreLevelMin+1 && coreLevelMax != coreLevelMin) && cores == coreLevelMax && cores > 0)//Max Exceeded
 	    			{
 	    				System.out.println("Stopped out of ballance core on plugin: " + plug.getName());
-	    				plug.stopCore(false);
+	    				plug.stopCore();
 	    				cores = plug.getRunningCores();
 	    				didsomething = true;
 	    			}
 	    			if(!didsomething && cores == coreLevelMax && coreTotal > maxthreads)//Too many cores
 	    			{
 	    				System.out.println("Stopped system exceeding core on plugin: " + plug.getName());
-	    				plug.stopCore(true);
+	    				plug.stopCore();
 	    				cores = plug.getRunningCores();
 	    				didsomething = true;
 	    			}
 	    			if(!didsomething && coreTotal < maxthreads && cores == coreLevelMin)
 	    			{
 	    				System.out.println("Started core on plugin: " + plug.getName());
-	    				if ( plug.startCore() )//core started.
-	    				{
-	    					cores = plug.getRunningCores();
-	    					didsomething = true;
-	    				}
+	    				plug.startCore();//core started.
+	    				didsomething = true;
 	    			}
 	    			
 	    			//Update the stats

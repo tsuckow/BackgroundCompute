@@ -55,7 +55,7 @@ public class PluginManager
 		JPanel p = new JPanel();
 		
 		//Get the plugins to populate the list
-		installedPlugins = PluginLoader.getLocalPlugins();
+		installedPlugins = PluginLoader.getLoadedPlugins();
 		
 		//Generate the list box
 		list = new JList(/*pluginList*/installedPlugins); //data has type Object[]
@@ -137,7 +137,7 @@ public class PluginManager
 	 */
 	private static void PluginInfo(JLabel label, String name)
 	{
-			Plugin plug = PluginLoader.loadPlugin(name);
+			PluginHandler plug = PluginLoader.loadPlugin(name);
         	String Info = "<html>Error: Unable to load Plugin</html>";
         	if(plug!=null)
         	{
@@ -163,7 +163,7 @@ public class PluginManager
 			}
 			if( regenlist++ % 5 == 0)
 			{
-				String[] temp = PluginLoader.getLocalPlugins();
+				String[] temp = PluginLoader.getLoadedPlugins();
 				if( !Arrays.equals(temp,installedPlugins) )
 				{
 					installedPlugins = temp;
@@ -187,8 +187,8 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
-        			plug.stopAll(true,false);
+        			PluginHandler plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			plug.stop();
         			//frame.dispose();
 					//frame = null;
 					//show();
@@ -210,8 +210,8 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
-        			plug.stopAll(true,true);
+        			PluginHandler plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			plug.stop();
         			//frame.dispose();
 					//frame = null;
 					//show();
@@ -233,7 +233,7 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			PluginHandler plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			int n = JOptionPane.showConfirmDialog(
         				    frame,
         				    "Are you sure you want to uninstall: \"" + plug.getName() + "\"",
@@ -242,7 +242,7 @@ public class PluginManager
         				    JOptionPane.QUESTION_MESSAGE);
         			if(n == JOptionPane.YES_OPTION)
         			{
-        				plug.startRemove();
+        				plug.uninstall();
         				frame.dispose();
         				frame = null;
         				show();
@@ -265,7 +265,7 @@ public class PluginManager
         		if(list.getSelectedIndex() != -1)
         		{
         			//BC.PError("Got Selection: " + installedPlugins[list.getSelectedIndex()]);
-        			Plugin plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
+        			PluginHandler plug = PluginLoader.loadPlugin(installedPlugins[list.getSelectedIndex()]);
         			JFrame bob = new JFrame(plug.getName());
         			bob.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         			

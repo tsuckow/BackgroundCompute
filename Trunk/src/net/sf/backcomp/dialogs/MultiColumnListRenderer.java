@@ -17,25 +17,32 @@ import java.awt.*;
 class MultiColumnListRenderer extends DefaultListCellRenderer
 {
 	private static final long serialVersionUID = 1L;
-	String [] status = new String[3];
+	String [] status = new String[4];
 	
     public MultiColumnListRenderer()
     {        
         status[0] = "images/status_green.png";
 		status[1] = "images/status_red.png";
 		status[2] = "images/status_blue.png";
+		status[3] = "images/status_orange.png";
     }
     
-    private int stateCode(Plugin.PluginState st)
+    private int stateCode(PluginHandler pm)
     {
-    	switch(st)
+    	if( pm.isActive() )
     	{
-    		case Stopped:
-    			return 1;
-    		case Running:
+    		if( pm.isPaused() )
+    			return 3;
+    		else
     			return 0;
-    		default:
-    			return 2;
+    	}
+    	else if( pm.isStopped() )
+    	{
+    		return 1;
+    	}
+    	else	
+    	{
+    		return 2;
     	}
     }
     
@@ -58,9 +65,9 @@ class MultiColumnListRenderer extends DefaultListCellRenderer
     	{
     		wow.setLayout(new BorderLayout());
  		
-    		Plugin plug = PluginLoader.loadPlugin( (String)value );
+    		PluginHandler plug = PluginLoader.loadPlugin( (String)value );
     		
-    		String image = ClassLoader.getSystemResource(status[ stateCode( plug.getState() ) ]).toString();
+    		String image = ClassLoader.getSystemResource(status[ stateCode( plug ) ]).toString();
     		
     		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + image + "'></td></tr></table></html>");
 		

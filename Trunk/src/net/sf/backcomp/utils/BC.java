@@ -512,11 +512,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 					}
 					
 					
-					showMsg(
+					/*showMsg(
 						"Other Lanaguages.",
 						"DEBUG",
 						JOptionPane.INFORMATION_MESSAGE
-					);
+					);*/
 					//TODO:Ask about language?
 				}
 				else

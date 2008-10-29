@@ -11,6 +11,7 @@ import net.sf.backcomp.debug.Debug;
 import net.sf.backcomp.debug.DebugLevel;
 import net.sf.backcomp.dialogs.*;
 import net.sf.backcomp.plugins.Plugin;
+import net.sf.backcomp.plugins.PluginLoader;
 
 import java.awt.AWTException;
 import java.awt.Image;
@@ -149,7 +150,8 @@ public final class Tray
 	            if( e.getActionCommand().equals("Quit") )
 	            {
 	            	Worker.terminate();
-	            	Plugin.terminate();
+	            	//We know what plugins are loaded, terminate them in order.
+	            	PluginLoader.VMHalt();
 	            	Tray.iconDestroy();
 	            	//throw new ThreadDeath();
 	            }
