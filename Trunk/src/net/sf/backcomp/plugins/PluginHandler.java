@@ -127,7 +127,7 @@ public class PluginHandler
 		}
 		
 		//Is a Plugin?
-		if( !loadedClass.isAssignableFrom(Plugin.class) )
+		if( !Plugin.class.isAssignableFrom(loadedClass) )
 		{
 			Debug.message("Class not a plugin: " + pluginName,DebugLevel.Error);
 			return;

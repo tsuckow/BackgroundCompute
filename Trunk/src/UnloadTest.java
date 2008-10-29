@@ -1,5 +1,3 @@
-package net.sf.backcomp.diagnostic.plugins.UnloadTest;
-
 import javax.swing.JPanel;
 
 import net.sf.backcomp.Exceptions.PluginNotPauseableError;
