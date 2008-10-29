@@ -1,4 +1,3 @@
-net/sf/backcomp/dialogs/MultiColumnListRenderer$1.class
 net/sf/backcomp/dialogs/MultiColumnListRenderer.class
 net/sf/backcomp/dialogs/PluginManager$ListListen.class
 net/sf/backcomp/dialogs/PluginManager$RefreshList.class
