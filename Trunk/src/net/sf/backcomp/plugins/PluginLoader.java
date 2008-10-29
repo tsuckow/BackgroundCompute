@@ -15,12 +15,13 @@ import java.util.HashMap;
 
 public final class PluginLoader
 {
+	private static long lastCheckTime = 0;
 	private PluginLoader(){}//This is a static class
 	
 	/**
 	 * The cache of the plugins.
 	 */
-	private static HashMap<String,PluginHandler> PluginCache = new HashMap<String,PluginHandler>();
+	private static volatile HashMap<String,PluginHandler> PluginCache = new HashMap<String,PluginHandler>();
 	//TODO: Cache need to expire and have ability to unload/refresh plugins. (Bool flag on load that will cause it to dump, GC, GC and load again? [This would require syncronizing.])
 	
 	/**
@@ -73,6 +74,11 @@ public final class PluginLoader
 	 */
 	public static String[] getLoadedPlugins()
 	{
+		if( lastCheckTime + 100*60 < System.currentTimeMillis() )
+		{
+			findPlugins();
+			lastCheckTime = System.currentTimeMillis();
+		}
 		return PluginCache.keySet().toArray(new String[0]);
 	}
 	

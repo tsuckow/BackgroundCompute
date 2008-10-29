@@ -1,8 +1,15 @@
 package net.sf.backcomp.plugins;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.io.File;
+
 import javax.swing.JPanel;
 
 import net.sf.backcomp.Exceptions.NotImplementedException;
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 
 /*
  * ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
@@ -82,10 +89,77 @@ public class PluginHandler
 	private Plugin myPlugin = null;
 	private PluginInterconnect myInterconnect = null;
 	private int cores = 0;
+	private boolean loaded = false;
 	
 	PluginHandler(String p)
 	{
 		pluginName = p;
+		
+		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+		
+		URLClassLoader UCL = null;
+		
+		Class<?> loadedClass = null;
+		
+		Plugin loadedPlugin = null;
+		
+		//Setup the loader.
+		try
+		{
+			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()},CL);
+		}
+		catch(MalformedURLException ex)
+		{
+			Debug.message("Plugin Dir Path Malformed! " + "plugins/" + pluginName + "/",DebugLevel.Error);
+			return;
+		}
+		
+		//Load the Class
+		try
+		{
+			loadedClass = UCL.loadClass(pluginName);
+		}
+		catch(ClassNotFoundException ex)
+		{
+			Debug.message("Class not found: " + "plugins/" + pluginName + "/" + pluginName,DebugLevel.Error);
+			return;
+		}
+		
+		//Is a Plugin?
+		if( !loadedClass.isAssignableFrom(Plugin.class) )
+		{
+			Debug.message("Class not a plugin: " + pluginName,DebugLevel.Error);
+			return;
+		}
+		
+		
+		try
+		{	
+			loadedPlugin = (Plugin)loadedClass.newInstance();
+		}
+		catch(InstantiationException ex)
+		{
+			Debug.message("Failed to load Plugin: " + pluginName,DebugLevel.Error);
+			return;
+		}
+		catch(IllegalAccessException ex)
+		{
+			Debug.message("Illegal Access to Plugin: " + pluginName,DebugLevel.Error);
+			return;
+		}
+		catch(NoClassDefFoundError ex)
+		{
+			Debug.message("Class Def Missing: " + pluginName,DebugLevel.Error);
+			return;
+		}
+		
+		myPlugin = loadedPlugin;
+		
+		myInterconnect = new PluginInterconnect();
+		myPlugin.initialize(myInterconnect);
+		
+		loaded = true;
 	}
 	
 	public void stop()
@@ -151,9 +225,11 @@ public class PluginHandler
 	
 	public boolean isValid()
 	{
-		//INit?
+		if(!loaded) return false;
 		PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
-		return ps != PluginInterconnect.PluginState.Removed;
+		return
+			   ps != PluginInterconnect.PluginState.Removed
+			&& ps != PluginInterconnect.PluginState.Initilizing;
 	}
 	
 	public void unLoad()
