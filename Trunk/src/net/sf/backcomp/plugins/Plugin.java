@@ -61,4 +61,6 @@ public interface Plugin
      * @return JPanel of a Settings Dialog.
      */
     public JPanel getSettings();
+    
+    public JPanel getStatus();
 }

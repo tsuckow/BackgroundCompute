@@ -1,3 +1,7 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import net.sf.backcomp.Exceptions.PluginNotPauseableError;
@@ -49,6 +53,7 @@ public class UnloadTest implements Plugin
 		if(!running)
 		{
 			running = true;
+			link.setPluginState(PluginInterconnect.PluginState.Running);
 			myThread t = new myThread();
 			t.start();
 		}
@@ -67,6 +72,11 @@ public class UnloadTest implements Plugin
 		throw new PluginNotPauseableError();
 	}
 
+	public JPanel getStatus()
+	{
+		return new UnloadTestStatus();
+	}
+	
 	class myThread extends Thread
 	{
 
@@ -79,7 +89,29 @@ public class UnloadTest implements Plugin
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {}
 			}
+			link.setPluginState(PluginInterconnect.PluginState.Stopped);
 		}
 		
+	}
+	
+	public class UnloadTestStatus extends JPanel
+	{		
+			private static final long serialVersionUID = 1L;
+			
+			public UnloadTestStatus()
+			{
+				
+				JButton stop = new JButton("Swap A");
+		        stop.addActionListener(new StopButton());
+		        this.add(stop);
+			}
+			
+			private class StopButton implements ActionListener
+			{
+				public void actionPerformed(ActionEvent e)
+		        {
+		        	//Do Swap
+		        }
+			}
 	}
 }

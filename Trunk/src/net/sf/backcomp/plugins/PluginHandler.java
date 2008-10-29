@@ -220,7 +220,7 @@ public class PluginHandler
 	
 	public JPanel getStatus()
 	{
-		throw new NotImplementedException();
+		return myPlugin.getStatus();
 	}
 	
 	public boolean isValid()
