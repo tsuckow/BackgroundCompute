@@ -139,9 +139,17 @@ public class PluginManager
 	{
 			PluginHandler plug = PluginLoader.loadPlugin(name);
         	String Info = "<html>Error: Unable to load Plugin</html>";
-        	if(plug!=null)
+        	if(plug != null)
         	{
         		Info = plug.getInfo();
+        		if(Info == null)
+        		{
+        			Info = "Information Not Available";
+        		}
+        	}
+        	else
+        	{
+        		Info = "Selected Plugin Does Not Exist.";
         	}
 			label.setText("<html><div width='320px' height='160px'>" + Info + "</div><html>");
 	}

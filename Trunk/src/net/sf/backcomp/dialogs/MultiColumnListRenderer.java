@@ -67,9 +67,19 @@ class MultiColumnListRenderer extends DefaultListCellRenderer
  		
     		PluginHandler plug = PluginLoader.loadPlugin( (String)value );
     		
-    		String image = ClassLoader.getSystemResource(status[ stateCode( plug ) ]).toString();
+    		int state = 2;
+    		String name = "Plugin No Longer Exists";
     		
-    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + plug.getName() + "</td><td style='text-align:right;'><img src='" + image + "'></td></tr></table></html>");
+    		if(plug != null)	
+    		{
+    			state = stateCode( plug );
+    			name = plug.getName();
+    		}
+    		
+    		
+    		String image = ClassLoader.getSystemResource(status[ state ]).toString();
+    		
+    		JLabel a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt; width:146pt;'><tr><td>" + name + "</td><td style='text-align:right;'><img src='" + image + "'></td></tr></table></html>");
 		
     		wow.add(a,BorderLayout.CENTER);
        
