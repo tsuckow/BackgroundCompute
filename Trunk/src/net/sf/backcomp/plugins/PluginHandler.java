@@ -166,7 +166,6 @@ public class PluginHandler
 	{
 		if( !isValid() ) return;
 		myPlugin.halt();
-		myPlugin = null;
 	}
 	
 	/**
@@ -225,11 +224,26 @@ public class PluginHandler
 	
 	public boolean isValid()
 	{
-		if(!loaded) return false;
-		PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
-		return
-			   ps != PluginInterconnect.PluginState.Removed
-			&& ps != PluginInterconnect.PluginState.Initilizing;
+		if(loaded && myInterconnect != null)
+		{
+			PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
+			
+			if(ps == PluginInterconnect.PluginState.NeedReload)
+			{
+				loaded = false;
+				myPlugin = null;
+				myInterconnect = null;
+				return false;
+			}
+			
+			if(myPlugin==null || myInterconnect == null) return false;
+			
+			return
+				   ps != PluginInterconnect.PluginState.Removed
+				&& ps != PluginInterconnect.PluginState.Initilizing;
+		}
+		return false;
+		
 	}
 	
 	public void unLoad()
