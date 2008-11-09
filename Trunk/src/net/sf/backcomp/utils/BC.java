@@ -1249,7 +1249,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 			if ( index != -1 )
 			{
 				String dir = dFile.substring( 0, index );
-				if ( !dir.equals(".") && !new File( dir ).mkdirs() )
+				File theDir = new File( dir );
+				if ( !theDir.exists() && !theDir.mkdirs() )
 				{
 					updateError(
 						localeFormat(
