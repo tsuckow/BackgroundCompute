@@ -192,7 +192,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 	/**
 	 * The command for getting the Directory
 	 */
-	static final String DIR_UPDATE = "RootList2.php?Base=";
+	static final String DIR_UPDATE = "HashDir2.php?Base=";
 	
 	/**
 	 * Language Localization Bundle
