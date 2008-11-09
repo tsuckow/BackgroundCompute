@@ -76,6 +76,14 @@ public final class Tray
          		
 				popup.add(Item);
 				popup.addSeparator();
+				
+				Item = new MenuItem("About");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("About"); 
+         		
+				popup.add(Item);
+				
+				popup.addSeparator();
 
          		// create menu item for the default action
         		MenuItem defaultItem = new MenuItem("Quit");
@@ -166,6 +174,10 @@ public final class Tray
 	            else if( e.getActionCommand().equals("Debug") )
 	            {
 	            	DebugDialog.show();
+				}
+	            else if( e.getActionCommand().equals("About") )
+	            {
+	            	AboutDialog.show();
 				}
 			}
 			catch(Exception ex)

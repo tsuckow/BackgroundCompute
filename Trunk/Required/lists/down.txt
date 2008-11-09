@@ -1,0 +1,8 @@
+.
+images
+net/sf/backcomp/utils
+net/sf/backcomp/debug
+net/sf/backcomp/dialogs
+net/sf/backcomp/Exceptions
+net/sf/backcomp/plugins
+net/sf/backcomp/plugins/utils

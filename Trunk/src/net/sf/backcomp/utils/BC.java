@@ -185,6 +185,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 	static final Properties SETTINGS = new Properties( DEFAULT_SETTINGS );
 	
 	/**
+	 * The command for getting the lists
+	 */
+	static final String ROOT_UPDATE = "RootList2.php?Base=";
+	
+	/**
+	 * The command for getting the Directory
+	 */
+	static final String DIR_UPDATE = "RootList2.php?Base=";
+	
+	/**
 	 * Language Localization Bundle
 	 */
 	private static ResourceBundle sLanguageBundle;
@@ -347,7 +357,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		
 		//Retrieve the list of update lists
 		remoteToLocal(
-			"HashList.php?Base=dev&R=Y&File=lists/Lists.txt",
+			ROOT_UPDATE + "dev",
 			"Lists.txt"
 		);
 		
@@ -359,7 +369,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		setProgressValue( NUM_OVERALLPB, 0, 1, 0 );
 		
 		//Get the sub lists that have the different modules.
-		handleUpdateList( "Lists.txt", "HashList.php?Base=dev&File=", 1, 0 );
+		//handleUpdateList( "Lists.txt", "HashList.php?Base=dev&File=", 1, 0 );
 		
 		//Do the updating
 		final String[] subLists = getLocalList( "Lists.txt" );
@@ -388,9 +398,14 @@ public final class BC extends SwingWorker<Object, Object[]>
 				}
 			}
 			
+			remoteToLocal(
+				DIR_UPDATE + "dev&Dir=" + listname,
+				listname + "DirList.txt"
+			);
+			
 			updated = handleUpdateList(
-				listname,
-				"dev/",
+				listname + "DirList.txt",
+				"dev" + "/",
 				subLists.length,
 				subListNum
 			);
