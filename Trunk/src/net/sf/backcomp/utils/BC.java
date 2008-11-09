@@ -400,7 +400,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			
 			remoteToLocal(
 				DIR_UPDATE + "dev&Dir=" + listname,
-				listname + "DirList.txt"
+				listname + "/DirList.txt"
 			);
 			
 			updated = handleUpdateList(
