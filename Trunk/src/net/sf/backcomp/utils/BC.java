@@ -404,7 +404,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 			);
 			
 			updated = handleUpdateList(
-				listname + "DirList.txt",
+				listname + "/DirList.txt",
 				"dev" + "/",
 				subLists.length,
 				subListNum
@@ -605,6 +605,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		int numLists,
 		int listNum )
 	{
+		//FIXME: if listname doesn't exist, it don't care. 
 		//Vars
 		boolean updated = false;
 		int fileNum = 0;
