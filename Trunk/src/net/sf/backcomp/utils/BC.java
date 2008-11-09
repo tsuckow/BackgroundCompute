@@ -1248,7 +1248,8 @@ public final class BC extends SwingWorker<Object, Object[]>
 			final int index = dFile.lastIndexOf( File.separatorChar );
 			if ( index != -1 )
 			{
-				if ( !new File( dFile.substring( 0, index ) ).mkdirs() )
+				String dir = dFile.substring( 0, index );
+				if ( !dir.equals(".") && !new File( dir ).mkdirs() )
 				{
 					updateError(
 						localeFormat(
