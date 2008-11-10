@@ -33,6 +33,8 @@ public class PluginHandler
 		
 		URLClassLoader UCL = null;
 		
+		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
+		
 		Class<?> loadedClass = null;
 		
 		Plugin loadedPlugin = null;
@@ -40,7 +42,7 @@ public class PluginHandler
 		//Setup the loader.
 		try
 		{
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()});
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()},CL);
 		}
 		catch(MalformedURLException ex)
 		{
