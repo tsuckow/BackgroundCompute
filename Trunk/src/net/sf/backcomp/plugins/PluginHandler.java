@@ -1,88 +1,20 @@
 package net.sf.backcomp.plugins;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.io.File;
 
 import javax.swing.JPanel;
 
-import net.sf.backcomp.Exceptions.NotImplementedException;
 import net.sf.backcomp.debug.Debug;
 import net.sf.backcomp.debug.DebugLevel;
 
-/*
- * ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
-		
-		URLClassLoader UCL = null;
-		
-		PluginHandler test = null;
-		
-		//Load from cache if available
-		test = PluginCache.get(name + "_Plugin");
-		
-		if(test != null)
-		{
-			//Checks if this class is reloading and needs cache clear.
-			if(test.needReload())
-			{
-				PluginCache.remove(name + "_Plugin");
-				test = null;//Remove our reference.
-				return null;
-			}
-			return test;
-		}
-		
-		try
-		{
-			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + name + "/").toURI().toURL()},CL);
-		}
-		catch(MalformedURLException ex)
-		{
-			Debug.message("Plugin Dir Path Malformed!",DebugLevel.Error);
-			return null;
-		}
-		try
-		{
-			
-			test = (Plugin)UCL.loadClass(name + "_Plugin").newInstance();
-			
-		}//TODO:IMprove the error messages
-		catch(ClassNotFoundException ex)
-		{
-			Debug.message("Class not found: " + "plugins/" + name + "/" + name + "_Plugin",DebugLevel.Error);
-			return null;
-		}
-		catch(InstantiationException ex)
-		{
-			Debug.message("Failed to load class",DebugLevel.Error);
-			return null;
-		}
-		catch(IllegalAccessException ex)
-		{
-			Debug.message("Illegal Access",DebugLevel.Error);
-			return null;
-		}
-		catch(NoClassDefFoundError ex)
-		{
-			Debug.message("Class File Corrupted",DebugLevel.Error);
-			return null;
-		}
-		
-		//Checks if this class is reloading
-		if(test.needReload())
-		{
-			test = null;//Remove our reference.
-			return null;
-		}
-		
-		
-		
-		PluginCache.put(name + "_Plugin", test);
-		return test;
+/**
+ * Serves as a middle man between a plugin and the main application.
+ * @author Deathbob
+ *
  */
-
 public class PluginHandler
 {
 	final String pluginName;
@@ -91,11 +23,13 @@ public class PluginHandler
 	private int cores = 0;
 	private boolean loaded = false;
 	
+	/**
+	 * Loads an instance of a plugin.
+	 * @param p File name of string
+	 */
 	PluginHandler(String p)
 	{
 		pluginName = p;
-		
-		ClassLoader CL = net.sf.backcomp.utils.BC.class.getClassLoader();
 		
 		URLClassLoader UCL = null;
 		
@@ -106,8 +40,7 @@ public class PluginHandler
 		//Setup the loader.
 		try
 		{
-			//FIXME: Shouldn't this second one be null. Except what about the bootstrap loader being null.
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()},CL);
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()});
 		}
 		catch(MalformedURLException ex)
 		{
@@ -168,6 +101,12 @@ public class PluginHandler
 		myPlugin.halt();
 	}
 	
+	public void start()
+	{
+		if( !isValid() ) return;
+		myPlugin.start();
+	}
+	
 	/**
 	 * Returns if the plugin is active.<br>
 	 * A plugin is active if it is in the Running or Paused states.
@@ -185,14 +124,14 @@ public class PluginHandler
 	
 	public boolean isPaused()
 	{
-		//FIXME: Initilized?
+		if( !isValid() ) return false;
 		PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
 		return ps == PluginInterconnect.PluginState.Paused;
 	}
 	
 	public boolean isStopped()
 	{
-		//FIXME: Initilized?
+		if( !isValid() ) return true;
 		PluginInterconnect.PluginState ps = myInterconnect.getPluginState();
 		return
 			   ps == PluginInterconnect.PluginState.Stopped
@@ -201,24 +140,25 @@ public class PluginHandler
 	
 	public void uninstall()
 	{
-		//FIXME: Initilized?
+		if( !isValid() ) return;
 		myPlugin.uninstall();
 	}
 	
 	public String getName()
 	{
-		//FIXME: INit?
+		if( !isValid() ) return "";
 		return myPlugin.getName();
 	}
 	
 	public String getInfo()
 	{
-		//FIXME: INit?
+		if( !isValid() ) return null;
 		return myPlugin.getInfo();
 	}
 	
 	public JPanel getStatus()
 	{
+		if( !isValid() ) return null;
 		return myPlugin.getStatus();
 	}
 	
@@ -249,7 +189,9 @@ public class PluginHandler
 	public void unLoad()
 	{
 		stop();
-		//FIXME: Unload
+		loaded = false;
+		myPlugin = null;
+		myInterconnect = null;
 	}
 	
 	public int getRunningCores()
@@ -259,12 +201,20 @@ public class PluginHandler
 	
 	public void stopCore()
 	{
+		if( !isValid() ) return;
 		if(cores > 0) --cores;
 	}
 	
 	public void startCore()
 	{
+		if( !isValid() ) return;
 		if( !isActive() ) myPlugin.start();
 		++cores;
+	}
+	
+	public int wantedCores()
+	{
+		if( !isValid() ) return -1;
+		return myInterconnect.getWantedCpu();
 	}
 }

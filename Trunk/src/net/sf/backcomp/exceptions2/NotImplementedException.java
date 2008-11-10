@@ -1,4 +1,4 @@
-package net.sf.backcomp.Exceptions;
+package net.sf.backcomp.exceptions2;
 
 public class NotImplementedException extends Error
 {

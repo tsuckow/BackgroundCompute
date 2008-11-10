@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import net.sf.backcomp.Exceptions.PluginNotPauseableError;
+import net.sf.backcomp.exceptions2.PluginNotPauseableError;
 import net.sf.backcomp.plugins.Plugin;
 import net.sf.backcomp.plugins.PluginInterconnect;
 
@@ -103,7 +103,7 @@ public class UnloadTest implements Plugin
 			public UnloadTestStatus()
 			{
 				
-				JButton stop = new JButton("Swap B");
+				JButton stop = new JButton("Swap A");
 		        stop.addActionListener(new StopButton());
 		        this.add(stop);
 			}

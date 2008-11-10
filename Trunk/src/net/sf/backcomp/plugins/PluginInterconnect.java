@@ -1,5 +1,7 @@
 package net.sf.backcomp.plugins;
 
+//FIXME: Synchronization, this class is interacted with by many threads.
+
 public class PluginInterconnect
 {
 	/**

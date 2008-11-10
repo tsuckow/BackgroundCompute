@@ -356,10 +356,16 @@ public final class BC extends SwingWorker<Object, Object[]>
 		setSplashText( localize( "Lists1", "Downloading Lists..." ) );
 		
 		//Retrieve the list of update lists
-		remoteToLocal(
-			ROOT_UPDATE + "dev",
-			"Lists.txt"
-		);
+		if ( !remoteToLocal(ROOT_UPDATE + "dev","Lists.txt") )
+		{
+			updateError(
+				localeFormat(
+					"Error_Download1",
+					"Lists.txt"
+				),
+				null
+			);
+		}
 		
 		//TODO
 		//1. If Lists.txt is empty, something went wrong and exit gracefully
@@ -377,7 +383,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		for ( String list : subLists )//Move through the sublists
 		{
 			String listname = null;
-			
+			String hash = null;
 			{
 				final String[] linea = list.split( ";" );
 				if ( linea.length != 2 )
@@ -395,13 +401,41 @@ public final class BC extends SwingWorker<Object, Object[]>
 				else
 				{
 					listname = linea[0];
+					hash = linea[1];
 				}
 			}
 			
-			remoteToLocal(
-				DIR_UPDATE + "dev&Dir=" + listname,
-				listname + "/DirList.txt"
-			);
+			if ( !remoteToLocal( DIR_UPDATE + "dev&Dir=" + listname,
+				listname + "/DirList.txt" ) )
+			{
+				updateError(
+					localeFormat(
+						"Error_Download1",
+						listname
+					),
+					null
+				);
+			}
+			String localHash = getLocalHash( listname + "/DirList.txt" );
+			
+			//Verify it
+			if ( localHash.compareTo( hash ) != 0 )
+			{
+				//Data ERROR
+				updateError(
+					localeFormat(
+						"Error_Download2",
+						new String[]
+						{
+							listname + "/DirList.txt",
+							localHash,
+							hash
+						}
+					),
+					null
+				);
+			}
+			
 			
 			updated = handleUpdateList(
 				listname + "/DirList.txt",

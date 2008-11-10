@@ -41,6 +41,8 @@ public class AboutDialog
 			);
 		frame.add( logo );
 		
+		frame.pack();
+		
 		//Go Live
 		if(frame != null) frame.setVisible(true);
 	}

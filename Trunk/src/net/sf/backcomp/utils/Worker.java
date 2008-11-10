@@ -10,7 +10,6 @@
 
 package net.sf.backcomp.utils;
 
-import net.sf.backcomp.plugins.Plugin;
 import net.sf.backcomp.plugins.PluginHandler;
 import net.sf.backcomp.plugins.PluginLoader;
 
@@ -50,9 +49,17 @@ class Worker extends Thread
 	    		if(plug != null && !plug.isPaused())
 	    		{
 	    			long cores = plug.getRunningCores();
+	    			final long wanted = plug.wantedCores();
+	    			if( wanted < 0 ) continue; //Invalid plugin want
+	    			if( wanted == 0 ) //Not CPU intensive
+	    			{
+	    				if( !plug.isActive() ) plug.start();
+	    				continue;
+	    			}
 	    			
 	    			if(!didsomething && (coreLevelMax != coreLevelMin+1 && coreLevelMax != coreLevelMin) && cores == coreLevelMax && cores > 0)//Max Exceeded
 	    			{
+	    				//TODO:Debug Logging
 	    				System.out.println("Stopped out of ballance core on plugin: " + plug.getName());
 	    				plug.stopCore();
 	    				cores = plug.getRunningCores();
@@ -60,6 +67,7 @@ class Worker extends Thread
 	    			}
 	    			if(!didsomething && cores == coreLevelMax && coreTotal > maxthreads)//Too many cores
 	    			{
+	    				//TODO:Debug Logging
 	    				System.out.println("Stopped system exceeding core on plugin: " + plug.getName());
 	    				plug.stopCore();
 	    				cores = plug.getRunningCores();
@@ -67,6 +75,7 @@ class Worker extends Thread
 	    			}
 	    			if(!didsomething && coreTotal < maxthreads && cores == coreLevelMin)
 	    			{
+	    				//TODO:Debug Logging
 	    				System.out.println("Started core on plugin: " + plug.getName());
 	    				plug.startCore();//core started.
 	    				didsomething = true;

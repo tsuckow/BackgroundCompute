@@ -11,8 +11,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
 
-//FIXME: Who knows what this does.
-
+/**
+ * Loads plugins and maintains the list of valid ones.
+ * @author Deathbob
+ *
+ */
 public final class PluginLoader
 {
 	private static long lastCheckTime = 0;
@@ -22,7 +25,6 @@ public final class PluginLoader
 	 * The cache of the plugins.
 	 */
 	private static volatile HashMap<String,PluginHandler> PluginCache = new HashMap<String,PluginHandler>();
-	//TODO: Cache need to expire and have ability to unload/refresh plugins. (Bool flag on load that will cause it to dump, GC, GC and load again? [This would require syncronizing.])
 	
 	/**
 	 * 
@@ -31,7 +33,6 @@ public final class PluginLoader
 	 * @param name Name of plugin to load or null on failure.
 	 * @return instance of Plugin given by name. 
 	 */
-	//TODO: exception handling needs work.
 	public static PluginHandler loadPlugin(String name)
 	{
 		if(name == null) return null;
@@ -68,7 +69,8 @@ public final class PluginLoader
 	
 	/**
 	 * 
-	 * Attempts to mount every installed plugin and returns name of classes of Type Plugin.
+	 * Returns name of classes loaded of Type Plugin.<br>
+	 * Once a minute it looks for new plugins.
 	 * 
 	 * @return array of Plugin names that are installed.
 	 */
@@ -84,7 +86,6 @@ public final class PluginLoader
 	
 	/**
 	 * Attempts to mount every installed plugin.
-	 * 
 	 */
 	public static void findPlugins()
 	{
@@ -107,6 +108,9 @@ public final class PluginLoader
     	src.listFiles(filter); //We discard the result since we dont need it
 	}
 	
+	/**
+	 * Halts all plugins when the application is closing.
+	 */
 	public static void VMHalt()
 	{
 		for( String plug : getLoadedPlugins() )
