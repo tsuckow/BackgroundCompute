@@ -103,7 +103,7 @@ public class UnloadTest implements Plugin
 			public UnloadTestStatus()
 			{
 				
-				JButton stop = new JButton("Swap A");
+				JButton stop = new JButton("Swap C");
 		        stop.addActionListener(new StopButton());
 		        this.add(stop);
 			}

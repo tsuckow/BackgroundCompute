@@ -40,7 +40,7 @@ public class PluginHandler
 		//Setup the loader.
 		try
 		{
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()});
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()},null);
 		}
 		catch(MalformedURLException ex)
 		{
