@@ -40,7 +40,7 @@ public class PluginHandler
 		//Setup the loader.
 		try
 		{
-			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()},null);
+			UCL = new URLClassLoader(new URL[]{new File("plugins/" + pluginName + "/").toURI().toURL()});
 		}
 		catch(MalformedURLException ex)
 		{
@@ -55,7 +55,12 @@ public class PluginHandler
 		}
 		catch(ClassNotFoundException ex)
 		{
-			Debug.message("Class not found: " + "plugins/" + pluginName + "/" + pluginName,DebugLevel.Error);
+			Debug.message("Class not found: " + "plugins/" + pluginName + "/" + pluginName,DebugLevel.Error,ex);
+			return;
+		}
+		catch(NoClassDefFoundError ex)
+		{
+			Debug.message("Class Definition not found: " + "plugins/" + pluginName + "/" + pluginName,DebugLevel.Error,ex);
 			return;
 		}
 		
