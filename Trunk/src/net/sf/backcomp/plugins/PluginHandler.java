@@ -62,7 +62,7 @@ public class PluginHandler
 		}
 		catch(NoClassDefFoundError ex)
 		{
-			Debug.messageDlg("Class Definition not found: " + "plugins/" + pluginName + "/" + pluginName + Debug.getStackTrace(ex),DebugLevel.Error,ex);
+			Debug.message("Class Definition not found: " + "plugins/" + pluginName + "/" + pluginName,DebugLevel.Error,ex);
 			return;
 		}
 		
@@ -90,7 +90,7 @@ public class PluginHandler
 		}
 		catch(NoClassDefFoundError ex)
 		{
-			Debug.messageDlg("Class Def Missing: " + pluginName + Debug.getStackTrace(ex),DebugLevel.Error,ex);
+			Debug.message("Class Def Missing: " + pluginName,DebugLevel.Error,ex);
 			return;
 		}
 		
