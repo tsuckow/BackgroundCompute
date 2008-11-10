@@ -90,7 +90,7 @@ public class PluginHandler
 		}
 		catch(NoClassDefFoundError ex)
 		{
-			Debug.message("Class Def Missing: " + pluginName,DebugLevel.Error);
+			Debug.messageDlg("Class Def Missing: " + pluginName + Debug.getStackTrace(ex),DebugLevel.Error,ex);
 			return;
 		}
 		
