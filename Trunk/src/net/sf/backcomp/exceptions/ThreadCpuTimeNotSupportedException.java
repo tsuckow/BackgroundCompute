@@ -1,4 +1,4 @@
-package net.sf.backcomp.exceptions2;
+package net.sf.backcomp.exceptions;
 
 public class ThreadCpuTimeNotSupportedException extends Exception
 {

@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import net.sf.backcomp.exceptions2.PluginNotPauseableError;
+import net.sf.backcomp.exceptions.PluginNotPauseableError;
 import net.sf.backcomp.plugins.Plugin;
 import net.sf.backcomp.plugins.PluginInterconnect;
 

@@ -10,7 +10,7 @@ package net.sf.backcomp.plugins.utils;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
-import net.sf.backcomp.exceptions2.ThreadCpuTimeNotSupportedException;
+import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
 
 /**
  * Manages tracking CPU usage for a single thread.
