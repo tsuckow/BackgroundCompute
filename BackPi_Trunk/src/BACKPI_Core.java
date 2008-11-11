@@ -1,76 +1,97 @@
-/**
- * @(#)BACKPI_Plugin.java
- *
- * Background Pi ( Computes Decimal Digits of Pi )
- * Copyright (C) 2007 Thomas Suckow (Deathbob)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * support@defcon1.hopto.org
- *
- * @author Deathbob
- * @version 0.1 2006/12/20
- */
-
-import net.sf.backcomp.plugins.Plugin;
-import net.sf.backcomp.utils.*;
-import net.sf.backcomp.debug.*;
-
 import java.awt.TrayIcon;
-import javax.swing.JPanel;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
+import java.util.Date;
+import java.util.Properties;
 
-import org.w3c.dom.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.*;
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
+import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
+import net.sf.backcomp.plugins.utils.CpuLimiter;
+import net.sf.backcomp.utils.Tray;
 
-public class BACKPI_Plugin extends Plugin
+
+public class BACKPI_Core extends Thread
 {
+	private final Properties Settings;
 	
-	private CopyOnWriteArrayList<BACKPI_Status> Threads = new CopyOnWriteArrayList<BACKPI_Status>();
-	private static Properties defaultSettings()
+	private final BACKPI_Status status;
+	
+	private final CpuLimiter limiter;
+	
+	private volatile boolean halt = false;
+	
+	BACKPI_Core(Properties Set, BACKPI_Status Stat)
 	{
-		Properties set = new Properties();
+		Settings = Set;
+		status = Stat;
 		
-		//set.setProperty("username", "");
-		set.setProperty("server_path", "http://defcon1.hopto.org/backpi/");
+		CpuLimiter limitInit = null;
 		
-		return set;
+		try
+		{
+			limitInit = new CpuLimiter();
+		}
+		catch (ThreadCpuTimeNotSupportedException e)
+		{}//We don't support this.
+		finally
+		{
+			limiter = limitInit;
+		}
 	}
-	private static Properties defaultResume()
+	
+	public void halt()
 	{
-		Properties set = new Properties();
-		
-		set.setProperty("range", "1");
-		set.setProperty("iteration", "0");
-		set.setProperty("sum", "0");
-		
-		return set;
+		halt = true;
 	}
-	public final static Properties Settings = new Properties( defaultSettings() );//Load settings object with defaults
-	public final static Properties Resume = new Properties( defaultResume() );//Load settings object with defaults
 	
-	public BACKPI_Plugin() //{}
-	{}
+	@Override
+	public void run()
+	{
+		main();
+	}
 	
-    //int i = 0;
-    
+	private boolean coreShutdown(BACKPI_Status status)
+   	{
+		if(limiter != null)
+		{
+			limiter.recordCpuUsage();
+			limiter.doSleep();
+		}
+		else
+		{
+			CpuLimiter.sleep(100);
+		}
+		
+   		if( halt )
+   		{
+   			return true;
+   		}
+   		return false;
+   	}
+	
+	private static String formatTime(long timeRemaining)
+   	{
+   		String result = "";
+   		int sec = (int)(timeRemaining/1000) % 60;
+   		int min = (int)(timeRemaining/(1000*60)) % 60;
+   		int hours = (int)(timeRemaining/(1000*60*60)) % 24;
+   		int days = (int)(timeRemaining/(1000*60*60*24)) % 7;
+   		int weeks = (int)(timeRemaining/(1000*60*60*24*7));
+   		if (weeks != 0)
+   			result = weeks + " weeks ";
+   		if (days != 0 || weeks != 0)
+   			result += days + " days ";
+   		result += ((hours<10)?"0":"") + hours + ":" + ((min<10)?"0":"") + min + ":" + ((sec<10)?"0":"") + sec;
+   		return result;
+   	}
 	
 	private long comm_nextRange()
 	{
@@ -154,7 +175,7 @@ public class BACKPI_Plugin extends Plugin
 		if(range == 1 && data != 141592653)
 		{
 			Debug.messageDlg("Computation Error Detected In Plugin BACKPI!", DebugLevel.Fatal);
-			stopAll(true,true);
+			//TODO:Prevent further execution.
 			throw new Error("BACKPI: Calculation of range 1 failed.");
 		}
 		
@@ -351,38 +372,9 @@ public class BACKPI_Plugin extends Plugin
    	{
    	    return (long)Math.floor( ( bound )/( Math.log( bound )-1.083) );
    	}
-   	
-   	private boolean coreShutdown(BACKPI_Status status)
-   	{
-   		if( currentCoreShouldExit() )
-   		{
-   			Threads.remove(status);
-   			return true;
-   		}
-   		return false;
-   	}
-   	
-   	private static String formatTime(long timeRemaining)
-   	{
-   		String result = "";
-   		int sec = (int)(timeRemaining/1000) % 60;
-   		int min = (int)(timeRemaining/(1000*60)) % 60;
-   		int hours = (int)(timeRemaining/(1000*60*60)) % 24;
-   		int days = (int)(timeRemaining/(1000*60*60*24)) % 7;
-   		int weeks = (int)(timeRemaining/(1000*60*60*24*7));
-   		if (weeks != 0)
-   			result = weeks + " weeks ";
-   		if (days != 0 || weeks != 0)
-   			result += days + " days ";
-   		result += ((hours<10)?"0":"") + hours + ":" + ((min<10)?"0":"") + min + ":" + ((sec<10)?"0":"") + sec;
-   		return result;
-   	}
-   	
-   	@Override
-    public void main()
+	
+	public void main()
     {
-   		BACKPI_Status status = new BACKPI_Status();
-   		Threads.add(status);
    		
     	long n = 1;
     	
@@ -455,7 +447,14 @@ public class BACKPI_Plugin extends Plugin
     			{
     				status.Iteration = PrimeCount(a);
     						
-    				status.cputime = getCpuUsage();
+    				if(limiter != null)
+    				{
+    					status.cputime = limiter.getAvgCpuUsage();	
+    				}
+    				else
+    				{
+    					status.cputime = -2;
+    				}
     			
     				long timetotal = 0;
     				for(short j = 0; j < iTimeNum; ++j){timetotal += iTime[j];}
@@ -681,93 +680,4 @@ public class BACKPI_Plugin extends Plugin
     		if(coreShutdown(status)) return;
     	}
     }
-    
-   	@Override
-    public String getName()
-    {
-    	return "Background Pi";
-    }
-    
-    @Override
-    public String getInfo()
-    {
-    	return "<img src='" + BACKPI_Plugin.class.getResource("images/Info.png") + "'>";
-    }
-    
-    @Override
-    public JPanel getSettings()
-    {
-    	return null;
-    }
-    
-    @Override
-    public JPanel getStatus()
-    {
-    	JPanel statusPanel = new BACKPI_StatusPanel(Threads);
-    	return statusPanel;
-    }
-    
-    @Override
-    public boolean needCore()
-    {
-    	return true;
-    }
-    
-    @Override
-    protected void core()
-    {
-    	main();
-    }
-    
-    public void remove()
-    {
-    	//BC.PError("Removing...");
-    	//TODO: Add uninstall code (should basicly just delete my own directory)
-    }
 }
-
-/*NodeList listOfPersons = doc.getElementsByTagName("person");
-int totalPersons = listOfPersons.getLength();
-System.out.println("Total no of people : " + totalPersons);
-
-for(int s=0; s<listOfPersons.getLength() ; s++){
-
-
-    Node firstPersonNode = listOfPersons.item(s);
-    if(firstPersonNode.getNodeType() == Node.ELEMENT_NODE){
-
-
-        Element firstPersonElement = (Element)firstPersonNode;
-
-        //-------
-        NodeList firstNameList = firstPersonElement.getElementsByTagName("first");
-        Element firstNameElement = (Element)firstNameList.item(0);
-
-        NodeList textFNList = firstNameElement.getChildNodes();
-        System.out.println("First Name : " + 
-               ((Node)textFNList.item(0)).getNodeValue().trim());
-
-        //-------
-        NodeList lastNameList = firstPersonElement.getElementsByTagName("last");
-        Element lastNameElement = (Element)lastNameList.item(0);
-
-        NodeList textLNList = lastNameElement.getChildNodes();
-        System.out.println("Last Name : " + 
-               ((Node)textLNList.item(0)).getNodeValue().trim());
-
-        //----
-        NodeList ageList = firstPersonElement.getElementsByTagName("age");
-        Element ageElement = (Element)ageList.item(0);
-
-        NodeList textAgeList = ageElement.getChildNodes();
-        System.out.println("Age : " + 
-               ((Node)textAgeList.item(0)).getNodeValue().trim());
-
-        //------
-
-
-    }//end of if clause
-
-
-}//end of for loop with s var
-*/

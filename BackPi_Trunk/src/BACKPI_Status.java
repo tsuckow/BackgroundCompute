@@ -14,8 +14,8 @@ public class BACKPI_Status
 	
 	public String timeleft = "";
 	
+	public BACKPI_Core statusCore;
+	
 	public BACKPI_Status()
-	{
-		//Init
-	}
+	{	}
 }
