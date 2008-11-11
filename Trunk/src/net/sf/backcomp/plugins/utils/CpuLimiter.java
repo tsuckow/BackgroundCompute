@@ -103,14 +103,18 @@ public class CpuLimiter
 	
 	public void doSleep()
 	{
+		sleep( getSleepTime() );
+	}
+	
+	static public void sleep(long ms)
+	{
 		try
     	{
-			Thread.sleep( getSleepTime() );
+			Thread.sleep( ms );
     	}
     	catch(InterruptedException e)
     	{
     		
     	}
 	}
-	
 }

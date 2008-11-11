@@ -20,7 +20,6 @@ public class PluginHandler
 	final String pluginName;
 	private Plugin myPlugin = null;
 	private PluginInterconnect myInterconnect = null;
-	private int cores = 0;
 	private boolean loaded = false;
 	
 	/**
@@ -201,20 +200,20 @@ public class PluginHandler
 	
 	public int getRunningCores()
 	{
-		return isActive()?cores:0;
+		return isActive()?myInterconnect.getCores():0;
 	}
 	
 	public void stopCore()
 	{
 		if( !isValid() ) return;
-		if(cores > 0) --cores;
+		if(myInterconnect.getCores() > 0)  myInterconnect.setCores( myInterconnect.getCores() - 1 );
 	}
 	
 	public void startCore()
 	{
 		if( !isValid() ) return;
 		if( !isActive() ) myPlugin.start();
-		++cores;
+		myInterconnect.setCores( myInterconnect.getCores() + 1 );
 	}
 	
 	public int wantedCores()

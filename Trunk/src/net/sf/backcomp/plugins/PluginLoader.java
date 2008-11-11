@@ -66,7 +66,7 @@ public final class PluginLoader
 	}
 	
 	
-	
+	//TODO: Add a way to guarantee it will not load new plugins (for like when the app is closing)
 	/**
 	 * 
 	 * Returns name of classes loaded of Type Plugin.<br>
