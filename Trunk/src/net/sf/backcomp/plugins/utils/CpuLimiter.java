@@ -26,7 +26,7 @@ public class CpuLimiter
 	private final int BUFFER_SIZE = 20;
 	private final ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
 	
-	private long CpuGoal = 6000;
+	private long CpuGoal = 60 * 100;
 	private long lastCheck = 0;
 	private long lastCpuTime = 0;
 	private int CpuSamples[] = new int[BUFFER_SIZE];
@@ -75,8 +75,6 @@ public class CpuLimiter
 		//Usage % where 100% = 10,000 (100*100)
 		int usageInterval = (int)( cpuInterval * 100 * 100 / timeInterval );
 		
-		Debug.message("Thread CPU Time: " + usageInterval, DebugLevel.Debug);
-		
 		//Prepare for next round,
 		lastCpuTime = currentCpu;
 		lastCheck = currentTime;
@@ -86,7 +84,7 @@ public class CpuLimiter
 		if(samplesIndex >= BUFFER_SIZE) samplesIndex = 0;
 		
 		//Recalculate sleep time
-		throttleTime += (getAvgCpuUsage() - CpuGoal)/100;
+		throttleTime += (getAvgCpuUsage() - CpuGoal)/(100*100);
 		if(throttleTime < 0) throttleTime = 0;
 	}
 	
