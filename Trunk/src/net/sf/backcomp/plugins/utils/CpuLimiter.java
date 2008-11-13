@@ -25,7 +25,6 @@ public class CpuLimiter
 {
 	private final int BUFFER_SIZE = 20;
 	private final ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
-	private Thread thisThread = Thread.currentThread();
 	
 	private long CpuGoal = 6000;
 	private long lastCheck = 0;
@@ -60,7 +59,7 @@ public class CpuLimiter
 	 */
 	public long getThreadCpuTime()
 	{
-		return TMB.getThreadCpuTime(thisThread.getId());
+		return TMB.getThreadCpuTime(Thread.currentThread().getId());
 	}
 	
 	public void recordCpuUsage()

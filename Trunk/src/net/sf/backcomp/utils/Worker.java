@@ -26,6 +26,11 @@ class Worker extends Thread
 {
 	private static boolean stop = false;
 	
+	Worker()
+	{
+		super("Worker");
+	}
+	
     public void run()
     { 	
     	long coreLevelMax = 0;//Max's
