@@ -84,7 +84,7 @@ public class CpuLimiter
 		if(samplesIndex >= BUFFER_SIZE) samplesIndex = 0;
 		
 		//Recalculate sleep time
-		throttleTime += (getAvgCpuUsage() - CpuGoal)/(100*100);
+		throttleTime += (getAvgCpuUsage() - CpuGoal)/(100*10);
 		if(throttleTime < 0) throttleTime = 0;
 	}
 	
