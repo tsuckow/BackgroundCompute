@@ -10,6 +10,8 @@ package net.sf.backcomp.plugins.utils;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
 
 /**
@@ -42,6 +44,7 @@ public class CpuLimiter
 	{
 		if( !TMB.isCurrentThreadCpuTimeSupported() )
 		{
+			Debug.message("Thread CPU Time Not Supported", DebugLevel.NotImplemented);
 			throw new ThreadCpuTimeNotSupportedException();
 		}
 		
