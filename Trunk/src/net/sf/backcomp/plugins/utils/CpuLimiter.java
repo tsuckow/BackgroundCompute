@@ -76,6 +76,8 @@ public class CpuLimiter
 		//Usage % where 100% = 10,000 (100*100)
 		int usageInterval = (int)( cpuInterval * 100 * 100 / timeInterval );
 		
+		Debug.message("Thread CPU Time: " + usageInterval, DebugLevel.Debug);
+		
 		//Prepare for next round,
 		lastCpuTime = currentCpu;
 		lastCheck = currentTime;
