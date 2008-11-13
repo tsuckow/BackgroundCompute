@@ -83,7 +83,7 @@ public class CpuLimiter
 		
 		//Commit the usage number
 		CpuSamples[samplesIndex++] = usageInterval;
-		if(samplesIndex > BUFFER_SIZE) samplesIndex = 0;
+		if(samplesIndex >= BUFFER_SIZE) samplesIndex = 0;
 		
 		//Recalculate sleep time
 		throttleTime += (getAvgCpuUsage() - CpuGoal)/100;
