@@ -41,15 +41,15 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		
+		setMinimumSize(new Dimension(200,100));
 		
 		pack(); //Compute Size
 
 		//Handle Minimum Size
-		final Dimension size = getSize();
+		/*final Dimension size = getSize();
 		if(size.width < 200) size.width = 200;
 		if(size.height < 100) size.height = 100;
-		setSize(size);
+		setSize(size);*/
 		
 		if (parent != null)
 		{
