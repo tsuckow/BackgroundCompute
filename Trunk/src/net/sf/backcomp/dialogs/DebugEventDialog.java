@@ -3,6 +3,7 @@ package net.sf.backcomp.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,13 +27,6 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		super(parent, "Debug", true);
 		setModal(false);
 		
-		if (parent != null)
-		{
-			Dimension parentSize = parent.getSize(); 
-			Point p = parent.getLocation(); 
-			setLocation(p.x + parentSize.width / 4, p.y + parentSize.height / 4);
-		}
-		
 		JPanel messagePane = new JPanel();
 		messagePane.add(new JLabel(event.getMsg()));
 		getContentPane().add(messagePane);
@@ -47,7 +41,35 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		pack(); 
+		
+		
+		pack(); //Compute Size
+
+		//Handle Minimum Size
+		final Dimension size = getSize();
+		if(size.width < 200) size.width = 200;
+		if(size.height < 100) size.height = 100;
+		setSize(size);
+		
+		if (parent != null)
+		{
+			Dimension parentSize = parent.getSize(); 
+			Point p = parent.getLocation(); 
+			setLocation(p.x + parentSize.width / 4, p.y + parentSize.height / 4);
+		}
+		else
+		{
+			final Dimension screenSize =
+				Toolkit.getDefaultToolkit().getScreenSize();
+			screenSize.height = screenSize.height / 2;
+			screenSize.width = screenSize.width / 2;
+			size.height = size.height / 2;
+			size.width = size.width / 2;
+			final int y = screenSize.height - size.height;
+			final int x = screenSize.width - size.width;
+			setLocation( x, y );
+		}
+		
 		setVisible(true);
 	}
 	  
