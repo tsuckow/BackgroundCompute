@@ -46,10 +46,7 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		pack(); //Compute Size
 
 		//Handle Minimum Size
-		/*
-		if(size.width < 200) size.width = 200;
-		if(size.height < 100) size.height = 100;
-		setSize(size);*/
+		setMinimumSize(getSize());
 		
 		if (parent != null)
 		{

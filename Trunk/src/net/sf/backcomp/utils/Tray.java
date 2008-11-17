@@ -185,7 +185,7 @@ public final class Tray
 				}
 	            else if( e.getActionCommand().equals("Event") )
 	            {
-	            	Debug.messageDlg("Debug Event from tray", DebugLevel.Warning, new IllegalAccessException("Debug Event Sample Exception"));
+	            	Debug.messageDlg("Debug Event from tray\n1\n2\n3", DebugLevel.Warning, new IllegalAccessException("Debug Event Sample Exception"));
 				}
 	            else if( e.getActionCommand().equals("About") )
 	            {
