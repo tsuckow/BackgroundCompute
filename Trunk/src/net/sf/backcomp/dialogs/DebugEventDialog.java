@@ -46,7 +46,7 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		pack(); //Compute Size
 
 		//Handle Minimum Size
-		/*final Dimension size = getSize();
+		/*
 		if(size.width < 200) size.width = 200;
 		if(size.height < 100) size.height = 100;
 		setSize(size);*/
@@ -61,6 +61,7 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		{
 			final Dimension screenSize =
 				Toolkit.getDefaultToolkit().getScreenSize();
+			final Dimension size = getSize();
 			screenSize.height = screenSize.height / 2;
 			screenSize.width = screenSize.width / 2;
 			size.height = size.height / 2;
