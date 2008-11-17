@@ -11,6 +11,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
 
+import net.sf.backcomp.dialogs.DebugEventDialog;
+
 public final class Debug
 {
 	final static String NEW_LINE = System.getProperty("line.separator");
@@ -18,17 +20,29 @@ public final class Debug
 	
 	private static CopyOnWriteArrayList<DebugMsg> Msgs = new CopyOnWriteArrayList<DebugMsg>();
 	
-	public static void message(String msg, DebugLevel lvl)
+	public static DebugMsg message(String msg, DebugLevel lvl)
 	{
 		//Get Time, Add to ArrayList
 		DebugMsg dm = new DebugMsg(msg,lvl);
 		Msgs.add(dm);
 		if(Msgs.size() > 500) Msgs.remove(0);
+		return dm;
+	}
+	
+	public static DebugMsg message(String msg, DebugLevel lvl, Throwable thrown)
+	{
+		String stack = getStackTrace(thrown);
+		
+		//Get Time, Add to ArrayList
+		DebugMsg dm = new DebugMsg(msg,lvl,stack);
+		Msgs.add(dm);
+		if(Msgs.size() > 500) Msgs.remove(0);
+		return dm;
 	}
 	
 	public static void messageDlg(String msg, DebugLevel lvl)
 	{
-		message(msg, lvl);
+		DebugMsg dm = message(msg, lvl);
 		
 		int icon = 0;
 		switch(lvl)
@@ -51,20 +65,12 @@ public final class Debug
 				break;
 		}	
 		JOptionPane.showMessageDialog(null,msg,"Debug Level: " + lvl.toString(),icon);
-	}
-	
-	public static void message(String msg, DebugLevel lvl, Throwable thrown)
-	{
-		String stack = getStackTrace(thrown);
-		
-		//Get Time, Add to ArrayList
-		DebugMsg dm = new DebugMsg(msg,lvl,stack);
-		Msgs.add(dm);
+		new DebugEventDialog(null, dm);
 	}
 	
 	public static void messageDlg(String msg, DebugLevel lvl, Throwable thrown)
 	{
-		message(msg, lvl, thrown);
+		DebugMsg dm = message(msg, lvl, thrown);
 		
 		String stack = getStackTrace(thrown);
 		
@@ -90,6 +96,7 @@ public final class Debug
 				break;
 		}	
 		JOptionPane.showMessageDialog(null,msg + NEW_LINE + NEW_LINE + stack,"Debug Level: " + lvl.toString(),icon);
+		new DebugEventDialog(null, dm);
 	}
 	
 	/**

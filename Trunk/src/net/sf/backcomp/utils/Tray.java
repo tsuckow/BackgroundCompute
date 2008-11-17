@@ -7,12 +7,6 @@
  */
 package net.sf.backcomp.utils;
 
-import net.sf.backcomp.debug.Debug;
-import net.sf.backcomp.debug.DebugLevel;
-import net.sf.backcomp.dialogs.*;
-import net.sf.backcomp.plugins.Plugin;
-import net.sf.backcomp.plugins.PluginLoader;
-
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -22,6 +16,14 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
+import net.sf.backcomp.dialogs.AboutDialog;
+import net.sf.backcomp.dialogs.DebugDialog;
+import net.sf.backcomp.dialogs.PluginManager;
+import net.sf.backcomp.dialogs.Settings;
+import net.sf.backcomp.plugins.PluginLoader;
 
 /**
  * @author Deathbob
@@ -67,6 +69,12 @@ public final class Tray
 				Item = new MenuItem("Debug Window");
 	         	Item.addActionListener(listener);
          		Item.setActionCommand("Debug"); 
+         		
+				popup.add(Item);
+				
+				Item = new MenuItem("Debug Event");
+	         	Item.addActionListener(listener);
+         		Item.setActionCommand("Event"); 
          		
 				popup.add(Item);
 				
@@ -174,6 +182,10 @@ public final class Tray
 	            else if( e.getActionCommand().equals("Debug") )
 	            {
 	            	DebugDialog.show();
+				}
+	            else if( e.getActionCommand().equals("Event") )
+	            {
+	            	Debug.messageDlg("Debug Event from tray", DebugLevel.Warning, new IllegalAccessException("Debug Event Sample Exception"));
 				}
 	            else if( e.getActionCommand().equals("About") )
 	            {

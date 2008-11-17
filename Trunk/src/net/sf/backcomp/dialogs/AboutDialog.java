@@ -1,11 +1,11 @@
 package net.sf.backcomp.dialogs;
 
-import java.awt.BorderLayout;
 import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class AboutDialog
 {
@@ -30,7 +30,7 @@ public class AboutDialog
 		}
 		frame = new JFrame("About Background Compute");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
+		JPanel p = new JPanel();
 		//Add the background Image
 		final JLabel logo =
 			new JLabel(
@@ -39,7 +39,8 @@ public class AboutDialog
 					"Updater"
 				)
 			);
-		frame.add( logo );
+		p.add(logo);
+		frame.add( p );
 		
 		frame.pack();
 		
