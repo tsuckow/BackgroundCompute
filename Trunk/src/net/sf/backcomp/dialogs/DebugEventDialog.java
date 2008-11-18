@@ -3,6 +3,7 @@ package net.sf.backcomp.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -11,10 +12,13 @@ import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import net.sf.backcomp.components.MultiLineLabel;
 import net.sf.backcomp.debug.DebugMsg;
@@ -30,8 +34,9 @@ public class DebugEventDialog extends JDialog implements ActionListener
 	{
 		super(parent, "Debug", true);
 		setModal(false);
+		getContentPane().setLayout(new BorderLayout());
 		
-		JPanel northPane = new JPanel();
+		JPanel northPane = new JPanel(new BorderLayout());
 		final JLabel icon =
 			new JLabel(
 				new ImageIcon(
@@ -41,10 +46,20 @@ public class DebugEventDialog extends JDialog implements ActionListener
 					"Attention!"
 				)
 			);
-		icon.setAlignmentX(LEFT_ALIGNMENT);
+		icon.setVerticalAlignment(SwingConstants.TOP);
+		icon.setBorder( new EmptyBorder( 5,5,5,5 ) );
 		northPane.add(icon,BorderLayout.WEST);
-		northPane.add(new MultiLineLabel(event.getMsg()),BorderLayout.CENTER);
-		northPane.setBackground(Color.CYAN);
+		JLabel rightHold = new JLabel();
+		rightHold.setMinimumSize(new Dimension(50,50));
+		rightHold.setPreferredSize(new Dimension(50,50));
+		rightHold.setBorder( new EmptyBorder( 5,5,5,5 ) );
+		northPane.add(rightHold,BorderLayout.EAST);
+		
+		JPanel msgPane = new JPanel();
+		MultiLineLabel msg = new MultiLineLabel(event.getMsg(),5,5);
+		msg.setAlignmentX(CENTER_ALIGNMENT);
+		msgPane.add(msg);
+		northPane.add(msgPane,BorderLayout.CENTER);
 		getContentPane().add(northPane,BorderLayout.NORTH);
 		
 		JPanel buttonPane = new JPanel();
