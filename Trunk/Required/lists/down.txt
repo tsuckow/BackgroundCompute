@@ -1,5 +1,6 @@
 .
 images
+images/debug
 net/sf/backcomp/utils
 net/sf/backcomp/debug
 net/sf/backcomp/components

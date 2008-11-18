@@ -6,7 +6,9 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,9 +30,19 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		super(parent, "Debug", true);
 		setModal(false);
 		
-		JPanel messagePane = new JPanel();
-		messagePane.add(new MultiLineLabel(event.getMsg()));
-		getContentPane().add(messagePane,BorderLayout.NORTH);
+		JPanel northPane = new JPanel();
+		final JLabel icon =
+			new JLabel(
+				new ImageIcon(
+					"images" + File.separator
+					+ "debug" + File.separator
+					+ "attention50x50.png",
+					"Updater"
+				)
+			);
+		northPane.add(icon,BorderLayout.WEST);
+		northPane.add(new MultiLineLabel(event.getMsg()),BorderLayout.CENTER);
+		getContentPane().add(northPane,BorderLayout.NORTH);
 		
 		JPanel buttonPane = new JPanel();
 		JButton button = new JButton("OK"); 
