@@ -1,6 +1,0 @@
-net/sf/backcomp/plugins/Plugin.class
-net/sf/backcomp/plugins/PluginHandler.class
-net/sf/backcomp/plugins/PluginInterconnect$PluginState.class
-net/sf/backcomp/plugins/PluginInterconnect.class
-net/sf/backcomp/plugins/PluginLoader$1.class
-net/sf/backcomp/plugins/PluginLoader.class

@@ -2,6 +2,7 @@
 images
 net/sf/backcomp/utils
 net/sf/backcomp/debug
+net/sf/backcomp/components
 net/sf/backcomp/dialogs
 net/sf/backcomp/exceptions
 net/sf/backcomp/plugins

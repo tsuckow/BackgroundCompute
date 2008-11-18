@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.sf.backcomp.components.MultiLineLabel;
 import net.sf.backcomp.debug.DebugMsg;
 
 public class DebugEventDialog extends JDialog implements ActionListener
@@ -28,8 +29,8 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		setModal(false);
 		
 		JPanel messagePane = new JPanel();
-		messagePane.add(new JLabel(event.getMsg()));
-		getContentPane().add(messagePane);
+		messagePane.add(new MultiLineLabel(event.getMsg()));
+		getContentPane().add(messagePane,BorderLayout.NORTH);
 		
 		JPanel buttonPane = new JPanel();
 		JButton button = new JButton("OK"); 

@@ -1,4 +1,0 @@
-net/sf/backcomp/debug/DebugLevel.class
-net/sf/backcomp/debug/DebugMsg.class
-net/sf/backcomp/debug/Debug$1.class
-net/sf/backcomp/debug/Debug.class

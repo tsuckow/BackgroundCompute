@@ -1,7 +1,0 @@
-lists/UpdaterList.txt
-lists/MediaList.txt
-lists/DebugList.txt
-lists/UtilsList.txt
-lists/PluginsList.txt
-lists/DialogsList.txt
-lists/ExceptionsList.txt
