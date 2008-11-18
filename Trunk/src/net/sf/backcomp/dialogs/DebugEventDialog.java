@@ -1,6 +1,7 @@
 package net.sf.backcomp.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -37,11 +38,13 @@ public class DebugEventDialog extends JDialog implements ActionListener
 					"images" + File.separator
 					+ "debug" + File.separator
 					+ "attention50x50.png",
-					"Updater"
+					"Attention!"
 				)
 			);
+		icon.setAlignmentX(LEFT_ALIGNMENT);
 		northPane.add(icon,BorderLayout.WEST);
 		northPane.add(new MultiLineLabel(event.getMsg()),BorderLayout.CENTER);
+		northPane.setBackground(Color.CYAN);
 		getContentPane().add(northPane,BorderLayout.NORTH);
 		
 		JPanel buttonPane = new JPanel();
