@@ -4,7 +4,6 @@ package net.sf.backcomp.components;
 //You may study, use, modify, and distribute this example for any purpose.
 //This example is provided WITHOUT WARRANTY either expressed or implied.
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,7 +11,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.StringTokenizer;
 
-public class MultiLineLabel extends Canvas
+import javax.swing.JComponent;
+
+public class MultiLineLabel extends JComponent
 {
 	private static final long serialVersionUID = 1L;
 
