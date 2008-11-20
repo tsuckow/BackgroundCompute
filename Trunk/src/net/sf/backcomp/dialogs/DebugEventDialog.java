@@ -1,25 +1,26 @@
 package net.sf.backcomp.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import net.sf.backcomp.components.CollapsiblePanel;
 import net.sf.backcomp.components.MultiLineLabel;
 import net.sf.backcomp.debug.DebugMsg;
 
@@ -62,6 +63,23 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		northPane.add(msgPane,BorderLayout.CENTER);
 		getContentPane().add(northPane,BorderLayout.NORTH);
 		
+		String stack = event.getStack();
+		if( stack != null )
+		{
+			JTextArea tf = new JTextArea();
+			tf.setText(stack);
+			tf.setEditable(false);
+			JScrollPane sp = new JScrollPane(tf);
+			Icon i = new ImageIcon(
+				"images" + File.separator
+				+ "debug" + File.separator
+				+ "attention50x50.png",
+				"Attention!"
+			);
+			CollapsiblePanel cp = new CollapsiblePanel(sp, i, i);
+			getContentPane().add(cp, BorderLayout.CENTER);
+		}
+		
 		JPanel buttonPane = new JPanel();
 		JButton button = new JButton("OK"); 
 		buttonPane.add(button); 
@@ -75,6 +93,11 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		setMinimumSize(new Dimension(200,100));
 		
 		pack(); //Compute Size
+		
+		Dimension nsize = northPane.getSize();
+		northPane.setMinimumSize(nsize);
+		nsize.width = Integer.MAX_VALUE;
+		northPane.setMaximumSize(nsize);
 
 		//Handle Minimum Size
 		setMinimumSize(getSize());

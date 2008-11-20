@@ -71,6 +71,10 @@ public class CpuLimiter
 		
 		//If no time passed, forgetaboutit
 		if( cpuInterval == 0 || timeInterval == 0 ) return;
+		if( cpuInterval > timeInterval)
+		{
+			Debug.message("Paradox: Cpu time greater than time elapsed.\n"+cpuInterval+"\n"+timeInterval, DebugLevel.Warning);
+		}
 		
 		//Usage % where 100% = 10,000 (100*100)
 		int usageInterval = (int)( cpuInterval * 100 * 100 / timeInterval );
