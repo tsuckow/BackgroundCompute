@@ -66,6 +66,7 @@ public class CpuLimiter
 	{
 		long currentCpu = getThreadCpuTime();
 		long currentTime = System.nanoTime();
+		long currentCpu2 = getThreadCpuTime();//Diagnosic for why cpu shit is happening.
 		long cpuInterval = currentCpu - lastCpuTime;
 		long timeInterval = currentTime - lastCheck;
 		
@@ -73,7 +74,16 @@ public class CpuLimiter
 		if( cpuInterval == 0 || timeInterval == 0 ) return;
 		if( cpuInterval > timeInterval)
 		{
-			Debug.message("Paradox: Cpu time greater than time elapsed.\n"+cpuInterval+"\n"+timeInterval, DebugLevel.Warning);
+			Debug.message(
+				"Paradox: Cpu time greater than time elapsed.\n"
+				+cpuInterval
+				+"\n"
+				+timeInterval
+				+"\n"
+				+currentCpu2
+				, DebugLevel.Warning
+			);
+			return;
 		}
 		
 		//Usage % where 100% = 10,000 (100*100)
