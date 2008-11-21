@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 
 import javax.swing.Icon;
@@ -24,12 +26,16 @@ import net.sf.backcomp.components.CollapsiblePanel;
 import net.sf.backcomp.components.MultiLineLabel;
 import net.sf.backcomp.debug.DebugMsg;
 
-public class DebugEventDialog extends JDialog implements ActionListener
+public class DebugEventDialog extends JDialog
+implements ActionListener, ComponentListener
 {
 	/**
 	 * Serial Number
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	Dimension minsize;
+	Dimension prefsize;
 
 	public DebugEventDialog(JFrame parent, DebugMsg event)
 	{
@@ -76,6 +82,8 @@ public class DebugEventDialog extends JDialog implements ActionListener
 				+ "attention50x50.png",
 				"Attention!"
 			);
+			sp.addComponentListener(this);
+			
 			CollapsiblePanel cp = new CollapsiblePanel(sp, i, i);
 			getContentPane().add(cp, BorderLayout.CENTER);
 		}
@@ -94,13 +102,10 @@ public class DebugEventDialog extends JDialog implements ActionListener
 		
 		pack(); //Compute Size
 		
-		Dimension nsize = northPane.getSize();
-		northPane.setMinimumSize(nsize);
-		nsize.width = Integer.MAX_VALUE;
-		northPane.setMaximumSize(nsize);
-
-		//Handle Minimum Size
-		setMinimumSize(getSize());
+		minsize = getSize();
+		prefsize = new Dimension(minsize);
+		
+		setResizable(false);
 		
 		if (parent != null)
 		{
@@ -129,5 +134,37 @@ public class DebugEventDialog extends JDialog implements ActionListener
 	{
 		setVisible(false); 
 		dispose(); 
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+		if(minsize != null)
+		{
+			prefsize = new Dimension(getSize());
+			setMinimumSize(minsize);
+			setSize(minsize);
+			setResizable(false);
+		}	
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		Dimension biggerminsize = new Dimension( minsize );
+		biggerminsize.height = biggerminsize.height + 50;
+		setMinimumSize(biggerminsize);
+		setSize(prefsize);
+		setResizable(true);
 	}
 }

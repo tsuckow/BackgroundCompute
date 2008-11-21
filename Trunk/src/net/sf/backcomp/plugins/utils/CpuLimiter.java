@@ -66,7 +66,7 @@ public class CpuLimiter
 	{
 		long currentCpu = getThreadCpuTime();
 		long currentTime = System.nanoTime();
-		long currentCpu2 = getThreadCpuTime();//Diagnosic for why cpu shit is happening.
+		long currentCpu2 = getThreadCpuTime();//Diagnostic for why cpu shit is happening.
 		long cpuInterval = currentCpu - lastCpuTime;
 		long timeInterval = currentTime - lastCheck;
 		
@@ -80,7 +80,7 @@ public class CpuLimiter
 				+"\n"
 				+timeInterval
 				+"\n"
-				+currentCpu2
+				+(currentCpu2-currentCpu)
 				, DebugLevel.Warning
 			);
 			return;
@@ -89,9 +89,9 @@ public class CpuLimiter
 		//Usage % where 100% = 10,000 (100*100)
 		int usageInterval = (int)( cpuInterval * 100 * 100 / timeInterval );
 		
-		//Prepare for next round,
-		lastCpuTime = currentCpu;
-		lastCheck = currentTime;
+		//Prepare for next round.
+		lastCheck = System.nanoTime();
+		lastCpuTime = getThreadCpuTime();
 		
 		//Commit the usage number
 		CpuSamples[samplesIndex++] = usageInterval;

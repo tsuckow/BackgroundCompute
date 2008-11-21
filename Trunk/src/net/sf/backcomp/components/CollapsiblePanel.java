@@ -34,6 +34,7 @@ public class CollapsiblePanel extends JPanel implements ActionListener
 		button.addActionListener(this);
 		
 		button.setIcon(notVisible);
+		
 		content.setVisible(true);
 		content.setVisible(false);
 		
