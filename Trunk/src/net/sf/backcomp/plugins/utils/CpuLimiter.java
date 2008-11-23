@@ -26,7 +26,7 @@ public class CpuLimiter
 	private final int BUFFER_SIZE = 20;
 	private final ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
 	
-	private long CpuGoal = 60 * 100;
+	private long CpuGoal = 50 * 100;
 	private long lastCheck = 0;
 	private long lastCpuTime = 0;
 	private int CpuSamples[] = new int[BUFFER_SIZE];
@@ -66,7 +66,6 @@ public class CpuLimiter
 	{
 		long currentCpu = getThreadCpuTime();
 		long currentTime = System.nanoTime();
-		long currentCpu2 = getThreadCpuTime();//Diagnostic for why cpu shit is happening.
 		long cpuInterval = currentCpu - lastCpuTime;
 		long timeInterval = currentTime - lastCheck;
 		
@@ -79,8 +78,6 @@ public class CpuLimiter
 				+cpuInterval
 				+"\n"
 				+timeInterval
-				+"\n"
-				+(currentCpu2-currentCpu)
 				, DebugLevel.Warning
 			);
 			return;
@@ -98,7 +95,7 @@ public class CpuLimiter
 		if(samplesIndex >= BUFFER_SIZE) samplesIndex = 0;
 		
 		//Recalculate sleep time
-		throttleTime += (getAvgCpuUsage() - CpuGoal)/(100*10);
+		throttleTime += (getAvgCpuUsage() - CpuGoal)/(100*10)+1;
 		if(throttleTime < 0) throttleTime = 0;
 	}
 	
@@ -114,7 +111,7 @@ public class CpuLimiter
 	
 	public int getSleepTime()
 	{
-		return throttleTime;
+		return throttleTime/10;
 	}
 	
 	public void doSleep()
