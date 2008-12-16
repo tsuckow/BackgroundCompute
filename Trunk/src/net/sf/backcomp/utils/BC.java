@@ -23,6 +23,7 @@
  */
 package net.sf.backcomp.utils;
 
+//TODO: Save the directory files to backup file, do a diff and delete removed files.
 
 import java.awt.BorderLayout;
 import java.awt.Color;

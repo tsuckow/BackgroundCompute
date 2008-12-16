@@ -64,7 +64,7 @@ public final class Debug
 				icon = JOptionPane.PLAIN_MESSAGE;
 				break;
 		}	
-		JOptionPane.showMessageDialog(null,msg,"Debug Level: " + lvl.toString(),icon);
+		//JOptionPane.showMessageDialog(null,msg,"Debug Level: " + lvl.toString(),icon);
 		new DebugEventDialog(null, dm);
 	}
 	
@@ -95,7 +95,7 @@ public final class Debug
 				icon = JOptionPane.PLAIN_MESSAGE;
 				break;
 		}	
-		JOptionPane.showMessageDialog(null,msg + NEW_LINE + NEW_LINE + stack,"Debug Level: " + lvl.toString(),icon);
+		//JOptionPane.showMessageDialog(null,msg + NEW_LINE + NEW_LINE + stack,"Debug Level: " + lvl.toString(),icon);
 		new DebugEventDialog(null, dm);
 	}
 	
@@ -107,7 +107,7 @@ public final class Debug
 	public static String getStackTrace(Throwable aThrowable)
 	{
 	    //add the class name and any message passed to constructor
-	    final StringBuilder result = new StringBuilder( "Stack Trace: " );
+	    final StringBuilder result = new StringBuilder();
 	    result.append(aThrowable.toString());
 	    
 	    result.append(NEW_LINE);

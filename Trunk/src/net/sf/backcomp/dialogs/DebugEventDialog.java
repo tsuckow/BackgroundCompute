@@ -84,7 +84,7 @@ implements ActionListener, ComponentListener
 			);
 			sp.addComponentListener(this);
 			
-			CollapsiblePanel cp = new CollapsiblePanel(sp, i, i);
+			CollapsiblePanel cp = new CollapsiblePanel(sp);
 			getContentPane().add(cp, BorderLayout.CENTER);
 		}
 		
