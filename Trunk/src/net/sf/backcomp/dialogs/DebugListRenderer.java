@@ -10,6 +10,7 @@ package net.sf.backcomp.dialogs;
 import net.sf.backcomp.debug.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import java.awt.*;
 
@@ -36,7 +37,8 @@ class DebugListRenderer extends DefaultListCellRenderer
                                        boolean cellHasFocus)
     { 	
     	JPanel panel = new JPanel();
-    	
+    	Border b = BorderFactory.createLineBorder( new Color( isSelected?255:0, 0, 0) );
+    	panel.setBorder( b );
     	try
     	{
     		panel.setLayout(new BorderLayout());
@@ -47,12 +49,12 @@ class DebugListRenderer extends DefaultListCellRenderer
     			DebugMsg msg = (DebugMsg)value;
     			String color = (msg.getLevel().getForeColor()!=null)?Integer.toHexString( msg.getLevel().getForeColor().getRGB() & 0x00ffffff ):"000000";//Text Color
     			
-    			a = new JLabel("<html><table style='border-style: solid; " + (isSelected?"border-color:#FF0000;":"") + " border-width: 1pt 1pt 1pt 1pt; color:#" + color + "' width='200'><tr><td>" + msg.getMsg() + "</td></tr><tr><td>" + msg.getLevel().toString() + "</td></tr></table></html>");
+    			a = new JLabel("<html><table style='color:#" + color + "' width='200'><tr><td>" + msg.getMsg() + "</td></tr><tr><td>" + msg.getLevel().toString() + "</td></tr></table></html>");
     			panel.setBackground(isSelected ? ((msg.getLevel().getLightColor()==null)?list.getSelectionBackground():msg.getLevel().getLightColor()) : msg.getLevel().getDarkColor());
     		}
     		else//Something is very wrong
     		{
-    			a = new JLabel("<html><table style='border-style: solid; border-width: 1pt 1pt 1pt 1pt;' width='200'><tr><td>ERROR: Not a DebugMsg</td></tr></table></html>");
+    			a = new JLabel("<html><table width='200'><tr><td>ERROR: Not a DebugMsg</td></tr></table></html>");
     			panel.setBackground(isSelected ? list.getSelectionBackground() : null);
     		}
     		panel.setForeground(isSelected ? list.getSelectionForeground() : null);
