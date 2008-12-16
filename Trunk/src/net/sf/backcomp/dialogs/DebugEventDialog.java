@@ -162,7 +162,8 @@ implements ActionListener, ComponentListener
 	@Override
 	public void componentShown(ComponentEvent e) {
 		Dimension biggerminsize = new Dimension( minsize );
-		biggerminsize.height = biggerminsize.height + 50;
+		biggerminsize.height = biggerminsize.height + 100;
+		biggerminsize.width = Math.max(biggerminsize.width, 400);
 		setMinimumSize(biggerminsize);
 		setSize(prefsize);
 		setResizable(true);
