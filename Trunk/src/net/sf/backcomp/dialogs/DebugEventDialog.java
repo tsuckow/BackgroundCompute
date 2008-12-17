@@ -10,7 +10,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -37,13 +36,13 @@ implements ActionListener, ComponentListener
 	Dimension minsize;
 	Dimension prefsize;
 
-	public DebugEventDialog(JFrame parent, DebugMsg event)
+	public DebugEventDialog( JFrame parent, DebugMsg event )
 	{
-		super(parent, "Debug", true);
-		setModal(false);
-		getContentPane().setLayout(new BorderLayout());
+		super( parent, "Debug", true );
+		setModal( false );
+		getContentPane().setLayout( new BorderLayout() );
 		
-		JPanel northPane = new JPanel(new BorderLayout());
+		JPanel northPane = new JPanel( new BorderLayout() );
 		final JLabel icon =
 			new JLabel(
 				new ImageIcon(
@@ -53,65 +52,63 @@ implements ActionListener, ComponentListener
 					"Attention!"
 				)
 			);
-		icon.setVerticalAlignment(SwingConstants.TOP);
-		icon.setBorder( new EmptyBorder( 5,5,5,5 ) );
-		northPane.add(icon,BorderLayout.WEST);
+		icon.setVerticalAlignment( SwingConstants.TOP );
+		icon.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
+		northPane.add( icon, BorderLayout.WEST );
 		JLabel rightHold = new JLabel();
-		rightHold.setMinimumSize(new Dimension(50,50));
-		rightHold.setPreferredSize(new Dimension(50,50));
-		rightHold.setBorder( new EmptyBorder( 5,5,5,5 ) );
-		northPane.add(rightHold,BorderLayout.EAST);
+		rightHold.setMinimumSize( new Dimension( 50, 50 ) );
+		rightHold.setPreferredSize( new Dimension( 50, 50 ) );
+		rightHold.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
+		northPane.add( rightHold, BorderLayout.EAST );
 		
 		JPanel msgPane = new JPanel();
-		MultiLineLabel msg = new MultiLineLabel(event.getMsg(),5,5);
-		msg.setAlignmentX(CENTER_ALIGNMENT);
-		msgPane.add(msg);
-		northPane.add(msgPane,BorderLayout.CENTER);
-		getContentPane().add(northPane,BorderLayout.NORTH);
+		MultiLineLabel msg = new MultiLineLabel( event.getMsg(), 5, 5 );
+		msg.setAlignmentX( CENTER_ALIGNMENT );
+		msgPane.add( msg );
+		northPane.add( msgPane, BorderLayout.CENTER );
+		getContentPane().add( northPane, BorderLayout.NORTH );
 		
 		String stack = event.getStack();
 		if( stack != null )
 		{
 			JTextArea tf = new JTextArea();
-			tf.setText(stack);
-			tf.setEditable(false);
-			JScrollPane sp = new JScrollPane(tf);
-			Icon i = new ImageIcon(
-				"images" + File.separator
-				+ "debug" + File.separator
-				+ "attention50x50.png",
-				"Attention!"
-			);
-			sp.addComponentListener(this);
+			tf.setText( stack );
+			tf.setEditable( false );
+			JScrollPane sp = new JScrollPane( tf );
+
+			sp.addComponentListener( this );
 			
-			CollapsiblePanel cp = new CollapsiblePanel(sp);
-			getContentPane().add(cp, BorderLayout.CENTER);
+			CollapsiblePanel cp = new CollapsiblePanel( sp );
+			getContentPane().add( cp, BorderLayout.CENTER );
 		}
 		
 		JPanel buttonPane = new JPanel();
-		JButton button = new JButton("OK"); 
-		buttonPane.add(button); 
+		JButton button = new JButton( "OK" ); 
+		buttonPane.add( button ); 
 		
-		button.addActionListener(this);
+		button.addActionListener( this );
 		
-		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		getContentPane().add( buttonPane, BorderLayout.SOUTH );
 		
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation( DISPOSE_ON_CLOSE );
 		
-		setMinimumSize(new Dimension(200,100));
+		setMinimumSize( new Dimension( 200, 100 ) );
 		
 		pack(); //Compute Size
 		
 		minsize = getSize();
-		prefsize = new Dimension(minsize);
+		prefsize = new Dimension( minsize );
 		
-		setResizable(false);
+		setResizable( false );
 		
-		if (parent != null)
+		if ( parent != null )
 		{
 			Dimension parentSize = parent.getSize(); 
 			Point p = parent.getLocation(); 
-			setLocation(p.x + parentSize.width / 4, p.y + parentSize.height / 4);
+			setLocation(
+				p.x + parentSize.width / 4,
+				p.y + parentSize.height / 4
+			);
 		}
 		else
 		{
@@ -127,45 +124,45 @@ implements ActionListener, ComponentListener
 			setLocation( x, y );
 		}
 		
-		setVisible(true);
+		setVisible( true );
 	}
 	  
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed( ActionEvent e )
 	{
-		setVisible(false); 
+		setVisible( false ); 
 		dispose(); 
 	}
 
 	@Override
-	public void componentHidden(ComponentEvent arg0) {
-		if(minsize != null)
+	public void componentHidden( ComponentEvent arg0 ) {
+		if( minsize != null )
 		{
-			prefsize = new Dimension(getSize());
-			setMinimumSize(minsize);
-			setSize(minsize);
-			setResizable(false);
+			prefsize = new Dimension( getSize() );
+			setMinimumSize( minsize );
+			setSize( minsize );
+			setResizable( false );
 		}	
 	}
 
 	@Override
-	public void componentMoved(ComponentEvent e) {
+	public void componentMoved( ComponentEvent e ) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void componentResized(ComponentEvent e) {
+	public void componentResized( ComponentEvent e ) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void componentShown(ComponentEvent e) {
+	public void componentShown( ComponentEvent e ) {
 		Dimension biggerminsize = new Dimension( minsize );
 		biggerminsize.height = biggerminsize.height + 100;
 		biggerminsize.width = Math.max(biggerminsize.width, 400);
-		setMinimumSize(biggerminsize);
-		setSize(prefsize);
-		setResizable(true);
+		setMinimumSize( biggerminsize );
+		setSize( prefsize );
+		setResizable( true );
 	}
 }

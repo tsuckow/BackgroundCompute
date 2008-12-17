@@ -33,8 +33,8 @@ public final class Tray
 {
 	private Tray(){}//This is a static class
 	
-	//Locks
-	private final static Object lock_tray = new Object();//Create a REALLY SMALL but unique object.
+	//Locks //Create a REALLY SMALL but unique object.
+	private final static Object lock_tray = new Object();
 	
 	private static TrayIcon trayIcon = null;
 	
@@ -48,74 +48,76 @@ public final class Tray
 	public static void iconCreate()
 	{
 		//TODO: Make sure only one instance
-		synchronized(lock_tray)
+		synchronized( lock_tray )
 		{
 			if ( SystemTray.isSupported() )
 			{
 				SystemTray tray = SystemTray.getSystemTray(); //Get the tray
-				Image image = Toolkit.getDefaultToolkit().getImage("Tray.png"); //Get the tray image
+				//Get the tray image
+				final Image ima =
+					Toolkit.getDefaultToolkit().getImage( "Tray.png" ); 
 				
 				ActionListener listener = new iconListener();
 				
 				// create a popup menu
 				PopupMenu popup = new PopupMenu();
 				
-				MenuItem Item = new MenuItem("Manage Projects");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Projects"); 
+				MenuItem Item = new MenuItem( "Manage Projects" );
+	         	Item.addActionListener( listener );
+         		Item.setActionCommand( "Projects" ); 
          		
-				popup.add(Item);
+				popup.add( Item );
 				
-				Item = new MenuItem("Debug Window");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Debug"); 
+				Item = new MenuItem( "Debug Window" );
+	         	Item.addActionListener( listener );
+         		Item.setActionCommand( "Debug" ); 
          		
-				popup.add(Item);
+				popup.add( Item );
 				
-				Item = new MenuItem("Debug Event");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Event"); 
+				Item = new MenuItem( "Debug Event" );
+	         	Item.addActionListener( listener );
+         		Item.setActionCommand( "Event" ); 
          		
-				popup.add(Item);
+				popup.add( Item );
 				
-				Item = new MenuItem("Settings");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("Settings"); 
+				Item = new MenuItem( "Settings");
+	         	Item.addActionListener( listener );
+         		Item.setActionCommand( "Settings" ); 
          		
-				popup.add(Item);
+				popup.add( Item );
 				popup.addSeparator();
 				
-				Item = new MenuItem("About");
-	         	Item.addActionListener(listener);
-         		Item.setActionCommand("About"); 
+				Item = new MenuItem( "About" );
+	         	Item.addActionListener( listener );
+         		Item.setActionCommand( "About" ); 
          		
-				popup.add(Item);
+				popup.add( Item );
 				
 				popup.addSeparator();
 
          		// create menu item for the default action
-        		MenuItem defaultItem = new MenuItem("Quit");
-         		defaultItem.addActionListener(listener);
-         		defaultItem.setActionCommand("Quit"); 
+        		MenuItem defaultItem = new MenuItem( "Quit" );
+         		defaultItem.addActionListener( listener );
+         		defaultItem.setActionCommand( "Quit" ); 
          		
-         		popup.add(defaultItem);
+         		popup.add( defaultItem );
          		
          		// construct a TrayIcon
-         		trayIcon = new TrayIcon(image, "Background Compute", popup);
-         		trayIcon.setImageAutoSize(true);
+         		trayIcon = new TrayIcon( ima, "Background Compute", popup );
+         		trayIcon.setImageAutoSize( true );
          	
          		// set the TrayIcon properties
-         		trayIcon.addActionListener(listener);
+         		trayIcon.addActionListener( listener );
          		// ...
          	
          		// add the tray image
          		try
          		{
-             		tray.add(trayIcon);
+             		tray.add( trayIcon );
          		}
-         		catch (AWTException e)
+         		catch ( AWTException e )
          		{
-             		System.err.println(e);
+             		System.err.println( e );
          		}
         		// ...
          			
@@ -125,12 +127,12 @@ public final class Tray
 	
 	public static void iconDestroy()
 	{
-		synchronized(lock_tray)
+		synchronized( lock_tray )
 		{
-			if(trayIcon != null)
+			if( trayIcon != null )
 			{
 				SystemTray tray = SystemTray.getSystemTray(); //Get the tray
-				tray.remove(trayIcon);
+				tray.remove( trayIcon );
 			}
 		}//End Sync
 	}
@@ -146,24 +148,28 @@ public final class Tray
 	 * @see net.sf.backcomp.utils.Tray
 	 *
 	 */
-	public static void iconMessage(String title, String msg, TrayIcon.MessageType type)
+	public static void iconMessage(
+		String title,
+		String msg,
+		TrayIcon.MessageType type
+	)
 	{
-		synchronized(lock_tray)
+		synchronized( lock_tray )
 		{
-			trayIcon.displayMessage(title,msg,type);
+			trayIcon.displayMessage( title, msg, type );
 		}
 	}
 	
 	private static class iconListener implements ActionListener
 	{
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed( ActionEvent e )
         {
 			try{
-				if(e == null) return;
+				if( e == null ) return;
 				
-	            if(e.getActionCommand() == null) return;
+	            if( e.getActionCommand() == null ) return;
 	            
-	            if( e.getActionCommand().equals("Quit") )
+	            if( e.getActionCommand().equals( "Quit" ) )
 	            {
 	            	Worker.terminate();
 	            	//We know what plugins are loaded, terminate them in order.
@@ -171,32 +177,40 @@ public final class Tray
 	            	Tray.iconDestroy();
 	            	//throw new ThreadDeath();
 	            }
-	            else if( e.getActionCommand().equals("Projects") )
+	            else if( e.getActionCommand().equals( "Projects" ) )
 	            {
 	            	PluginManager.show();
 	            }          		
-	            else if( e.getActionCommand().equals("Settings") )
+	            else if( e.getActionCommand().equals( "Settings" ) )
 	            {
 	            	Settings.show();
 				}
-	            else if( e.getActionCommand().equals("Debug") )
+	            else if( e.getActionCommand().equals( "Debug" ) )
 	            {
 	            	DebugDialog.show();
 				}
-	            else if( e.getActionCommand().equals("Event") )
+	            else if( e.getActionCommand().equals( "Event" ) )
 	            {
-	            	Debug.messageDlg("Debug Event from tray\n1\n2\n3", DebugLevel.Warning, new IllegalAccessException("Debug Event Sample Exception"));
+	            	Debug.messageDlg(
+	            		"Debug Event from tray\n1\n2\n3",
+	            		DebugLevel.Warning,
+	            		new IllegalAccessException(
+	            			"Debug Event Sample Exception"
+	            		) 
+	            	);
 				}
-	            else if( e.getActionCommand().equals("About") )
+	            else if( e.getActionCommand().equals( "About" ) )
 	            {
 	            	AboutDialog.show();
 				}
 			}
-			catch(Exception ex)
+			catch( Exception ex )
 			{
-				Debug.messageDlg("Unhandled Exception in Tray Menu", DebugLevel.Fatal, ex);
-				//ex.printStackTrace();
-				//iconMessage( "Unhandled Exception in Tray Menu", ex.getMessage(), TrayIcon.MessageType.ERROR);				
+				Debug.messageDlg(
+					"Unhandled Exception in Tray Menu",
+					DebugLevel.Fatal,
+					ex
+				);				
 			}
 		}
 	}

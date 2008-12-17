@@ -357,7 +357,7 @@ public final class BC extends SwingWorker<Object, Object[]>
 		setSplashText( localize( "Lists1", "Downloading Lists..." ) );
 		
 		//Retrieve the list of update lists
-		if ( !remoteToLocal(ROOT_UPDATE + "dev","Lists.txt") )
+		if ( !remoteToLocal( ROOT_UPDATE + "dev", "Lists.txt" ) )
 		{
 			updateError(
 				localeFormat(
@@ -1243,10 +1243,11 @@ public final class BC extends SwingWorker<Object, Object[]>
 		{
 			if ( is != null )
 			{
-				try {
+				try
+				{
 					is.close();
 				}
-				catch (IOException e)
+				catch ( IOException e )
 				{
 					e.printStackTrace();
 				}
