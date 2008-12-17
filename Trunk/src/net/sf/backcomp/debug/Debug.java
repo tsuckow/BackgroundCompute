@@ -7,9 +7,8 @@
  */
 package net.sf.backcomp.debug;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sf.backcomp.dialogs.DebugEventDialog;
 
@@ -43,28 +42,7 @@ public final class Debug
 	public static void messageDlg(String msg, DebugLevel lvl)
 	{
 		DebugMsg dm = message(msg, lvl);
-		
-		int icon = 0;
-		switch(lvl)
-		{
-			case NotImplemented:
-			case Error:
-				icon = JOptionPane.ERROR_MESSAGE;
-				break;
-			case Warning:
-				icon = JOptionPane.WARNING_MESSAGE;
-				break;
-			case Information:
-				icon = JOptionPane.INFORMATION_MESSAGE;
-				break;
-			case Debug:
-				icon = JOptionPane.QUESTION_MESSAGE;
-				break;
-			default:
-				icon = JOptionPane.PLAIN_MESSAGE;
-				break;
-		}	
-		//JOptionPane.showMessageDialog(null,msg,"Debug Level: " + lvl.toString(),icon);
+
 		new DebugEventDialog(null, dm);
 	}
 	
@@ -72,30 +50,6 @@ public final class Debug
 	{
 		DebugMsg dm = message(msg, lvl, thrown);
 		
-		String stack = getStackTrace(thrown);
-		
-		int icon = 0;
-		switch(lvl)
-		{
-			case Fatal:
-			case Error:
-				icon = JOptionPane.ERROR_MESSAGE;
-				break;
-			case NotImplemented:
-			case Warning:
-				icon = JOptionPane.WARNING_MESSAGE;
-				break;
-			case Information:
-				icon = JOptionPane.INFORMATION_MESSAGE;
-				break;
-			case Debug:
-				icon = JOptionPane.QUESTION_MESSAGE;
-				break;
-			default:
-				icon = JOptionPane.PLAIN_MESSAGE;
-				break;
-		}	
-		//JOptionPane.showMessageDialog(null,msg + NEW_LINE + NEW_LINE + stack,"Debug Level: " + lvl.toString(),icon);
 		new DebugEventDialog(null, dm);
 	}
 	

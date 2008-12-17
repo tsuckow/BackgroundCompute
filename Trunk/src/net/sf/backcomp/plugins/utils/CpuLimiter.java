@@ -23,7 +23,7 @@ import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
  */
 public class CpuLimiter
 {
-	private final int BUFFER_SIZE = 20;
+	private final static int BUFFER_SIZE = 20;
 	private final ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
 	
 	private long CpuGoal = 50 * 100;
@@ -97,7 +97,7 @@ public class CpuLimiter
 		//Recalculate sleep time
 		throttleTime +=
 			(getAvgCpuUsage() - CpuGoal)/(100)
-			+Math.signum(getAvgCpuUsage() - CpuGoal);
+			+(int)Math.signum(getAvgCpuUsage() - CpuGoal);
 		if(throttleTime < 0) throttleTime = 0;
 	}
 	
