@@ -89,7 +89,9 @@ public class PluginManager
 		
 		//Set timer for refreshing the list
 		if ( timer != null )
+		{
 			timer.stop();
+		}
 		timer = new javax.swing.Timer( 1000, new RefreshList( list ) );
 		timer.start();
 		
@@ -126,7 +128,7 @@ public class PluginManager
 		
 		//Center frame
 		final Dimension screenSize =
-		    Toolkit.getDefaultToolkit().getScreenSize();
+			Toolkit.getDefaultToolkit().getScreenSize();
 		final Dimension size = frame.getSize();
 		
 		listScroller.setSize( new Dimension( 150, size.height ) );
@@ -159,12 +161,16 @@ public class PluginManager
 		{
 			Info = plug.getInfo();
 			if ( Info == null )
+			{
 				Info = "Information Not Available";
+			}
 		}
 		else
+		{
 			Info = "Selected Plugin Does Not Exist.";
+		}
 		label.setText( "<html><div width='320px' height='160px'>" + Info
-		    + "</div><html>" );
+			+ "</div><html>" );
 	}
 	
 	private static class RefreshList implements ActionListener
@@ -180,7 +186,9 @@ public class PluginManager
 		public void actionPerformed( final ActionEvent e )
 		{
 			if ( !list.isDisplayable() )
+			{
 				timer.stop();
+			}
 			if ( regenlist++ % 5 == 0 )
 			{
 				final String[] temp = PluginLoader.getLoadedPlugins();
@@ -205,8 +213,8 @@ public class PluginManager
 			else if ( list.getSelectedIndex() != -1 )
 			{
 				final PluginHandler plug =
-				    PluginLoader.loadPlugin( installedPlugins[list
-				        .getSelectedIndex()] );
+					PluginLoader.loadPlugin( installedPlugins[list
+						.getSelectedIndex()] );
 				plug.stop();
 				//frame.dispose();
 				//frame = null;
@@ -226,8 +234,8 @@ public class PluginManager
 			else if ( list.getSelectedIndex() != -1 )
 			{
 				final PluginHandler plug =
-				    PluginLoader.loadPlugin( installedPlugins[list
-				        .getSelectedIndex()] );
+					PluginLoader.loadPlugin( installedPlugins[list
+						.getSelectedIndex()] );
 				plug.stop();
 				//frame.dispose();
 				//frame = null;
@@ -247,16 +255,16 @@ public class PluginManager
 			else if ( list.getSelectedIndex() != -1 )
 			{
 				final PluginHandler plug =
-				    PluginLoader.loadPlugin( installedPlugins[list
-				        .getSelectedIndex()] );
+					PluginLoader.loadPlugin( installedPlugins[list
+						.getSelectedIndex()] );
 				final int n =
-				    JOptionPane.showConfirmDialog(
-				        frame,
-				        "Are you sure you want to uninstall: \""
-				            + plug.getName() + "\"",
-				        "Remove Plugin?",
-				        JOptionPane.YES_NO_OPTION,
-				        JOptionPane.QUESTION_MESSAGE );
+					JOptionPane.showConfirmDialog(
+						frame,
+						"Are you sure you want to uninstall: \""
+							+ plug.getName() + "\"",
+						"Remove Plugin?",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE );
 				if ( n == JOptionPane.YES_OPTION )
 				{
 					plug.uninstall();
@@ -279,8 +287,8 @@ public class PluginManager
 			else if ( list.getSelectedIndex() != -1 )
 			{
 				final PluginHandler plug =
-				    PluginLoader.loadPlugin( installedPlugins[list
-				        .getSelectedIndex()] );
+					PluginLoader.loadPlugin( installedPlugins[list
+						.getSelectedIndex()] );
 				final JFrame bob = new JFrame( plug.getName() );
 				bob.setDefaultCloseOperation( WindowConstants.DISPOSE_ON_CLOSE );
 				
@@ -293,7 +301,7 @@ public class PluginManager
 				
 				//Center frame
 				final Dimension screenSize =
-				    Toolkit.getDefaultToolkit().getScreenSize();
+					Toolkit.getDefaultToolkit().getScreenSize();
 				final Dimension size = bob.getSize();
 				
 				screenSize.height = screenSize.height / 2;
@@ -323,7 +331,9 @@ public class PluginManager
 				//TODO:Uhoh
 			}
 			else if ( list.getSelectedIndex() != -1 )
+			{
 				PluginInfo( info, installedPlugins[list.getSelectedIndex()] );
+			}
 		}
 	}
 }

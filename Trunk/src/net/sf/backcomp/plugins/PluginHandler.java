@@ -40,13 +40,13 @@ public class PluginHandler
 		try
 		{
 			UCL =
-			    new URLClassLoader( new URL[] { new File( "plugins/"
-			        + pluginName + "/" ).toURI().toURL() } );
+				new URLClassLoader( new URL[] { new File( "plugins/"
+					+ pluginName + "/" ).toURI().toURL() } );
 		}
 		catch ( final MalformedURLException ex )
 		{
 			Debug.message( "Plugin Dir Path Malformed! " + "plugins/"
-			    + pluginName + "/", DebugLevel.Error );
+				+ pluginName + "/", DebugLevel.Error );
 			return;
 		}
 		
@@ -58,13 +58,13 @@ public class PluginHandler
 		catch ( final ClassNotFoundException ex )
 		{
 			Debug.message( "Class not found: " + "plugins/" + pluginName + "/"
-			    + pluginName, DebugLevel.Error, ex );
+				+ pluginName, DebugLevel.Error, ex );
 			return;
 		}
 		catch ( final NoClassDefFoundError ex )
 		{
 			Debug.message( "Class Definition not found: " + "plugins/"
-			    + pluginName + "/" + pluginName, DebugLevel.Error, ex );
+				+ pluginName + "/" + pluginName, DebugLevel.Error, ex );
 			return;
 		}
 		
@@ -72,8 +72,8 @@ public class PluginHandler
 		if ( !Plugin.class.isAssignableFrom( loadedClass ) )
 		{
 			Debug.message(
-			    "Class not a plugin: " + pluginName,
-			    DebugLevel.Error );
+				"Class not a plugin: " + pluginName,
+				DebugLevel.Error );
 			return;
 		}
 		
@@ -84,23 +84,23 @@ public class PluginHandler
 		catch ( final InstantiationException ex )
 		{
 			Debug.message(
-			    "Failed to load Plugin: " + pluginName,
-			    DebugLevel.Error );
+				"Failed to load Plugin: " + pluginName,
+				DebugLevel.Error );
 			return;
 		}
 		catch ( final IllegalAccessException ex )
 		{
 			Debug.message(
-			    "Illegal Access to Plugin: " + pluginName,
-			    DebugLevel.Error );
+				"Illegal Access to Plugin: " + pluginName,
+				DebugLevel.Error );
 			return;
 		}
 		catch ( final NoClassDefFoundError ex )
 		{
 			Debug.message(
-			    "Class Def Missing: " + pluginName,
-			    DebugLevel.Error,
-			    ex );
+				"Class Def Missing: " + pluginName,
+				DebugLevel.Error,
+				ex );
 			return;
 		}
 		
@@ -115,14 +115,18 @@ public class PluginHandler
 	public void stop()
 	{
 		if ( !isValid() )
+		{
 			return;
+		}
 		myPlugin.halt();
 	}
 	
 	public void start()
 	{
 		if ( !isValid() )
+		{
 			return;
+		}
 		myPlugin.start();
 	}
 	
@@ -135,57 +139,71 @@ public class PluginHandler
 	public boolean isActive()
 	{
 		if ( !isValid() )
+		{
 			return false;
+		}
 		final PluginInterconnect.PluginState ps =
-		    myInterconnect.getPluginState();
+			myInterconnect.getPluginState();
 		return ps == PluginInterconnect.PluginState.Running
-		    || ps == PluginInterconnect.PluginState.Paused;
+			|| ps == PluginInterconnect.PluginState.Paused;
 	}
 	
 	public boolean isPaused()
 	{
 		if ( !isValid() )
+		{
 			return false;
+		}
 		final PluginInterconnect.PluginState ps =
-		    myInterconnect.getPluginState();
+			myInterconnect.getPluginState();
 		return ps == PluginInterconnect.PluginState.Paused;
 	}
 	
 	public boolean isStopped()
 	{
 		if ( !isValid() )
+		{
 			return true;
+		}
 		final PluginInterconnect.PluginState ps =
-		    myInterconnect.getPluginState();
+			myInterconnect.getPluginState();
 		return ps == PluginInterconnect.PluginState.Stopped
-		    || ps == PluginInterconnect.PluginState.NeedReload;
+			|| ps == PluginInterconnect.PluginState.NeedReload;
 	}
 	
 	public void uninstall()
 	{
 		if ( !isValid() )
+		{
 			return;
+		}
 		myPlugin.uninstall();
 	}
 	
 	public String getName()
 	{
 		if ( !isValid() )
+		{
 			return "";
+		}
 		return myPlugin.getName();
 	}
 	
 	public String getInfo()
 	{
 		if ( !isValid() )
+		{
 			return null;
+		}
 		return myPlugin.getInfo();
 	}
 	
 	public JPanel getStatus()
 	{
 		if ( !isValid() )
+		{
 			return null;
+		}
 		return myPlugin.getStatus();
 	}
 	
@@ -194,7 +212,7 @@ public class PluginHandler
 		if ( loaded && myInterconnect != null )
 		{
 			final PluginInterconnect.PluginState ps =
-			    myInterconnect.getPluginState();
+				myInterconnect.getPluginState();
 			
 			if ( ps == PluginInterconnect.PluginState.NeedReload )
 			{
@@ -205,10 +223,12 @@ public class PluginHandler
 			}
 			
 			if ( myPlugin == null || myInterconnect == null )
+			{
 				return false;
+			}
 			
 			return ps != PluginInterconnect.PluginState.Removed
-			    && ps != PluginInterconnect.PluginState.Initilizing;
+				&& ps != PluginInterconnect.PluginState.Initilizing;
 		}
 		return false;
 		
@@ -230,24 +250,34 @@ public class PluginHandler
 	public void stopCore()
 	{
 		if ( !isValid() )
+		{
 			return;
+		}
 		if ( myInterconnect.getCores() > 0 )
+		{
 			myInterconnect.setCores( myInterconnect.getCores() - 1 );
+		}
 	}
 	
 	public void startCore()
 	{
 		if ( !isValid() )
+		{
 			return;
+		}
 		if ( !isActive() )
+		{
 			myPlugin.start();
+		}
 		myInterconnect.setCores( myInterconnect.getCores() + 1 );
 	}
 	
 	public int wantedCores()
 	{
 		if ( !isValid() )
+		{
 			return -1;
+		}
 		return myInterconnect.getWantedCpu();
 	}
 }

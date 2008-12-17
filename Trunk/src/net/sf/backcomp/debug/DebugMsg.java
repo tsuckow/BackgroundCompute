@@ -23,7 +23,7 @@ public final class DebugMsg
 	private String stack = null;//Stack Trace, if available
 	private long time = 0;
 	
-	public DebugMsg(String msg, DebugLevel lvl)
+	public DebugMsg( final String msg, final DebugLevel lvl )
 	{
 		this.msg = msg;
 		this.lvl = lvl;
@@ -36,7 +36,7 @@ public final class DebugMsg
 	 * @param lvl Debug level
 	 * @param stack Stack trace
 	 */
-	public DebugMsg(String msg, DebugLevel lvl, String stack)
+	public DebugMsg( final String msg, final DebugLevel lvl, final String stack )
 	{
 		this.msg = msg;
 		this.lvl = lvl;
@@ -58,6 +58,7 @@ public final class DebugMsg
 	{
 		return time;
 	}
+	
 	public String getStack()
 	{
 		return stack;

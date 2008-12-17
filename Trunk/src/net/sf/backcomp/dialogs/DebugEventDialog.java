@@ -26,7 +26,9 @@ import net.sf.backcomp.components.MultiLineLabel;
 import net.sf.backcomp.debug.DebugMsg;
 
 public class DebugEventDialog extends JDialog
-implements ActionListener, ComponentListener
+	implements
+	ActionListener,
+	ComponentListener
 {
 	/**
 	 * Serial Number
@@ -35,56 +37,50 @@ implements ActionListener, ComponentListener
 	
 	Dimension minsize;
 	Dimension prefsize;
-
-	public DebugEventDialog( JFrame parent, DebugMsg event )
+	
+	public DebugEventDialog( final JFrame parent, final DebugMsg event )
 	{
 		super( parent, "Debug", true );
 		setModal( false );
 		getContentPane().setLayout( new BorderLayout() );
 		
-		JPanel northPane = new JPanel( new BorderLayout() );
+		final JPanel northPane = new JPanel( new BorderLayout() );
 		final JLabel icon =
-			new JLabel(
-				new ImageIcon(
-					"images" + File.separator
-					+ "debug" + File.separator
-					+ "attention50x50.png",
-					"Attention!"
-				)
-			);
+			new JLabel( new ImageIcon( "images" + File.separator + "debug"
+				+ File.separator + "attention50x50.png", "Attention!" ) );
 		icon.setVerticalAlignment( SwingConstants.TOP );
 		icon.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		northPane.add( icon, BorderLayout.WEST );
-		JLabel rightHold = new JLabel();
+		final JLabel rightHold = new JLabel();
 		rightHold.setMinimumSize( new Dimension( 50, 50 ) );
 		rightHold.setPreferredSize( new Dimension( 50, 50 ) );
 		rightHold.setBorder( new EmptyBorder( 5, 5, 5, 5 ) );
 		northPane.add( rightHold, BorderLayout.EAST );
 		
-		JPanel msgPane = new JPanel();
-		MultiLineLabel msg = new MultiLineLabel( event.getMsg(), 5, 5 );
+		final JPanel msgPane = new JPanel();
+		final MultiLineLabel msg = new MultiLineLabel( event.getMsg(), 5, 5 );
 		msg.setAlignmentX( CENTER_ALIGNMENT );
 		msgPane.add( msg );
 		northPane.add( msgPane, BorderLayout.CENTER );
 		getContentPane().add( northPane, BorderLayout.NORTH );
 		
-		String stack = event.getStack();
-		if( stack != null )
+		final String stack = event.getStack();
+		if ( stack != null )
 		{
-			JTextArea tf = new JTextArea();
+			final JTextArea tf = new JTextArea();
 			tf.setText( stack );
 			tf.setEditable( false );
-			JScrollPane sp = new JScrollPane( tf );
-
+			final JScrollPane sp = new JScrollPane( tf );
+			
 			sp.addComponentListener( this );
 			
-			CollapsiblePanel cp = new CollapsiblePanel( sp );
+			final CollapsiblePanel cp = new CollapsiblePanel( sp );
 			getContentPane().add( cp, BorderLayout.CENTER );
 		}
 		
-		JPanel buttonPane = new JPanel();
-		JButton button = new JButton( "OK" ); 
-		buttonPane.add( button ); 
+		final JPanel buttonPane = new JPanel();
+		final JButton button = new JButton( "OK" );
+		buttonPane.add( button );
 		
 		button.addActionListener( this );
 		
@@ -103,12 +99,10 @@ implements ActionListener, ComponentListener
 		
 		if ( parent != null )
 		{
-			Dimension parentSize = parent.getSize(); 
-			Point p = parent.getLocation(); 
-			setLocation(
-				p.x + parentSize.width / 4,
-				p.y + parentSize.height / 4
-			);
+			final Dimension parentSize = parent.getSize();
+			final Point p = parent.getLocation();
+			setLocation( p.x + parentSize.width / 4, p.y + parentSize.height
+				/ 4 );
 		}
 		else
 		{
@@ -126,41 +120,45 @@ implements ActionListener, ComponentListener
 		
 		setVisible( true );
 	}
-	  
-	public void actionPerformed( ActionEvent e )
+	
+	public void actionPerformed( final ActionEvent e )
 	{
-		setVisible( false ); 
-		dispose(); 
+		setVisible( false );
+		dispose();
 	}
-
+	
 	@Override
-	public void componentHidden( ComponentEvent arg0 ) {
-		if( minsize != null )
+	public void componentHidden( final ComponentEvent arg0 )
+	{
+		if ( minsize != null )
 		{
 			prefsize = new Dimension( getSize() );
 			setMinimumSize( minsize );
 			setSize( minsize );
 			setResizable( false );
-		}	
+		}
 	}
-
+	
 	@Override
-	public void componentMoved( ComponentEvent e ) {
+	public void componentMoved( final ComponentEvent e )
+	{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public void componentResized( ComponentEvent e ) {
+	public void componentResized( final ComponentEvent e )
+	{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public void componentShown( ComponentEvent e ) {
-		Dimension biggerminsize = new Dimension( minsize );
+	public void componentShown( final ComponentEvent e )
+	{
+		final Dimension biggerminsize = new Dimension( minsize );
 		biggerminsize.height = biggerminsize.height + 100;
-		biggerminsize.width = Math.max(biggerminsize.width, 400);
+		biggerminsize.width = Math.max( biggerminsize.width, 400 );
 		setMinimumSize( biggerminsize );
 		setSize( prefsize );
 		setResizable( true );

@@ -59,7 +59,9 @@ public final class DebugDialog
 		
 		//Go Live
 		if ( frame != null )
+		{
 			frame.setVisible( true );
+		}
 	}
 	
 	/**
@@ -90,7 +92,9 @@ public final class DebugDialog
 		
 		//Set timer for refreshing the list
 		if ( timer != null )
+		{
 			timer.stop();
+		}
 		timer = new javax.swing.Timer( 100, new RefreshList( list ) );
 		timer.start();
 		
@@ -99,7 +103,7 @@ public final class DebugDialog
 		
 		//Center frame
 		final Dimension screenSize =
-		    Toolkit.getDefaultToolkit().getScreenSize();
+			Toolkit.getDefaultToolkit().getScreenSize();
 		final Dimension size = frame.getSize();
 		
 		//listScroller.setSize(new Dimension(150, size.height));
@@ -128,7 +132,9 @@ public final class DebugDialog
 		public void actionPerformed( final ActionEvent e )
 		{
 			if ( !list.isDisplayable() )
+			{
 				timer.stop();
+			}
 			if ( regenlist++ % 5 == 0 )
 			{
 				final DebugMsg[] temp = Debug.getArray();

@@ -18,16 +18,18 @@ import net.sf.backcomp.debug.DebugLevel;
  */
 public class SettingManager
 {
-	private SettingManager(){}//This is a static class
-	
-	public static String getSetting(String key)
+	private SettingManager()
 	{
-		return BC.SETTINGS.getProperty(key);
+	}//This is a static class
+	
+	public static String getSetting( final String key )
+	{
+		return BC.SETTINGS.getProperty( key );
 	}
 	
-	public static String getDefaultSetting(String key)
+	public static String getDefaultSetting( final String key )
 	{
-		return BC.DEFAULT_SETTINGS.getProperty(key);
+		return BC.DEFAULT_SETTINGS.getProperty( key );
 	}
 	
 	/**
@@ -37,16 +39,17 @@ public class SettingManager
 	 * @param value Value to place in the key.
 	 * @return
 	 */
-	public static String setSetting(String key, String value)
+	public static String setSetting( final String key, final String value )
 	{
 		String prop = null;
 		try
 		{
-			prop = (String)BC.SETTINGS.setProperty(key, value);
+			prop = ( String ) BC.SETTINGS.setProperty( key, value );
 		}
-		catch(ClassCastException ex)
+		catch ( final ClassCastException ex )
 		{
-			Debug.message("Setting old value was not a string: " + key + "\nNew Value: " + value, DebugLevel.Error, ex);
+			Debug.message( "Setting old value was not a string: " + key
+				+ "\nNew Value: " + value, DebugLevel.Error, ex );
 		}
 		
 		return prop;
@@ -58,9 +61,9 @@ public class SettingManager
 	 * @param key Key to check in settings.
 	 * @return
 	 */
-	public static boolean isDefaultSetting(String key)
+	public static boolean isDefaultSetting( final String key )
 	{
-		return !BC.SETTINGS.containsKey(key);
+		return !BC.SETTINGS.containsKey( key );
 	}
 	
 	/**
@@ -69,16 +72,19 @@ public class SettingManager
 	 * @param key Key to revert to Default.
 	 * @return
 	 */
-	public static String resetSetting(String key)
+	public static String resetSetting( final String key )
 	{
 		String prop = null;
 		try
 		{
-			prop = (String)BC.SETTINGS.remove(key);
+			prop = ( String ) BC.SETTINGS.remove( key );
 		}
-		catch(ClassCastException ex)
+		catch ( final ClassCastException ex )
 		{
-			Debug.message("Setting old value was not a string: " + key, DebugLevel.Error, ex);
+			Debug.message(
+				"Setting old value was not a string: " + key,
+				DebugLevel.Error,
+				ex );
 		}
 		
 		return prop;

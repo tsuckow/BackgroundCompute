@@ -11,6 +11,7 @@ package net.sf.backcomp.tests;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import junit.framework.Assert;
 
 /**
@@ -31,10 +32,9 @@ public class MethodUtils
 	 * @return Method
 	 */
 	public static Method getPMethod(
-		Class<?> targetClass,
-		String methodName,
-		Class<?>... argTypes
-	)
+		final Class< ? > targetClass,
+		final String methodName,
+		final Class< ? >... argTypes )
 	{
 		final Method m = getMethod( targetClass, methodName, argTypes );
 		
@@ -42,12 +42,11 @@ public class MethodUtils
 		{
 			m.setAccessible( true );
 		}
-		catch ( SecurityException e )
+		catch ( final SecurityException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered SecurityException when permissing method."
-			);
+			Assert
+				.fail( "Encountered SecurityException when permissing method." );
 			return null;
 		}
 		
@@ -63,32 +62,27 @@ public class MethodUtils
 	 * @return Method
 	 */
 	public static Method getMethod(
-		Class<?> targetClass,
-		String methodName,
-		Class<?>... argTypes
-	)
+		final Class< ? > targetClass,
+		final String methodName,
+		final Class< ? >... argTypes )
 	{
 		try
 		{
 			return net.sf.backcomp.utils.BC.class.getDeclaredMethod(
 				methodName,
-				argTypes
-			);
+				argTypes );
 		}
-		catch ( SecurityException e )
+		catch ( final SecurityException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered SecurityException when getting method."
-			);
+			Assert.fail( "Encountered SecurityException when getting method." );
 			return null;
 		}
-		catch ( NoSuchMethodException e )
+		catch ( final NoSuchMethodException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered NoSuchMethodException when getting method."
-			);
+			Assert
+				.fail( "Encountered NoSuchMethodException when getting method." );
 			return null;
 		}
 	}
@@ -102,37 +96,33 @@ public class MethodUtils
 	 * @return Result of the method.
 	 */
 	public static Object invokeMethod(
-		Method method,
-		Object instance,
-		Object... args
-	)
+		final Method method,
+		final Object instance,
+		final Object... args )
 	{
 		try
 		{
 			return method.invoke( instance, args );
 		}
-		catch ( IllegalArgumentException e )
+		catch ( final IllegalArgumentException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered IllegalArgumentException when invoking method."
-			);
+			Assert
+				.fail( "Encountered IllegalArgumentException when invoking method." );
 			return null;
 		}
-		catch ( IllegalAccessException e )
+		catch ( final IllegalAccessException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered IllegalAccessException when invoking method."
-			);
+			Assert
+				.fail( "Encountered IllegalAccessException when invoking method." );
 			return null;
 		}
-		catch ( InvocationTargetException e )
+		catch ( final InvocationTargetException e )
 		{
 			e.printStackTrace();
-			Assert.fail(
-				"Encountered InvocationTargetException when invoking method."
-			);
+			Assert
+				.fail( "Encountered InvocationTargetException when invoking method." );
 			return null;
 		}
 	}

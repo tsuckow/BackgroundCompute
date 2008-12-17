@@ -7,7 +7,8 @@
  */
 package net.sf.backcomp.utils;
 
-import net.sf.backcomp.debug.*;
+import net.sf.backcomp.debug.Debug;
+import net.sf.backcomp.debug.DebugLevel;
 
 /**
  * 
@@ -18,7 +19,9 @@ import net.sf.backcomp.debug.*;
  */
 public final class LangMan
 {
-	private LangMan(){}//This is a static class
+	private LangMan()
+	{
+	}//This is a static class
 	
 	/**
 	 * 
@@ -26,18 +29,21 @@ public final class LangMan
 	 * @param alt Alternative if key is empty
 	 * @return Localized value stored at {@code key} or {@code alt} if not found.
 	 */
-	public static String getString(String key, String alt)
+	public static String getString( final String key, final String alt )
 	{
-		if(BC.getLanguageBundle() != null)
+		if ( BC.getLanguageBundle() != null )
 		{
 			try
 			{
-				return BC.getLanguageBundle().getString(key);
+				return BC.getLanguageBundle().getString( key );
 			}
-			catch(Exception e)
+			catch ( final Exception e )
 			{
 				//No such compatible key.
-				Debug.message("Missing Locale Information For Key: " + key, DebugLevel.Information, e);
+				Debug.message(
+					"Missing Locale Information For Key: " + key,
+					DebugLevel.Information,
+					e );
 			}
 		}
 		return alt;

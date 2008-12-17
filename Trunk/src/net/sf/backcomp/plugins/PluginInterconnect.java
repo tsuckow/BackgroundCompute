@@ -13,7 +13,7 @@ public class PluginInterconnect
 	private boolean IsPauseable = false;
 	private PluginState State = PluginState.Initilizing;
 	private int cores = 0;
-		
+	
 	/**
 	 * The run state the plugin is in.
 	 */
@@ -29,7 +29,7 @@ public class PluginInterconnect
 	 * 
 	 * @param num Number of CPU cores wanted.
 	 */
-	public void setWantedCpu(int num)
+	public void setWantedCpu( final int num )
 	{
 		CpuResources = num;
 	}
@@ -43,7 +43,7 @@ public class PluginInterconnect
 		return CpuResources;
 	}
 	
-	public void setPluginState(PluginState ps)
+	public void setPluginState( final PluginState ps )
 	{
 		State = ps;
 	}
@@ -53,7 +53,7 @@ public class PluginInterconnect
 		return State;
 	}
 	
-	public void setPauseable(boolean pauseable)
+	public void setPauseable( final boolean pauseable )
 	{
 		IsPauseable = pauseable;
 	}
@@ -63,7 +63,7 @@ public class PluginInterconnect
 		return IsPauseable;
 	}
 	
-	public void setCores(int num)
+	public void setCores( final int num )
 	{
 		cores = num;
 	}

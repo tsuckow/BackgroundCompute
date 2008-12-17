@@ -10,11 +10,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 public class CollapsiblePanel extends JPanel implements ActionListener
 {
-
+	
 	/**
 	 * 
 	 */
@@ -25,8 +24,7 @@ public class CollapsiblePanel extends JPanel implements ActionListener
 	Icon visible;
 	Icon notVisible;
 	
-	
-	public CollapsiblePanel(JComponent c, Icon V, Icon NV)
+	public CollapsiblePanel( final JComponent c, final Icon V, final Icon NV )
 	{
 		super( new BorderLayout() );
 		
@@ -34,91 +32,84 @@ public class CollapsiblePanel extends JPanel implements ActionListener
 		visible = V;
 		notVisible = NV;
 		
-		button.setAlignmentX(LEFT_ALIGNMENT);
-		button.addActionListener(this);
+		button.setAlignmentX( LEFT_ALIGNMENT );
+		button.addActionListener( this );
 		
-		button.setIcon(notVisible);
-		button.setContentAreaFilled(false);
+		button.setIcon( notVisible );
+		button.setContentAreaFilled( false );
 		
-		JPanel buttonpane = new JPanel( new BorderLayout() ); 
-		buttonpane.add(button, BorderLayout.WEST);
+		final JPanel buttonpane = new JPanel( new BorderLayout() );
+		buttonpane.add( button, BorderLayout.WEST );
 		
-		content.setVisible(true);
-		content.setVisible(false);
+		content.setVisible( true );
+		content.setVisible( false );
 		
-		add(buttonpane,BorderLayout.NORTH);
-		add(content,BorderLayout.CENTER);
+		add( buttonpane, BorderLayout.NORTH );
+		add( content, BorderLayout.CENTER );
 	}
 	
-	public CollapsiblePanel(JComponent c)
+	public CollapsiblePanel( final JComponent c )
 	{
 		super( new BorderLayout() );
 		
 		content = c;
-		visible = new ImageIcon(
-			"images" + File.separator
-			+ "components" + File.separator
-			+ "arrowdown.png",
-			"Visible"
-		);
-		notVisible = new ImageIcon(
-			"images" + File.separator
-			+ "components" + File.separator
-			+ "arrow.png",
-			"Hidden"
-		);
+		visible =
+			new ImageIcon( "images" + File.separator + "components"
+				+ File.separator + "arrowdown.png", "Visible" );
+		notVisible =
+			new ImageIcon( "images" + File.separator + "components"
+				+ File.separator + "arrow.png", "Hidden" );
 		
-		button.setAlignmentX(LEFT_ALIGNMENT);
-		button.addActionListener(this);
+		button.setAlignmentX( LEFT_ALIGNMENT );
+		button.addActionListener( this );
 		
-		button.setIcon(notVisible);
-		button.setContentAreaFilled(false);
+		button.setIcon( notVisible );
+		button.setContentAreaFilled( false );
 		
-		JPanel buttonpane = new JPanel( new BorderLayout() ); 
-		buttonpane.add(button, BorderLayout.WEST);
+		final JPanel buttonpane = new JPanel( new BorderLayout() );
+		buttonpane.add( button, BorderLayout.WEST );
 		
-		content.setVisible(true);
-		content.setVisible(false);
+		content.setVisible( true );
+		content.setVisible( false );
 		
-		add(buttonpane,BorderLayout.NORTH);
-		add(content,BorderLayout.CENTER);
+		add( buttonpane, BorderLayout.NORTH );
+		add( content, BorderLayout.CENTER );
 	}
 	
-    public void actionPerformed (ActionEvent e)
-    {
-        if (e.getSource() == button)
-        {
-            setCollapsed(!isCollapsed());
-        }
-    }
-
-    /**
-     * Is the panel collapsed?
-     */
-    public boolean isCollapsed ()
-    {
-        return !content.isVisible();
-    }
-
-    /**
-     * Set the collapsed state.
-     */
-    public void setCollapsed (boolean collapse)
-    {
-        if (collapse)
-        {
-            content.setVisible(false);
-            button.setIcon(notVisible);
-        }
-        else
-        {
-            content.setVisible(true);
-            button.setIcon(visible);
-        }
-
-        invalidate();
-        repaint();
-    }
-
-
+	public void actionPerformed( final ActionEvent e )
+	{
+		if ( e.getSource() == button )
+		{
+			setCollapsed( !isCollapsed() );
+		}
+	}
+	
+	/**
+	 * Is the panel collapsed?
+	 */
+	public boolean isCollapsed()
+	{
+		return !content.isVisible();
+	}
+	
+	/**
+	 * Set the collapsed state.
+	 */
+	public void setCollapsed( final boolean collapse )
+	{
+		if ( collapse )
+		{
+			content.setVisible( false );
+			button.setIcon( notVisible );
+		}
+		else
+		{
+			content.setVisible( true );
+			button.setIcon( visible );
+		}
+		
+		invalidate();
+		repaint();
+	}
+	
 }

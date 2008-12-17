@@ -51,7 +51,9 @@ public class MultiLineLabel extends JComponent
 		lines = new String[num_lines];
 		line_widths = new int[num_lines];
 		for ( int i = 0; i < num_lines; i++ )
+		{
 			lines[i] = t.nextToken();
+		}
 	}
 	
 	// This method figures out how the font is, and how wide each
@@ -61,7 +63,9 @@ public class MultiLineLabel extends JComponent
 		final FontMetrics fm = getFontMetrics( getFont() );
 		// If we don't have font metrics yet, just return.
 		if ( fm == null )
+		{
 			return;
+		}
 		
 		line_height = fm.getHeight();
 		line_ascent = fm.getAscent();
@@ -70,17 +74,19 @@ public class MultiLineLabel extends JComponent
 		{
 			line_widths[i] = fm.stringWidth( lines[i] );
 			if ( line_widths[i] > max_width )
+			{
 				max_width = line_widths[i];
+			}
 		}
 	}
 	
 	// Here are four versions of the cosntrutor.
 	// Break the label up into separate lines, and save the other info.
 	public MultiLineLabel(
-	    final String label,
-	    final int margin_width,
-	    final int margin_height,
-	    final int alignment )
+		final String label,
+		final int margin_width,
+		final int margin_height,
+		final int alignment )
 	{
 		newLabel( label );
 		this.margin_width = margin_width;
@@ -89,9 +95,9 @@ public class MultiLineLabel extends JComponent
 	}
 	
 	public MultiLineLabel(
-	    final String label,
-	    final int margin_width,
-	    final int margin_height )
+		final String label,
+		final int margin_width,
+		final int margin_height )
 	{
 		this( label, margin_width, margin_height, LEFT );
 	}
@@ -180,7 +186,7 @@ public class MultiLineLabel extends JComponent
 	public Dimension getPreferredSize()
 	{
 		return new Dimension( max_width + 2 * margin_width, num_lines
-		    * line_height + 2 * margin_height );
+			* line_height + 2 * margin_height );
 	}
 	
 	// This method is called when the layout manager wants to know
