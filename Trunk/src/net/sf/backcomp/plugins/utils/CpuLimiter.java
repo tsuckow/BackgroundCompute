@@ -31,7 +31,7 @@ public class CpuLimiter
 	/**
 	 * Our CPU usage goal. (1-100)
 	 */
-	private long mCpuGoal = 50;
+	private long mCpuGoal = 30;
 	
 	/**
 	 * One hundred percent.
