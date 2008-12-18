@@ -47,6 +47,8 @@ public class BACKPI_StatusPanel extends JPanel
 
         SThread(JPanel p)
 		{
+        	super("Background Pi Status Panel");
+        	this.setDaemon(true);
             this.panel = p;
         }   
 
@@ -96,13 +98,18 @@ public class BACKPI_StatusPanel extends JPanel
         						tf.setName("CPU");
         						a.add( tf );
         						
+        						a.add( new JLabel("Cpu Sleep:", JLabel.TRAILING) );
+        						tf = new JTextField(20);
+        						tf.setName("CPUS");
+        						a.add( tf );
+        						
         						a.add( new JLabel("Time Left:", JLabel.TRAILING) );
         						tf = new JTextField(20);
         						tf.setName("TLEFT");
         						a.add( tf );
         						
         						SpringUtilities.makeCompactGrid(a,
-        								5, 2, //rows, cols
+        								6, 2, //rows, cols
         								6, 6,        //initX, initY
         								6, 6);       //xPad, yPad
         						
@@ -164,6 +171,15 @@ public class BACKPI_StatusPanel extends JPanel
         				do{
         					name = a.getComponent(j).getName();
         					++j;
+        				}while( (name==null || !name.equals("CPUS")) && j < a.getComponentCount() );
+        				if(name!=null && name.equals("CPUS"))
+        				{
+        					( (JTextField)a.getComponent(j-1) ).setText( String.valueOf(status.cpusleep) );
+        				}
+        				
+        				do{
+        					name = a.getComponent(j).getName();
+        					++j;
         				}while( (name==null || !name.equals("TLEFT")) && j < a.getComponentCount() );
         				if(name!=null && name.equals("TLEFT"))
         				{
@@ -182,7 +198,7 @@ public class BACKPI_StatusPanel extends JPanel
 		    		JFrame jf = (JFrame)(panel.getTopLevelAncestor());
 		    		jf.pack();
 		    		
-		    		if(panel.isDisplayable() == false)//No idea if this is safe or a race condition.
+		    		if(jf.isDisplayable() == false)//No idea if this is safe or a race condition.
 		    		{
 		    			panel.removeAll();
 		    			panel = null;

@@ -30,6 +30,7 @@ public class BACKPI_Core extends Thread
 	
 	BACKPI_Core(Properties Set, BACKPI_Status Stat)
 	{
+		super("Background Pi Core");
 		Settings = Set;
 		status = Stat;
 		
@@ -58,11 +59,10 @@ public class BACKPI_Core extends Thread
 		main();
 	}
 	
-	private boolean coreShutdown(BACKPI_Status status)
+	private boolean coreShutdown()
    	{
 		if(limiter != null)
 		{
-			limiter.recordCpuUsage();
 			limiter.doSleep();
 		}
 		else
@@ -344,26 +344,30 @@ public class BACKPI_Core extends Thread
       return r;
     }
     
-   	private static boolean isPrime(long n) // http://snippets.dzone.com/posts/show/2879
+    private static boolean isPrime(long n)
    	{
-		boolean prime = true;
-		for (long i = 3; i <= Math.sqrt(n); i += 2)
-			if (n % i == 0) {
-				prime = false;
-				break;
+		if( n!=2 && ( n % 2 == 0 || n < 2 ) ) return false;
+		
+		long sqrt = (long) Math.sqrt(n) + 1;
+		
+		for (long i = 3; i <= sqrt; i += 2)
+		{
+			if (n % i == 0)
+			{
+				return false;
 			}
-		if (( n%2 !=0 && prime && n > 2) || n == 2) {
-			return true;
-		} else {
-			return false;
 		}
+
+		return true;
+
 	}
    	
-   	/** return the prime number immediatly after n */
+   	/** return the prime number immediately after n where n >= 2 */
    	private static long next_prime(long n)
    	{
+   	   if( n % 2 == 0 ) --n; //Go back if even
    	   do {
-   	      n++;
+   	      n+=2;
    	   } while (!isPrime(n));
    	   return n;
    	}
@@ -442,7 +446,7 @@ public class BACKPI_Core extends Thread
     			lTime = new Date().getTime();
     			iTimePos = (iTimePos + 1) % iTimeNum;
     				
-    			if(coreShutdown(status)) return;
+    			if(coreShutdown()) return;
     			
     			{
     				status.Iteration = PrimeCount(a);
@@ -450,6 +454,7 @@ public class BACKPI_Core extends Thread
     				if(limiter != null)
     				{
     					status.cputime = limiter.getAvgCpuUsage();	
+    					status.cpusleep = 0;
     				}
     				else
     				{
@@ -465,7 +470,7 @@ public class BACKPI_Core extends Thread
     			
     			}
     					
-    			if(coreShutdown(status)) return;
+    			if(coreShutdown()) return;
     			
     		    vmax=(int)(Math.log(3*N)/Math.log(a));
     		    if (a==2) {
@@ -473,7 +478,7 @@ public class BACKPI_Core extends Thread
     		    	if (vmax<=0) continue;
     		    }
     		    av=1;
-    		    for(i=0;i<vmax;i++) av=av*a;
+    		    for(i=0;i<vmax;i++) av=av*a;//Fucked up way of doing pow(a,vmax)
 
     		    s=0;
     		    den=1;
@@ -677,7 +682,7 @@ public class BACKPI_Core extends Thread
     		{
     		}
     		*/
-    		if(coreShutdown(status)) return;
+    		if(coreShutdown()) return;
     	}
     }
 }

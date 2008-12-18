@@ -31,6 +31,7 @@ public class BACKPI_CoreManager extends Thread
 	*/
 	BACKPI_CoreManager(Properties Set, CopyOnWriteArrayList<BACKPI_Status> Ts, PluginInterconnect PI)
 	{
+		super("Background Pi Core Manager");
 		Settings = Set;
 		Threads = Ts;
 		link = PI;
@@ -47,8 +48,13 @@ public class BACKPI_CoreManager extends Thread
 				Threads.add(status);
 				
 				BACKPI_Core core = new BACKPI_Core(Settings, status);
+				core.setPriority(MIN_PRIORITY);
 				status.statusCore = core;
 				core.start();
+			}
+			if( Threads.size() > link.getCores() )
+			{
+				//TODO:
 			}
 			
 			Iterator<BACKPI_Status> i = Threads.iterator();
@@ -64,6 +70,14 @@ public class BACKPI_CoreManager extends Thread
 				//TODO: if more than like 20 threads have died in the last 25 seconds, something is afoot.
 			}
 			CpuLimiter.sleep(1000);
+		}
+		
+		Iterator<BACKPI_Status> i = Threads.iterator();
+		
+		while(i.hasNext())//Dead threads?
+		{
+			BACKPI_Status status = i.next();
+			status.statusCore.halt();
 		}
 	}
 	

@@ -35,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
 
-import net.sf.backcomp.exceptions.NotImplementedException;
+import net.sf.backcomp.exceptions.NotImplementedError;
 import net.sf.backcomp.exceptions.PluginNotPauseableError;
 import net.sf.backcomp.plugins.Plugin;
 import net.sf.backcomp.plugins.PluginInterconnect;
@@ -130,6 +130,6 @@ public class BACKPI implements Plugin
 	public void uninstall()
 	{
 		//TODO: Add uninstall code (should basically just delete my own directory)
-		throw new NotImplementedException();
+		throw new NotImplementedError();
 	}
 }

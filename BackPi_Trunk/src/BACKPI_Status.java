@@ -11,6 +11,7 @@ public class BACKPI_Status
 	public long MaxIteration = 0;
 	
 	public double cputime = -1;//-1, init; -2, not supported
+	public int cpusleep = 0;//-1, init; -2, not supported
 	
 	public String timeleft = "";
 	
