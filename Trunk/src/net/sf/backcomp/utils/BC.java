@@ -23,7 +23,7 @@
  */
 package net.sf.backcomp.utils;
 
-//TODO: Save the directory files to backup file, do a diff and delete removed files.
+//TODO: Save the directory files to backup, do a diff and delete removed files.
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -68,7 +68,7 @@ import javax.swing.UIManager;
  * @version 0.2.1 2008/08/17
  *
  */
-public final class BC extends SwingWorker< Object, Object[] >
+public final class BC extends SwingWorker < Object, Object[] >
 {
 	
 	/**
@@ -91,7 +91,9 @@ public final class BC extends SwingWorker< Object, Object[] >
 		
 		set.setProperty( "cpu_limit", "80" );
 		set.setProperty( "locale", "en" );
-		set.setProperty( "server_path", "http://defcon1.hopto.org/updates/bc/" );
+		set.setProperty(
+			"server_path",
+			"http://defcon1.hopto.org/updates/bc/" );
 		set.setProperty( "updateError", "False" );
 		
 		return set;
@@ -378,7 +380,11 @@ public final class BC extends SwingWorker< Object, Object[] >
 			if ( !remoteToLocal( DIR_UPDATE + "dev&Dir=" + listname, listname
 				+ "/DirList.txt" ) )
 			{
-				updateError( localeFormat( "Error_Download1", listname ), null );
+				updateError(
+					localeFormat(
+						"Error_Download1",
+						listname ),
+					null );
 			}
 			final String localHash = getLocalHash( listname + "/DirList.txt" );
 			
@@ -386,8 +392,13 @@ public final class BC extends SwingWorker< Object, Object[] >
 			if ( localHash.compareTo( hash ) != 0 )
 			{
 				//Data ERROR
-				updateError( localeFormat( "Error_Download2", new String[] {
-						listname + "/DirList.txt", localHash, hash } ), null );
+				updateError(
+					localeFormat( "Error_Download2",
+						new String[] {
+							listname + "/DirList.txt",
+							localHash, hash }
+					),
+					null );
 			}
 			
 			updated =
@@ -429,7 +440,8 @@ public final class BC extends SwingWorker< Object, Object[] >
 	 */
 	private void loadLocalization()
 	{
-		final Locale userLocale = new Locale( SETTINGS.getProperty( "locale" ) );
+		final Locale userLocale =
+			new Locale( SETTINGS.getProperty( "locale" ) );
 		try
 		{
 			final ClassLoader myClassLoader =
@@ -440,8 +452,11 @@ public final class BC extends SwingWorker< Object, Object[] >
 			try
 			{
 				myURLClassLoader =
-					new URLClassLoader( new URL[] { new File( "."
-						+ File.separator ).toURI().toURL(), }, myClassLoader );
+					new URLClassLoader(
+						new URL[] {
+							new File( "." + File.separator ).toURI().toURL(),
+						},
+						myClassLoader );
 				sLanguageBundle =
 					ResourceBundle.getBundle(
 						"Root",
@@ -475,7 +490,8 @@ public final class BC extends SwingWorker< Object, Object[] >
 			if ( children.length > 0 )
 			{
 				//Look for language bundles starting with root_
-				final ArrayList< String > filtered = new ArrayList< String >();
+				final ArrayList < String > filtered =
+					new ArrayList < String >();
 				for ( int i = 0; i < children.length; ++i )
 				{
 					if ( children[i].startsWith( "Root_" ) )
@@ -610,7 +626,9 @@ public final class BC extends SwingWorker< Object, Object[] >
 				
 				if ( !remoteToLocal( prefix + name, "Download.tmp" ) )
 				{
-					updateError( localeFormat( "Error_Download1", name ), null );
+					updateError(
+						localeFormat( "Error_Download1", name ),
+						null );
 				}
 				final File src = new File( "Download.tmp" );
 				
@@ -618,8 +636,11 @@ public final class BC extends SwingWorker< Object, Object[] >
 				if ( getLocalHash( "Download.tmp" ).compareTo( hash ) != 0 )
 				{
 					//Data ERROR
-					updateError( localeFormat( "Error_Download2", new String[] {
-							name, getLocalHash( name ), hash } ), null );
+					updateError(
+						localeFormat(
+							"Error_Download2",
+							new String[] { name, getLocalHash( name ), hash } ),
+						null );
 				}
 				
 				//Make the slash char for this OS
@@ -719,7 +740,7 @@ public final class BC extends SwingWorker< Object, Object[] >
 	 * @param chunks A List of queued items to update in order.
 	 */
 	@Override
-	protected void process( final List< Object[] > chunks )
+	protected void process( final List < Object[] > chunks )
 	{
 		//Handle each item in order
 		for ( final Object row[] : chunks )
@@ -746,22 +767,22 @@ public final class BC extends SwingWorker< Object, Object[] >
 				if ( row[0] instanceof Integer && row[1] instanceof Integer
 					&& row[2] instanceof Integer && row[3] instanceof Integer )
 				{
-					if ( mSplashProgressBars[( Integer ) row[0]] != null )
+					if ( mSplashProgressBars[(Integer) row[0]] != null )
 					{
-						if ( ( ( Integer ) row[2] ) == -1 )
+						if ( ( (Integer) row[2] ) == -1 )
 						{
 							//Unknown time
-							mSplashProgressBars[( Integer ) row[0]]
+							mSplashProgressBars[(Integer) row[0]]
 								.setIndeterminate( true );
 						}
 						else
 						{
 							//Specific Size
 							processProgressValue(
-								mSplashProgressBars[( Integer ) row[0]],
-								( Integer ) row[1],
-								( Integer ) row[2],
-								( Integer ) row[3] );
+								mSplashProgressBars[(Integer) row[0]],
+								(Integer) row[1],
+								(Integer) row[2],
+								(Integer) row[3] );
 						}
 					}
 				}
@@ -1268,7 +1289,8 @@ public final class BC extends SwingWorker< Object, Object[] >
 	{
 		if ( SETTINGS.getProperty( "updateError" ).equalsIgnoreCase( "False" ) )
 		{
-			setSplashText( localize( "Error_Update1", "Error while updating. " ) );
+			setSplashText(
+				localize( "Error_Update1", "Error while updating. " ) );
 			
 			try
 			{

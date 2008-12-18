@@ -1,3 +1,9 @@
+/*
+ *
+ * Background Compute ( Manages Distributed Projects )
+ * Copyright (C) 2008 Thomas Suckow (Deathbob)
+ *
+ */
 package net.sf.backcomp.components;
 
 import java.awt.BorderLayout;
