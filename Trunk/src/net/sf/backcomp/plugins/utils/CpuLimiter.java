@@ -34,6 +34,11 @@ public class CpuLimiter
 	private long mCpuGoal = 50;
 	
 	/**
+	 * One hundred percent.
+	 */
+	private static final int HUNDRED_PERCENT = 100;
+	
+	/**
 	 * Real time of when <code>reset()</code> was called.
 	 */
 	private long mLastCheck;
@@ -98,19 +103,24 @@ public class CpuLimiter
 		final long cpuInterval = currentCpu - mLastCpuTime;
 		final long timeInterval = currentTime - mLastCheck;
 		
+		Debug.message(
+			cpuInterval + " " + timeInterval,
+			DebugLevel.Debug );
+		
 		//If no time passed, forgetaboutit
 		if ( cpuInterval == 0 || timeInterval == 0 )
 		{
 			return 0;
 		}
+		
 		if ( cpuInterval > timeInterval )
 		{
 			Debug.message( "Paradox: Cpu time greater than time elapsed.\n"
 				+ cpuInterval + "\n" + timeInterval, DebugLevel.Warning );
-			return 100;
+			return HUNDRED_PERCENT;
 		}
 		
-		return (int) ( cpuInterval / timeInterval );
+		return (int) ( cpuInterval * HUNDRED_PERCENT / timeInterval );
 	}
 	
 	/**
