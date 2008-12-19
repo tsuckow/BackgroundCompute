@@ -103,10 +103,6 @@ public class CpuLimiter
 		final long cpuInterval = currentCpu - mLastCpuTime;
 		final long timeInterval = currentTime - mLastCheck;
 		
-		Debug.message(
-			cpuInterval + " " + timeInterval,
-			DebugLevel.Debug );
-		
 		//If no time passed, forgetaboutit
 		if ( cpuInterval == 0 || timeInterval == 0 )
 		{
