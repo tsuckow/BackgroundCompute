@@ -130,6 +130,7 @@ public class CpuLimiter
 	 */
 	public void doSleep()
 	{
+		long totalsleep = 0;
 		while ( getAvgCpuUsage() > mCpuGoal )
 		{
 			final long currentCpu = getThreadCpuTime();
@@ -142,7 +143,24 @@ public class CpuLimiter
 			final long sleeptime =
 				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1;
 			
-			sleep( ( sleeptime > 0 ) ? sleeptime : 1 );
+			if ( sleeptime > 0 )
+			{
+				Debug.message(
+					"Sleep time:" + Long.toString( sleeptime ),
+					DebugLevel.Debug );
+			}
+			
+			final long realsleep = 1; // ( sleeptime > 0 ) ? sleeptime : 1;
+			
+			totalsleep += realsleep;
+			
+			sleep( realsleep );
+		}
+		if ( totalsleep > 0 )
+		{
+			Debug.message(
+				"Total Sleep:" + Long.toString( totalsleep ),
+				DebugLevel.Debug );
 		}
 	}
 	
