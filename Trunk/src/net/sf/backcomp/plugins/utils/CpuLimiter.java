@@ -24,7 +24,7 @@ import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
  */
 public class CpuLimiter
 {
-	private static final int NANOS_IN_MILLI = 100000;
+	private static final long NANOS_IN_MILLI = 100000;
 
 	/**
 	 * Bean for getting CPU usage information.
@@ -34,7 +34,7 @@ public class CpuLimiter
 	/**
 	 * Our CPU usage goal. (1-100)
 	 */
-	private long mCpuGoal = 30;
+	private int mCpuGoal = 30;
 	
 	/**
 	 * One hundred percent.
@@ -141,12 +141,12 @@ public class CpuLimiter
 				( cpuInterval * HUNDRED_PERCENT ) / mCpuGoal + mLastCheck;
 			
 			final long sleeptime =
-				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1;
+				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1L;
 			
 			if ( sleeptime > 0 )
 			{
 				Debug.message(
-					"Sleep time:" + Long.toString( sleeptime ),
+					"Sleep time: " + Long.toString( targetEndTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( sleeptime ),
 					DebugLevel.Debug );
 			}
 			
