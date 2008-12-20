@@ -138,7 +138,8 @@ public class CpuLimiter
 			final long cpuInterval = currentCpu - mLastCpuTime;
 			
 			final long targetEndTime =
-				( cpuInterval * HUNDRED_PERCENT ) / mCpuGoal + mLastCheck;
+				( cpuInterval * (long) HUNDRED_PERCENT ) / (long) mCpuGoal
+				+ mLastCheck;
 			
 			final long sleeptime =
 				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1L;
