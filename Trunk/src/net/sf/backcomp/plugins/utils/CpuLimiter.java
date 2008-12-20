@@ -144,7 +144,7 @@ public class CpuLimiter
 			final long targetEndTime = targetTimeInterval + mLastCheck;
 			
 			final long sleeptime =
-				( targetTimeInterval - timeInterval ) / NANOS_IN_MILLI;
+				( targetTimeInterval - timeInterval ) ;// / NANOS_IN_MILLI;
 			
 			if ( sleeptime > 0 )
 			{
