@@ -147,7 +147,7 @@ public class CpuLimiter
 			if ( sleeptime > 0 )
 			{
 				Debug.message(
-					"Sleep time: " + Long.toString( targetEndTime ) + " " + Long.toString( (long)(cpuInterval * 3.333) ) + " " + Long.toString( sleeptime ),
+					"Sleep time: " + Long.toString( targetEndTime ) + " " + Long.toString( cpuInterval ) + " " + Long.toString( sleeptime ),
 					DebugLevel.Debug );
 			}
 			
