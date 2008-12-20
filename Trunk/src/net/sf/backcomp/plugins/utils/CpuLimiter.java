@@ -136,6 +136,7 @@ public class CpuLimiter
 			final long currentCpu = getThreadCpuTime();
 			final long currentTime = System.nanoTime();
 			final long cpuInterval = currentCpu - mLastCpuTime;
+			final long timeInterval = currentTime - mLastCheck;
 			
 			final long targetTimeInterval =
 				( cpuInterval * (long) HUNDRED_PERCENT ) / (long) mCpuGoal;
@@ -143,7 +144,7 @@ public class CpuLimiter
 			final long targetEndTime = targetTimeInterval + mLastCheck;
 			
 			final long sleeptime =
-				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1L;
+				( targetTimeInterval - timeInterval ) / NANOS_IN_MILLI;
 			
 			if ( sleeptime > 0 )
 			{
