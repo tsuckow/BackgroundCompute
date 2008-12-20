@@ -12,25 +12,46 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sf.backcomp.dialogs.DebugEventDialog;
 
+/**
+ * This class handles debug events.
+ * @author Deathbob
+ *
+ */
 public final class Debug
 {
-	final static String NEW_LINE = System.getProperty( "line.separator" );
+	/**
+	 * Maximum number of messages to track. 
+	 */
+	private static final int MAX_MESSAGES = 500;
 	
+	/**
+	 * Gets the newline string for this operating environment.
+	 * <br>
+	 * TODO: Move this to a function somewhere else.
+	 */
+	static final String NEW_LINE = System.getProperty( "line.separator" );
+	
+	/**
+	 * Not constructable
+	 */
 	private Debug()
 	{
 	}//This is a static class
 	
-	private static CopyOnWriteArrayList< DebugMsg > Msgs =
-		new CopyOnWriteArrayList< DebugMsg >();
+	/**
+	 * The messages in a threadsafe array.
+	 */
+	private static CopyOnWriteArrayList < DebugMsg > sMsgs =
+		new CopyOnWriteArrayList < DebugMsg > ();
 	
 	public static DebugMsg message( final String msg, final DebugLevel lvl )
 	{
 		//Get Time, Add to ArrayList
 		final DebugMsg dm = new DebugMsg( msg, lvl );
-		Msgs.add( dm );
-		if ( Msgs.size() > 500 )
+		sMsgs.add( dm );
+		if ( sMsgs.size() > MAX_MESSAGES )
 		{
-			Msgs.remove( 0 );
+			sMsgs.remove( 0 );
 		}
 		return dm;
 	}
@@ -44,10 +65,10 @@ public final class Debug
 		
 		//Get Time, Add to ArrayList
 		final DebugMsg dm = new DebugMsg( msg, lvl, stack );
-		Msgs.add( dm );
-		if ( Msgs.size() > 500 )
+		sMsgs.add( dm );
+		if ( sMsgs.size() > 500 )
 		{
-			Msgs.remove( 0 );
+			sMsgs.remove( 0 );
 		}
 		return dm;
 	}
@@ -97,7 +118,7 @@ public final class Debug
 	 */
 	public static Iterator< DebugMsg > getIterator()
 	{
-		return Msgs.iterator();
+		return sMsgs.iterator();
 	}
 	
 	/**
@@ -106,6 +127,6 @@ public final class Debug
 	 */
 	public static DebugMsg[] getArray()
 	{
-		return Msgs.toArray( new DebugMsg[0] );
+		return sMsgs.toArray( new DebugMsg[0] );
 	}
 }

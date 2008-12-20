@@ -16,13 +16,16 @@ import net.sf.backcomp.exceptions.ThreadCpuTimeNotSupportedException;
 
 /**
  * Manages tracking CPU usage for a single thread.
- * <br>This class is not thread safe and shouldn't need to be.
+ * <br>
+ * This class is not thread safe and shouldn't need to be.
  * 
  * @author Deathbob
  *
  */
 public class CpuLimiter
 {
+	private static final int NANOS_IN_MILLI = 100000;
+
 	/**
 	 * Bean for getting CPU usage information.
 	 */
@@ -129,7 +132,17 @@ public class CpuLimiter
 	{
 		while ( getAvgCpuUsage() > mCpuGoal )
 		{
-			sleep( 1 );
+			final long currentCpu = getThreadCpuTime();
+			final long currentTime = System.nanoTime();
+			final long cpuInterval = currentCpu - mLastCpuTime;
+			
+			final long targetEndTime =
+				( cpuInterval * HUNDRED_PERCENT ) / mCpuGoal + mLastCheck;
+			
+			final long sleeptime =
+				( targetEndTime - currentTime ) / NANOS_IN_MILLI - 1;
+			
+			sleep( ( sleeptime > 0 ) ? sleeptime : 1 );
 		}
 	}
 	
