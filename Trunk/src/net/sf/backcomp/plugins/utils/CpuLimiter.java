@@ -106,6 +106,10 @@ public class CpuLimiter
 		final long cpuInterval = currentCpu - mLastCpuTime;
 		final long timeInterval = currentTime - mLastCheck;
 		
+		Debug.message(
+			"Avg time: " + Long.toString( currentCpu ) + " " + Long.toString( mLastCpuTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( mLastCheck ),
+			DebugLevel.Debug );
+		
 		//If no time passed, forgetaboutit
 		if ( cpuInterval == 0 || timeInterval == 0 )
 		{
@@ -144,12 +148,12 @@ public class CpuLimiter
 			final long targetEndTime = targetTimeInterval + mLastCheck;
 			
 			final long sleeptime =
-				( targetTimeInterval - timeInterval ) ;// / NANOS_IN_MILLI;
+				( targetTimeInterval - timeInterval ) / NANOS_IN_MILLI;
 			
 			if ( sleeptime > 0 )
 			{
 				Debug.message(
-					"Sleep time: " + Long.toString( targetTimeInterval ) + " " + Long.toString( cpuInterval ) + " " + Long.toString( sleeptime ),
+					"Sleep time: " + Long.toString( currentCpu ) + " " + Long.toString( mLastCpuTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( mLastCheck ),
 					DebugLevel.Debug );
 			}
 			
