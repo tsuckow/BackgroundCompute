@@ -160,18 +160,15 @@ public class CpuLimiter
 					DebugLevel.Debug );*/
 			//}
 			
-			final long realsleep = ( sleeptime > 0 ) ? sleeptime : 1;
+			final long realsleep = 1;//( sleeptime > 0 ) ? sleeptime : 1;
 			
 			totalsleep += realsleep;
 			
 			sleep( realsleep );
 		}
-		if ( totalsleep > 0 )
-		{
 			Debug.message(
 				"Total Sleep:" + Long.toString( totalsleep ),
 				DebugLevel.Debug );
-		}
 	}
 	
 	/**
