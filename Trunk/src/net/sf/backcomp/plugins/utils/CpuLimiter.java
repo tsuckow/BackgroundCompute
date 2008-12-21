@@ -155,9 +155,9 @@ public class CpuLimiter
 				/*Debug.message(
 					"Sleep time: " + Long.toString( currentCpu ) + " " + Long.toString( mLastCpuTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( mLastCheck ),
 					DebugLevel.Debug );*/
-				/*Debug.message(
+				Debug.message(
 					"Sleep time: " + Long.toString( sleeptime ),
-					DebugLevel.Debug );*/
+					DebugLevel.Debug );
 			//}
 			
 			final long realsleep = ( sleeptime > 0 ) ? sleeptime : 1;
