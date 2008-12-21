@@ -106,10 +106,6 @@ public class CpuLimiter
 		final long cpuInterval = currentCpu - mLastCpuTime;
 		final long timeInterval = currentTime - mLastCheck;
 		
-		Debug.message(
-			"Avg time: " + Long.toString( currentCpu ) + " " + Long.toString( mLastCpuTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( mLastCheck ),
-			DebugLevel.Debug );
-		
 		//If no time passed, forgetaboutit
 		if ( cpuInterval == 0 || timeInterval == 0 )
 		{
@@ -123,7 +119,11 @@ public class CpuLimiter
 			return HUNDRED_PERCENT;
 		}
 		
-		return (int) ( cpuInterval * HUNDRED_PERCENT / timeInterval );
+		final long t = cpuInterval * HUNDRED_PERCENT;
+		final long b = timeInterval;
+		
+		//Does t/b in integer division rounding up.
+		return (int) ( ( t / b ) + ( ( t % b == 0 ) ? 0 : 1 ) );
 	}
 	
 	/**
@@ -150,12 +150,15 @@ public class CpuLimiter
 			final long sleeptime =
 				( targetTimeInterval - timeInterval ) / NANOS_IN_MILLI;
 			
-			if ( sleeptime > 0 )
-			{
-				Debug.message(
+			//if ( sleeptime > 0 )
+			//{
+				/*Debug.message(
 					"Sleep time: " + Long.toString( currentCpu ) + " " + Long.toString( mLastCpuTime ) + " " + Long.toString( currentTime ) + " " + Long.toString( mLastCheck ),
+					DebugLevel.Debug );*/
+				Debug.message(
+					"Sleep time: " + Long.toString( sleeptime ),
 					DebugLevel.Debug );
-			}
+			//}
 			
 			final long realsleep = 1; // ( sleeptime > 0 ) ? sleeptime : 1;
 			
