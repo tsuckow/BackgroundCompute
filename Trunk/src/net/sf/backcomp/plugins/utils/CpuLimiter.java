@@ -160,7 +160,7 @@ public class CpuLimiter
 					DebugLevel.Debug );*/
 			//}
 			
-			final long realsleep = 1;//( sleeptime > 0 ) ? sleeptime : 1;
+			final long realsleep = ( sleeptime > 0 ) ? sleeptime : 1;
 			
 			totalsleep += realsleep;
 			
