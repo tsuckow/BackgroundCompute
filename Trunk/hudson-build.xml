@@ -124,7 +124,7 @@
 	</target>
 	
 	<target name="coverage-report" depends="junit">
-		<cobertura-report format="html" srcdir="${sourceDir}" destdir="cobertura"/>
+		<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>
 	</target>
 	
 	<!-- ====================================================== -->
@@ -147,7 +147,7 @@
 	<target name="javadoc_deploy" depends="deploy,docs">
 	</target>
 	
-	<target name="style" depends="findbugs,checkstyle,coverage-report">
+	<target name="style" depends="findbugs,checkstyle">
 	</target>
 	
 	<!-- ====================================================== -->
