@@ -124,7 +124,7 @@
 	</target>
 	
 	<target name="coverage-report" depends="junit">
-		<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>
+		<cobertura-report format="html" srcdir="${sourceDir}" destdir="cobertura"/>
 	</target>
 	
 	<!-- ====================================================== -->
