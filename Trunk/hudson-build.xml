@@ -33,7 +33,7 @@
 		</path>
 		<path id="classpath.test">
 			<path refid="cobertura.classpath" />
-			<pathelement location="${instrumentDir}" />
+			<pathelement location="${outputDir}" />
 			<path refid="classpath.base" />
 		</path>
 		
