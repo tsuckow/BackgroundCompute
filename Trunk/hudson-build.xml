@@ -111,7 +111,7 @@
 	<target name="junit" depends="instrument">
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
-		<junit fork="true">
+		<junit fork="true" forkmode="once">
 			<classpath refid="classpath.test" />
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
