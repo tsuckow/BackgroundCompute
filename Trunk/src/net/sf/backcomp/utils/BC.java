@@ -746,7 +746,7 @@ public final class BC extends SwingWorker < Object, Object[] >
 		//for ( final Object row[] : chunks )
 		for ( int i = 0; i < chunks.size(); ++i )
 		{
-			final Object row[] = chunks.get();
+			final Object row[] = chunks.get(i);
 		
 			switch ( row.length )
 			{
