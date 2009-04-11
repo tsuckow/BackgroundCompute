@@ -1,4 +1,4 @@
-<project name="Background Compute" default="javadoc_deploy_style" basedir=".">
+<project name="Background Compute" default="hudson" basedir=".">
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -7,9 +7,11 @@
 		<property name="tst-dir" location="src/net/sf/backcomp/tests" />
 		<property name="sourceDir" value="src" />
 		<property name="outputDir" value="classes" />
+		<property name="instrumentDir" value="classes-instrumented" />
 		<property name="requiredDir" value="Required" />
 		<property name="javadocDir" value="doc" />
 		<property name="findbugs.home" value="lib/findbugs-1.3.5-rc1" />
+		<property name="cobertura.dir" value="lib/cobertura" />
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${findbugs.home}/lib/findbugs-ant.jar" />
 		<taskdef resource="checkstyletask.properties">
@@ -23,12 +25,22 @@
 			<pathelement location="lib/junit-4.5.jar" />
 			<pathelement location="lib/ant-junit.jar" />
 		</path>
+		<path id="cobertura.classpath">
+			<fileset dir="${cobertura.dir}">
+				<include name="cobertura.jar" />
+				<include name="lib/**/*.jar" />
+			</fileset>
+		</path>
 		<path id="classpath.test">
-			<pathelement location="${outputDir}" />
+			<path refid="cobertura.classpath" />
+			<pathelement location="${instrumentDir}" />
 			<path refid="classpath.base" />
 		</path>
 		
+		
 		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" classpathref="classpath.base"/>
+		
+		<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
 	</target>
 	<target name="clean" depends="init">
 		<delete dir="${outputDir}" />
@@ -87,10 +99,19 @@
 	<!-- ====================================================== -->
 	<!-- Verify we haven't broken anything. (We may only want to check the updater in the future before deploy) -->
 	<!-- ====================================================== -->
-	<target name="junit" depends="compile">
+	
+	<target name="instrument" depends="compile">
+		<cobertura-instrument todir="${instrumentDir}">
+			<fileset dir="${outputDir}">
+				<include name="**/*.class"/>
+			</fileset>
+		</cobertura-instrument>
+	</target>
+	
+	<target name="junit" depends="instrument">
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
-		<junit>
+		<junit fork="true">
 			<classpath refid="classpath.test" />
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
@@ -99,6 +120,10 @@
 				</fileset>
 			</batchtest>
 		</junit>
+	</target>
+	
+	<target name="coverage-report" depends="cover-test">
+		<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>
 	</target>
 	
 	<!-- ====================================================== -->
@@ -127,6 +152,6 @@
 	<!-- ====================================================== -->
 	<!-- Batch: JavaDoc, Deploy, Style -->
 	<!-- ====================================================== -->
-	<target name="javadoc_deploy_style" depends="deploy,docs,style">
+	<target name="hudson" depends="deploy,docs,style">
 	</target>
 </project>
