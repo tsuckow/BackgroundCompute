@@ -119,7 +119,7 @@
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
 				<fileset dir="${outputDir}">
-					<include name="**/TestHex.class" />
+					<include name="**/Test*.class" />
 				</fileset>
 			</batchtest>
 		</junit>
