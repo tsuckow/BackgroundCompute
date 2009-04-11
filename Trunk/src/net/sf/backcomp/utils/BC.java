@@ -743,8 +743,11 @@ public final class BC extends SwingWorker < Object, Object[] >
 	protected void process( final List < Object[] > chunks )
 	{
 		//Handle each item in order
-		for ( final Object row[] : chunks )
+		//for ( final Object row[] : chunks )
+		for ( int i = 0; i < chunks.size(); ++i )
 		{
+			final Object row[] = chunks.get()
+		
 			switch ( row.length )
 			{
 			case 0: //Create Splash Directive
