@@ -50,7 +50,7 @@
 		<mkdir dir="${outputDir}" />
 	</target>
 	<target name="compile" depends="prepare">
-		<javac debug="true" srcdir="${sourceDir}" destdir="${outputDir}">
+		<javac debug="true" debuglevel="vars,lines,source" srcdir="${sourceDir}" destdir="${outputDir}">
 			<classpath refid="classpath.base"/>
 		</javac>
 	</target>
