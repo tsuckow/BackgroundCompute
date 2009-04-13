@@ -125,7 +125,7 @@
 		</cobertura-instrument>-->
 		
 		<emma enabled="true">
-			<instr instrpath="${outputDir}" destdir="${instrumentDir}" metadatafile="${coverage.dir}/metadata.emma" merge="true">
+			<instr instrpath="${outputDir}" destdir="${instrumentDir}" metadatafile="${coverage.dir}/metadata.emma" merge="true" verbosity="verbose">
 				<filter excludes="*Test*" />
 			</instr>
 		</emma>
