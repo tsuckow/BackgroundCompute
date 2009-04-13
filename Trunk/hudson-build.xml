@@ -14,6 +14,7 @@
 		<!--<property name="cobertura.dir" value="lib/cobertura" />-->
 		<property name="deployDir" value="/home/webmaster/public_html/updates/bc/dev" />
 		
+		<property name="emma.verbosity" value="verbose" />
 		
 		<property name="coverage.dir" value="coverage" />
 		<property name="emma.dir" value="lib/emma" />
@@ -142,9 +143,6 @@
 					<include name="**/Test*.class" />
 				</fileset>
 			</batchtest>
-			
-			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/metadata.emma" />
-            <jvmarg value="-Demma.coverage.out.merge=true" />
 		</junit>
 	</target>
 	
@@ -155,6 +153,10 @@
 				<fileset dir="${coverage.dir}" >
 					<include name="*.emma" />
 				</fileset>
+				<fileset dir="/" >
+					<include name="*.ec" />
+				</fileset>
+				
 
 				<xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
 			</report>
