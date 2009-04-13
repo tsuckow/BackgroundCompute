@@ -142,6 +142,9 @@
 					<include name="**/Test*.class" />
 				</fileset>
 			</batchtest>
+			
+			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/metadata.emma" />
+            <jvmarg value="-Demma.coverage.out.merge=true" />
 		</junit>
 	</target>
 	
