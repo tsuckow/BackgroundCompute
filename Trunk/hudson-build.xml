@@ -1,4 +1,6 @@
 <project name="Background Compute" default="hudson" basedir=".">
+	<property name="verbosity" value="verbose" />
+
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
