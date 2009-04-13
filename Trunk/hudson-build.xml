@@ -49,7 +49,7 @@
 			<!--<path refid="cobertura.classpath" />-->
 			<path refid="emma.lib" />
 			<pathelement location="${instrumentDir}" />
-			<pathelement location="${outputDir}" />
+			<!--<pathelement location="${outputDir}" />-->
 			<path refid="classpath.base" />
 		</path>
 		
