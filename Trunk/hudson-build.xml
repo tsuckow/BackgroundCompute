@@ -137,6 +137,10 @@
 		<mkdir dir="${report.dir}"/>
 		<junit fork="true" forkmode="once">
 			<classpath refid="classpath.test" />
+			
+			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />  
+			<jvmarg value="-Demma.coverage.out.merge=true" /> 
+			
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
 				<fileset dir="${outputDir}">
