@@ -1,6 +1,4 @@
 <project name="Background Compute" default="hudson" basedir=".">
-	<property name="verbosity" value="verbose" />
-
 	<target name="printinfo">
 		<property environment="env" />
 		<echo message="${env.BUILD_TAG}"/>
@@ -149,7 +147,7 @@
 	
 	<target name="coverage-report" depends="junit">
 		<!--<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>-->
-		<emma enabled="true" >
+		<emma enabled="true" verbosity="verbose">
 			<report sourcepath="${sourceDir}" >
 				<fileset dir="${coverage.dir}" >
 					<include name="*.emma" />
