@@ -150,10 +150,10 @@
 		<!--<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>-->
 		<emma enabled="true" verbosity="verbose">
 			<report sourcepath="${sourceDir}" >
-				<fileset dir="${coverage.dir}" >
-					<include name="*.emma" />
-				</fileset>
-				<fileset dir="." includes="*.ec" />				
+				<fileset dir="." >
+					<include name="**/*.emma" />
+					<include name="**/*.ec" />
+				</fileset>			
 
 				<xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
 			</report>
