@@ -153,10 +153,7 @@
 				<fileset dir="${coverage.dir}" >
 					<include name="*.emma" />
 				</fileset>
-				<fileset dir="./" >
-					<include name="*.ec" />
-				</fileset>
-				
+				<fileset dir="." includes="*.ec" />				
 
 				<xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
 			</report>
