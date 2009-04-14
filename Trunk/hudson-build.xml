@@ -155,7 +155,7 @@
 		
 		<copy todir="coverage">
 			<fileset dir=".">
-				<exclude name="*.ec" />
+				<include name="*.ec" />
 			</fileset>
 		</copy>
 		
