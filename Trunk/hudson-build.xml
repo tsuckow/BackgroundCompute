@@ -135,7 +135,7 @@
 	<target name="junit" depends="instrument">
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
-		<junit fork="true" forkmode="once">
+		<junit fork="yes" forkmode="once">
 			<classpath refid="classpath.test" />
 			
 			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />  
