@@ -154,7 +154,7 @@
 		<!--<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>-->
 		<emma enabled="true" verbosity="verbose">
 			<report sourcepath="${sourceDir}" >
-				<fileset dir="Trunk" >
+				<fileset dir="." >
 					<!--<include name="**/*.emma" />-->
 					<include name="coverage/coverage.emma" />
 					<include name="coverage.ec" />
