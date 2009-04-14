@@ -152,13 +152,15 @@
 	
 	<target name="coverage-report" depends="junit">
 		<!--<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>-->
-		<emma enabled="true" verbosity="trace1">
-			<report sourcepath="${sourceDir}" >
+		<emma enabled="true" verbosity="trace3">
+			<report sourcepath="${sourceDir}" depth="all">
+				<infileset dir="." includes="*.em, *.ec, *.emma" />
+				<infileset dir="coverage" includes="*.em, *.ec, *.emma" />
+			
 				<fileset dir="." >
-					<!--<include name="**/*.emma" />-->
-					
-					<include name="coverage.ec" />
-					<include name="coverage/*.emma" />
+					<include name="**/*.ec" />
+					<include name="**/*.em" />
+					<include name="**/*.emma" />
 				</fileset>			
 
 				<xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
