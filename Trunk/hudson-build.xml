@@ -156,8 +156,8 @@
 			<report sourcepath="${sourceDir}" >
 				<fileset dir="." >
 					<!--<include name="**/*.emma" />-->
-					<include name="coverage/coverage.emma" />
-					<include name="coverage.ec" />
+					<include name="**/coverage/coverage.emma" />
+					<include name="**/coverage.ec" />
 				</fileset>			
 
 				<xml outfile="${coverage.dir}/coverage.xml" depth="method"/>
