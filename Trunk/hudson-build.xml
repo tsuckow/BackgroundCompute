@@ -136,10 +136,10 @@
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
 		<junit fork="yes" forkmode="once">
-			<classpath refid="classpath.test" />
-			
-			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />  
+			<jvmarg value="-Demma.coverage.out.file=coverage.emma" />  
 			<jvmarg value="-Demma.coverage.out.merge=true" /> 
+			
+			<classpath refid="classpath.test" />
 			
 			<formatter type="xml" />
 			<batchtest todir="${report.dir}">
@@ -152,6 +152,13 @@
 	
 	<target name="coverage-report" depends="junit">
 		<!--<cobertura-report format="xml" srcdir="${sourceDir}" destdir="cobertura"/>-->
+		
+		<copy todir="coverage">
+			<fileset dir=".">
+				<exclude name="*.ec" />
+			</fileset>
+		</copy>
+		
 		<emma enabled="true" verbosity="trace3">
 			<report sourcepath="${sourceDir}" depth="all">
 				<infileset dir="." includes="*.em, *.ec, *.emma" />
