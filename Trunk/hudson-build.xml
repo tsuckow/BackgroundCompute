@@ -155,7 +155,7 @@
 		<emma enabled="true" verbosity="verbose">
 			<report sourcepath="${sourceDir}" >
 				<fileset dir="." >
-					<include name="**/*.emma" />
+					<!--<include name="**/*.emma" />-->
 					<include name="**/*.ec" />
 				</fileset>			
 
