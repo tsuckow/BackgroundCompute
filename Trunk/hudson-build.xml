@@ -135,7 +135,7 @@
 	<target name="junit" depends="instrument">
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
-		<junit fork="on" forkmode="perTest">
+		<junit fork="off" forkmode="perTest">
 			<jvmarg value="-Demma.coverage.out.file=coverage.emma" />  
 			<jvmarg value="-Demma.coverage.out.merge=true" /> 
 			
