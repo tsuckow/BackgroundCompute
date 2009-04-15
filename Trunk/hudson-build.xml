@@ -4,7 +4,6 @@
 		<echo message="${env.BUILD_TAG}"/>
 	</target>
 	<target name="init" depends="printinfo">
-		<property name="tst-dir" location="src/net/sf/backcomp/tests" />
 		<property name="sourceDir" value="src" />
 		<property name="outputDir" value="classes" />
 		<property name="instrumentDir" value="classes-instrumented" />
@@ -49,7 +48,7 @@
 			<!--<path refid="cobertura.classpath" />-->
 			<path refid="emma.lib" />
 			<pathelement location="${instrumentDir}" />
-			<!--<pathelement location="${outputDir}" />-->
+			<pathelement location="${outputDir}" />
 			<path refid="classpath.base" />
 		</path>
 		
@@ -135,14 +134,14 @@
 	<target name="junit" depends="instrument">
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
-		<junit forrk="yes" forkmode="perTest">
+		<junit fork="yes">
 			<jvmarg value="-Demma.coverage.out.file=coverage.emma" />  
 			<jvmarg value="-Demma.coverage.out.merge=true" /> 
 			
 			<classpath refid="classpath.test" />
 			
 			<formatter type="xml" />
-			<batchtest todir="${report.dir}">
+			<batchtest fork="yes" todir="${report.dir}">
 				<fileset dir="${outputDir}">
 					<include name="**/Test*.class" />
 				</fileset>
