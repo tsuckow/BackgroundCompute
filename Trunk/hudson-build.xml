@@ -135,9 +135,6 @@
 		<property name="report.dir"  value="test-reports"/>
 		<mkdir dir="${report.dir}"/>
 		<junit fork="yes">
-			<jvmarg value="-Demma.coverage.out.file=coverage.emma" />  
-			<jvmarg value="-Demma.coverage.out.merge=true" /> 
-			
 			<classpath refid="classpath.test" />
 			
 			<formatter type="xml" />
